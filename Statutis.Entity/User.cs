@@ -24,8 +24,10 @@ public class User
 	public byte[]? Avatar { get; set; } = null;
 
 	public List<String> Roles { get; set; } = new List<string>();
-	
-	
+
+	public List<Team> Teams { get; set; } = new List<Team>();
+
+
 
 
 }
