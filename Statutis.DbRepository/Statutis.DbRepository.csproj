@@ -6,4 +6,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Statutis.Core\Statutis.Core.csproj" />
+      <ProjectReference Include="..\Statutis.Entity\Statutis.Entity.csproj" />
+    </ItemGroup>
+
 </Project>

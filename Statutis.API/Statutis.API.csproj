@@ -11,4 +11,11 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Statutis.Business\Statutis.Business.csproj" />
+      <ProjectReference Include="..\Statutis.Core\Statutis.Core.csproj" />
+      <ProjectReference Include="..\Statutis.DbRepository\Statutis.DbRepository.csproj" />
+      <ProjectReference Include="..\Statutis.Entity\Statutis.Entity.csproj" />
+    </ItemGroup>
+
 </Project>
