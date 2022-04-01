@@ -4,15 +4,6 @@ namespace Statutis.Entity.Service;
 
 public abstract class Service
 {
-	protected Service(string name, string description, Group @group, string host, ServiceType serviceType)
-	{
-		Name = name;
-		Description = description;
-		Group = @group;
-		Host = host;
-		ServiceType = serviceType;
-	}
-
 	[StringLength(maximumLength: 30), Required]
 	public String Name { get; set; }
 

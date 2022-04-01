@@ -4,23 +4,6 @@ namespace Statutis.Entity.Service.Check;
 
 public class SshService : Service
 {
-	public SshService(string name,
-		string description,
-		Group @group,
-		string host,
-		ServiceType serviceType,
-		string bash,
-		string username,
-		string password,
-		bool isSshKey = false,
-		int port = 22) : base(name, description, @group, host, serviceType)
-	{
-		Port = port;
-		Bash = bash;
-		Username = username;
-		Password = password;
-		IsSshKey = isSshKey;
-	}
 
 	public int Port { get; set; }
 

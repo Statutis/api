@@ -5,11 +5,15 @@ namespace Statutis.Entity;
 
 public class Team
 {
-	public Team(string name, string? color = null, Team? mainTeam = null)
+	public Team(string name, string? color = null)
 	{
 		Name = name;
-		MainTeam = mainTeam;
 		Color = color;
+	}
+
+	public Team(string name, string? color = null, Team? mainTeam = null) : this(name, color)
+	{
+		MainTeam = mainTeam;
 	}
 
 	[StringLength(maximumLength: 30), Required]
@@ -22,6 +26,8 @@ public class Team
 
 	public List<User> Users { get; set; } = new List<User>();
 	
+	public List<Team> Children { get; set; } = new List<Team>();
+
 	public List<Group> Groups { get; set; } = new List<Group>();
 
 }
