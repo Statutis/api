@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Statutis.Entity.Service;
 
 namespace Statutis.Entity;
 
@@ -20,5 +21,7 @@ public class Team
 	public Team? MainTeam { get; set; } = null;
 
 	public List<User> Users { get; set; } = new List<User>();
+	
+	public List<Group> Groups { get; set; } = new List<Group>();
 
 }
