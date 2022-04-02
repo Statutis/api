@@ -12,7 +12,7 @@ using Statutis.DbRepository;
 namespace Statutis.DbRepository.Migrations
 {
     [DbContext(typeof(StatutisContext))]
-    [Migration("20220402123619_InitialCreate")]
+    [Migration("20220402134038_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,25 +69,39 @@ namespace Statutis.DbRepository.Migrations
 
             modelBuilder.Entity("Statutis.Entity.Service.Service", b =>
                 {
-                    b.Property<string>("Name")
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
-
-                    b.Property<Guid>("GroupId")
+                    b.Property<Guid>("ServiceId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Host")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.HasKey("Name", "GroupId");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("ServiceTypeName")
+                        .IsRequired()
+                        .HasColumnType("character varying(30)");
+
+                    b.HasKey("ServiceId");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("ServiceTypeName");
+
+                    b.HasIndex("Name", "GroupId")
+                        .IsUnique();
 
                     b.ToTable("Service");
                 });
@@ -282,7 +296,7 @@ namespace Statutis.DbRepository.Migrations
 
                     b.HasOne("Statutis.Entity.Service.ServiceType", "ServiceType")
                         .WithMany()
-                        .HasForeignKey("Name")
+                        .HasForeignKey("ServiceTypeName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -319,7 +333,7 @@ namespace Statutis.DbRepository.Migrations
                 {
                     b.HasOne("Statutis.Entity.Service.Service", null)
                         .WithOne()
-                        .HasForeignKey("Statutis.Entity.Service.Check.DnsService", "Name", "GroupId")
+                        .HasForeignKey("Statutis.Entity.Service.Check.DnsService", "ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -328,7 +342,7 @@ namespace Statutis.DbRepository.Migrations
                 {
                     b.HasOne("Statutis.Entity.Service.Service", null)
                         .WithOne()
-                        .HasForeignKey("Statutis.Entity.Service.Check.HttpService", "Name", "GroupId")
+                        .HasForeignKey("Statutis.Entity.Service.Check.HttpService", "ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -337,7 +351,7 @@ namespace Statutis.DbRepository.Migrations
                 {
                     b.HasOne("Statutis.Entity.Service.Service", null)
                         .WithOne()
-                        .HasForeignKey("Statutis.Entity.Service.Check.PingService", "Name", "GroupId")
+                        .HasForeignKey("Statutis.Entity.Service.Check.PingService", "ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -346,7 +360,7 @@ namespace Statutis.DbRepository.Migrations
                 {
                     b.HasOne("Statutis.Entity.Service.Service", null)
                         .WithOne()
-                        .HasForeignKey("Statutis.Entity.Service.Check.SshService", "Name", "GroupId")
+                        .HasForeignKey("Statutis.Entity.Service.Check.SshService", "ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

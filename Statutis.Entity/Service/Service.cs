@@ -4,6 +4,9 @@ namespace Statutis.Entity.Service;
 
 public abstract class Service
 {
+
+	public Guid ServiceId { get; set; }
+	
 	[StringLength(maximumLength: 30), Required]
 	public String Name { get; set; }
 

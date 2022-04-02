@@ -79,14 +79,16 @@ namespace Statutis.DbRepository.Migrations
                 name: "Service",
                 columns: table => new
                 {
+                    ServiceId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     GroupId = table.Column<Guid>(type: "uuid", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    Host = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false)
+                    Host = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    ServiceTypeName = table.Column<string>(type: "character varying(30)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Service", x => new { x.Name, x.GroupId });
+                    table.PrimaryKey("PK_Service", x => x.ServiceId);
                     table.ForeignKey(
                         name: "FK_Service_Group_GroupId",
                         column: x => x.GroupId,
@@ -94,8 +96,8 @@ namespace Statutis.DbRepository.Migrations
                         principalColumn: "GroupId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Service_ServiceType_Name",
-                        column: x => x.Name,
+                        name: "FK_Service_ServiceType_ServiceTypeName",
+                        column: x => x.ServiceTypeName,
                         principalTable: "ServiceType",
                         principalColumn: "Name",
                         onDelete: ReferentialAction.Cascade);
@@ -153,31 +155,18 @@ namespace Statutis.DbRepository.Migrations
                 name: "DnsService",
                 columns: table => new
                 {
-                    Name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
-                    GroupId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ServiceId = table.Column<Guid>(type: "uuid", nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
                     Result = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DnsService", x => new { x.Name, x.GroupId });
+                    table.PrimaryKey("PK_DnsService", x => x.ServiceId);
                     table.ForeignKey(
-                        name: "FK_DnsService_Group_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "Group",
-                        principalColumn: "GroupId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DnsService_Service_Name_GroupId",
-                        columns: x => new { x.Name, x.GroupId },
+                        name: "FK_DnsService_Service_ServiceId",
+                        column: x => x.ServiceId,
                         principalTable: "Service",
-                        principalColumns: new[] { "Name", "GroupId" },
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DnsService_ServiceType_Name",
-                        column: x => x.Name,
-                        principalTable: "ServiceType",
-                        principalColumn: "Name",
+                        principalColumn: "ServiceId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -185,32 +174,19 @@ namespace Statutis.DbRepository.Migrations
                 name: "HttpService",
                 columns: table => new
                 {
-                    Name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
-                    GroupId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ServiceId = table.Column<Guid>(type: "uuid", nullable: false),
                     Port = table.Column<int>(type: "integer", nullable: false),
                     Code = table.Column<int>(type: "integer", nullable: true),
                     RedirectUrl = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HttpService", x => new { x.Name, x.GroupId });
+                    table.PrimaryKey("PK_HttpService", x => x.ServiceId);
                     table.ForeignKey(
-                        name: "FK_HttpService_Group_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "Group",
-                        principalColumn: "GroupId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_HttpService_Service_Name_GroupId",
-                        columns: x => new { x.Name, x.GroupId },
+                        name: "FK_HttpService_Service_ServiceId",
+                        column: x => x.ServiceId,
                         principalTable: "Service",
-                        principalColumns: new[] { "Name", "GroupId" },
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_HttpService_ServiceType_Name",
-                        column: x => x.Name,
-                        principalTable: "ServiceType",
-                        principalColumn: "Name",
+                        principalColumn: "ServiceId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -218,29 +194,16 @@ namespace Statutis.DbRepository.Migrations
                 name: "PingService",
                 columns: table => new
                 {
-                    Name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
-                    GroupId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ServiceId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PingService", x => new { x.Name, x.GroupId });
+                    table.PrimaryKey("PK_PingService", x => x.ServiceId);
                     table.ForeignKey(
-                        name: "FK_PingService_Group_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "Group",
-                        principalColumn: "GroupId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PingService_Service_Name_GroupId",
-                        columns: x => new { x.Name, x.GroupId },
+                        name: "FK_PingService_Service_ServiceId",
+                        column: x => x.ServiceId,
                         principalTable: "Service",
-                        principalColumns: new[] { "Name", "GroupId" },
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PingService_ServiceType_Name",
-                        column: x => x.Name,
-                        principalTable: "ServiceType",
-                        principalColumn: "Name",
+                        principalColumn: "ServiceId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -248,8 +211,7 @@ namespace Statutis.DbRepository.Migrations
                 name: "SshService",
                 columns: table => new
                 {
-                    Name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
-                    GroupId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ServiceId = table.Column<Guid>(type: "uuid", nullable: false),
                     Port = table.Column<int>(type: "integer", nullable: false),
                     Bash = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     Username = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
@@ -258,31 +220,14 @@ namespace Statutis.DbRepository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SshService", x => new { x.Name, x.GroupId });
+                    table.PrimaryKey("PK_SshService", x => x.ServiceId);
                     table.ForeignKey(
-                        name: "FK_SshService_Group_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "Group",
-                        principalColumn: "GroupId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SshService_Service_Name_GroupId",
-                        columns: x => new { x.Name, x.GroupId },
+                        name: "FK_SshService_Service_ServiceId",
+                        column: x => x.ServiceId,
                         principalTable: "Service",
-                        principalColumns: new[] { "Name", "GroupId" },
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SshService_ServiceType_Name",
-                        column: x => x.Name,
-                        principalTable: "ServiceType",
-                        principalColumn: "Name",
+                        principalColumn: "ServiceId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DnsService_GroupId",
-                table: "DnsService",
-                column: "GroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Group_MainGroupId",
@@ -301,24 +246,20 @@ namespace Statutis.DbRepository.Migrations
                 column: "TeamsTeamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HttpService_GroupId",
-                table: "HttpService",
-                column: "GroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PingService_GroupId",
-                table: "PingService",
-                column: "GroupId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Service_GroupId",
                 table: "Service",
                 column: "GroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SshService_GroupId",
-                table: "SshService",
-                column: "GroupId");
+                name: "IX_Service_Name_GroupId",
+                table: "Service",
+                columns: new[] { "Name", "GroupId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Service_ServiceTypeName",
+                table: "Service",
+                column: "ServiceTypeName");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Team_MainTeamId",

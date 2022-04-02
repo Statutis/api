@@ -28,7 +28,8 @@ public class StatutisContext : DbContext
 	{
 		modelBuilder.Entity<Service>(m =>
 		{
-			m.HasKey(x => new { x.Name, x.GroupId });
+			m.HasKey(x => x.ServiceId);
+			m.HasIndex(x => new { x.Name, x.GroupId }).IsUnique();
 			m.HasOne(x => x.Group)
 				.WithMany(x => x.Services).HasForeignKey(x => x.GroupId);
 		});
