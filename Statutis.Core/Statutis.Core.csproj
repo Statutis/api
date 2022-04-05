@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Interfaces\DbRepository" />
+      <ProjectReference Include="..\Statutis.Entity\Statutis.Entity.csproj" />
     </ItemGroup>
 
 </Project>
