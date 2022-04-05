@@ -6,7 +6,6 @@ public interface IUserService
 {
     //Get
     List<User> GetAll();
-    User Get(int id);
     User GetByEmail(string email);
     User GetByUsername(string email);
     
