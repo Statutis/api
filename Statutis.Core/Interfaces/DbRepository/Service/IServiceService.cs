@@ -9,7 +9,7 @@ public interface IServiceService
     List<Entity.Service.Service> GetByHost(string host);
     List<Entity.Service.Service> GetByServiceType(ServiceType serviceType);
     
-    Entity.Service.Service Get(string name);
+    List<Entity.Service.Service> Get(string name);
     Entity.Service.Service Get(Guid guid);
     
     //insert
