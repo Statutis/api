@@ -1,6 +1,6 @@
 using Statutis.Entity.Service;
 
-namespace Statutis.Core.Interfaces.DbRepository.Service;
+namespace Statutis.Core.Interfaces.Business.Service;
 
 public interface IServiceService
 {

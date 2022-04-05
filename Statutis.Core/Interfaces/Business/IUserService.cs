@@ -1,6 +1,6 @@
 using Statutis.Entity;
 
-namespace Statutis.Core.Interfaces.DbRepository;
+namespace Statutis.Core.Interfaces.Business;
 
 public interface IUserService
 {
