@@ -6,8 +6,8 @@ public interface ITeamRepository
 {
     //Get
     Task<List<Team>> GetAll();
-    Task<Team> Get(Guid guid);
-    Task<Team> Get(string name);
+    Task<Team?> Get(Guid guid);
+    Task<Team?> Get(string name);
 
     Task<List<Team>> GetTeamsOfUser(User user);
     
