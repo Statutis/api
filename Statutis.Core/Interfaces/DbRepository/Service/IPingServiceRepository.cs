@@ -5,17 +5,17 @@ namespace Statutis.Core.Interfaces.DbRepository.Service;
 public interface IPingServiceRepository
 {
     //Select
-    List<PingService> SelectAll();
-    PingService Select(Guid serviceId);
-    List<PingService> Select(string name);
-    List<PingService> SelectByHostname(string hostname);
+    Task<List<PingService>> SelectAll();
+    Task<PingService> Select(Guid serviceId);
+    Task<List<PingService>> Select(string name);
+    Task<List<PingService>> SelectByHostname(string hostname);
     
     //Update
-    PingService Update(PingService sshService);
+    Task<PingService> Update(PingService sshService);
     
     //Insert
-    PingService Insert(PingService sshService);
+    Task<PingService> Insert(PingService sshService);
     
     //Delete
-    void Delete(PingService sshService);
+    Task Delete(PingService sshService);
 }

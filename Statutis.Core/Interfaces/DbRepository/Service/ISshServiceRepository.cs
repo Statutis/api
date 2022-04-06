@@ -5,17 +5,17 @@ namespace Statutis.Core.Interfaces.DbRepository.Service;
 public interface ISshServiceRepository
 {
     //Select
-    List<SshService> SelectAll();
-    SshService Select(Guid serviceId);
-    List<SshService> Select(string name);
-    List<SshService> SelectByHostname(string hostname);
+    Task<List<SshService>> SelectAll();
+    Task<SshService> Select(Guid serviceId);
+    Task<List<SshService>> Select(string name);
+    Task<List<SshService>> SelectByHostname(string hostname);
     
     //Update
-    SshService Update(SshService sshService);
+    Task<SshService> Update(SshService sshService);
     
     //Insert
-    SshService Insert(SshService sshService);
+    Task<SshService> Insert(SshService sshService);
     
     //Delete
-    void Delete(SshService sshService);
+    Task Delete(SshService sshService);
 }

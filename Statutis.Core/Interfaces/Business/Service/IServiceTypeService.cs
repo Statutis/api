@@ -3,17 +3,17 @@ namespace Statutis.Core.Interfaces.Business.Service;
 public interface IServiceTypeService
 {
     //get
-    List<Entity.Service.ServiceType> GetAll();
+    Task<List<Entity.Service.ServiceType>> GetAll();
 
-    Entity.Service.ServiceType Get(string name);
+    Task<Entity.Service.ServiceType> Get(string name);
     
     //insert
-    Entity.Service.ServiceType Insert(Entity.Service.ServiceType serviceType);
+    Task<Entity.Service.ServiceType> Insert(Entity.Service.ServiceType serviceType);
     
     //Update
-    Entity.Service.ServiceType Update(Entity.Service.ServiceType serviceType);
+    Task<Entity.Service.ServiceType> Update(Entity.Service.ServiceType serviceType);
     
     //Delete
-    Entity.Service.ServiceType Delete(Entity.Service.ServiceType serviceType);
+    Task<Entity.Service.ServiceType> Delete(Entity.Service.ServiceType serviceType);
 
 }

@@ -5,13 +5,13 @@ namespace Statutis.Core.Interfaces.Business;
 public interface IUserService
 {
     //Get
-    List<User> GetAll();
-    User GetByEmail(string email);
-    User GetByUsername(string email);
+    Task<List<User>> GetAll();
+    Task<User> GetByEmail(string email);
+    Task<User> GetByUsername(string email);
     
     //Update
-    User Update(User user);
+    Task<User> Update(User user);
     
     //delete
-    void Delete(User user);
+    Task Delete(User user);
 }
