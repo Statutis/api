@@ -6,7 +6,7 @@ public interface IPingServiceRepository
 {
     //Select
     Task<List<PingService>> SelectAll();
-    Task<PingService> Select(Guid serviceId);
+    Task<PingService?> Select(Guid serviceId);
     Task<List<PingService>> Select(string name);
     Task<List<PingService>> SelectByHostname(string hostname);
     
