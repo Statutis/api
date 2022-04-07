@@ -10,7 +10,7 @@ public interface IServiceRepository
     Task<List<Entity.Service.Service>> GetByServiceType(ServiceType serviceType);
     
     Task<List<Entity.Service.Service>> Get(string name);
-    Task<Entity.Service.Service> Get(Guid guid);
+    Task<Entity.Service.Service?> Get(Guid guid);
     
     //insert
     Task<Entity.Service.Service> Insert(Entity.Service.Service service);
@@ -19,5 +19,5 @@ public interface IServiceRepository
     Task<Entity.Service.Service> Update(Entity.Service.Service service);
     
     //Delete
-    Task Delete(Entity.Service.Service delete);
+    Task Delete(Entity.Service.Service service);
 }
