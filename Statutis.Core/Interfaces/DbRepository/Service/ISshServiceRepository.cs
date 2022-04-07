@@ -6,7 +6,7 @@ public interface ISshServiceRepository
 {
     //Select
     Task<List<SshService>> SelectAll();
-    Task<SshService> Select(Guid serviceId);
+    Task<SshService?> Select(Guid serviceId);
     Task<List<SshService>> Select(string name);
     Task<List<SshService>> SelectByHostname(string hostname);
     
