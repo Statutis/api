@@ -5,7 +5,7 @@ public interface IServiceTypeRepository
     //get
     Task<List<Entity.Service.ServiceType>> GetAll();
 
-    Task<Entity.Service.ServiceType> Get(string name);
+    Task<Entity.Service.ServiceType?> Get(string name);
     
     //insert
     Task<Entity.Service.ServiceType> Insert(Entity.Service.ServiceType serviceType);
@@ -14,6 +14,6 @@ public interface IServiceTypeRepository
     Task<Entity.Service.ServiceType> Update(Entity.Service.ServiceType serviceType);
     
     //Delete
-    Task<Entity.Service.ServiceType> Delete(Entity.Service.ServiceType serviceType);
+    Task Delete(Entity.Service.ServiceType serviceType);
 
 }
