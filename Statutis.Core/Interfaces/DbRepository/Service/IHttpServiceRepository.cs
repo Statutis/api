@@ -6,7 +6,7 @@ public interface IHttpServiceRepository
 {
     //Select
     Task<List<HttpService>> SelectAll();
-    Task<HttpService> Select(Guid serviceId);
+    Task<HttpService?> Select(Guid serviceId);
     Task<List<HttpService>> Select(string name);
     Task<List<HttpService>> SelectByHostname(string hostname);
     
