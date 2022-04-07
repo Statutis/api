@@ -5,17 +5,17 @@ namespace Statutis.Core.Interfaces.DbRepository.Service;
 public interface IHttpServiceRepository
 {
     //Select
-    List<HttpService> SelectAll();
-    HttpService Select(Guid serviceId);
-    List<HttpService> Select(string name);
-    List<HttpService> SelectByHostname(string hostname);
+    Task<List<HttpService>> SelectAll();
+    Task<HttpService> Select(Guid serviceId);
+    Task<List<HttpService>> Select(string name);
+    Task<List<HttpService>> SelectByHostname(string hostname);
     
     //Update
-    HttpService Update(HttpService sshService);
+    Task<HttpService> Update(HttpService sshService);
     
     //Insert
-    HttpService Insert(HttpService sshService);
+    Task<HttpService> Insert(HttpService sshService);
     
     //Delete
-    void Delete(HttpService sshService);
+    Task Delete(HttpService sshService);
 }

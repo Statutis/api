@@ -5,17 +5,17 @@ namespace Statutis.Core.Interfaces.DbRepository.Service;
 public interface IDnsServiceRepository
 {
     //Select
-    List<DnsService> SelectAll();
-    DnsService Select(Guid serviceId);
-    List<DnsService> Select(string name);
-    List<DnsService> SelectByHostname(string hostname);
+    Task<List<DnsService>> SelectAll();
+    Task<DnsService> Select(Guid serviceId);
+    Task<List<DnsService>> Select(string name);
+    Task<List<DnsService>> SelectByHostname(string hostname);
     
     //Update
-    DnsService Update(DnsService sshService);
+    Task<DnsService> Update(DnsService sshService);
     
     //Insert
-    DnsService Insert(DnsService sshService);
+    Task<DnsService> Insert(DnsService sshService);
     
     //Delete
-    void Delete(DnsService sshService);
+    Task Delete(DnsService sshService);
 }
