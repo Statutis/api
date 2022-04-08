@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Statutis.Entity;
 using Statutis.Entity.Service;
 using Statutis.Entity.Service.Check;
@@ -19,8 +20,9 @@ public class StatutisContext : DbContext
 
 	public StatutisContext()
 	{
+		
 	}
-
+	public StatutisContext(DbContextOptions<StatutisContext> options) : base(options) { }
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		=> optionsBuilder.UseNpgsql(@"Host=localhost;Username=admin;Password=password;Database=statutis");
 
