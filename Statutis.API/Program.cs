@@ -23,7 +23,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 var app = builder.Build();
+
+//run migrations
+using (var scope = app.Services.CreateScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<StatutisContext>();
+    dataContext.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 /*if (app.Environment.IsDevelopment())
