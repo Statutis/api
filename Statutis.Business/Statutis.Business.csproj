@@ -11,4 +11,8 @@
       <ProjectReference Include="..\Statutis.Entity\Statutis.Entity.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Isopoh.Cryptography.Argon2" Version="1.1.11" />
+    </ItemGroup>
+
 </Project>
