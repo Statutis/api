@@ -8,7 +8,7 @@ public static class RegisterBusiness
 {
 	public static void AddBusiness(this IServiceCollection service)
 	{
-		service.AddSingleton<IPasswordHash, PasswordHash>();
-		service.AddSingleton<IServiceTypeService, ServiceTypeService>();
+		service.AddScoped<IPasswordHash, PasswordHash>();
+		service.AddScoped<IServiceTypeService, ServiceTypeService>();
 	}
 }

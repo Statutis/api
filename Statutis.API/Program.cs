@@ -18,14 +18,14 @@ string database = configuration.GetConnectionString("database");
 builder.Services.AddDbContext<StatutisContext>(opt => opt.UseNpgsql(
 	@"Host=" + hostname + ";Username=" + username + ";Password=" + password + ";Database=" + database + ""));
 
-builder.Services.AddDbRepositories();
-builder.Services.AddBusiness();
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+builder.Services.AddDbRepositories();
+builder.Services.AddBusiness();
 
 var app = builder.Build();
 
