@@ -6,12 +6,16 @@ namespace Statutis.API.Models;
 public class ServiceTypeModel
 {
 
-	public ServiceTypeModel(ServiceType serviceType)
+	public ServiceTypeModel(ServiceType serviceType, string _ref)
 	{
 		Name = serviceType.Name;
 		Color = serviceType.Color;
 		Icon = serviceType.Icon;
+		Ref = _ref;
 	}
+
+
+	public string Ref { get; internal set; }
 
 	[StringLength(maximumLength: 30), Required]
 	public String Name { get; }
