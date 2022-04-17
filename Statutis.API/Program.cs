@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Statutis.API.Utils.DependencyInjection;
 using Statutis.DbRepository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +16,10 @@ string password = configuration.GetConnectionString("password");
 string database = configuration.GetConnectionString("database");
 
 builder.Services.AddDbContext<StatutisContext>(opt => opt.UseNpgsql(
-    @"Host="+hostname+";Username="+username+";Password="+password+";Database="+database+""));
+	@"Host=" + hostname + ";Username=" + username + ";Password=" + password + ";Database=" + database + ""));
 
+builder.Services.AddDbRepositories();
+builder.Services.AddBusiness();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -29,8 +32,8 @@ var app = builder.Build();
 //run migrations
 using (var scope = app.Services.CreateScope())
 {
-    var dataContext = scope.ServiceProvider.GetRequiredService<StatutisContext>();
-    dataContext.Database.Migrate();
+	var dataContext = scope.ServiceProvider.GetRequiredService<StatutisContext>();
+	dataContext.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
