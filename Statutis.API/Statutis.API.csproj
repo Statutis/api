@@ -20,8 +20,4 @@
       <ProjectReference Include="..\Statutis.Entity\Statutis.Entity.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Controllers" />
-    </ItemGroup>
-
 </Project>
