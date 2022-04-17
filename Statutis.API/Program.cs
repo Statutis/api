@@ -8,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 ConfigurationManager configuration = builder.Configuration;
 IWebHostEnvironment environment = builder.Environment;
-
 string hostname = configuration.GetConnectionString("hostname");
 string port = configuration.GetConnectionString("port");
 string username = configuration.GetConnectionString("username");
@@ -27,8 +26,20 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbRepositories();
 builder.Services.AddBusiness();
 
+builder.Services.AddCors(options =>
+{
+	options.AddDefaultPolicy(builder =>
+	{
+		builder
+			.WithOrigins(configuration.GetSection("Application").GetSection("origin").Get<string[]>())
+			.AllowAnyMethod()
+			.AllowAnyHeader();
+	});
+});
+
 var app = builder.Build();
 
+app.UseCors();
 //run migrations
 using (var scope = app.Services.CreateScope())
 {
