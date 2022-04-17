@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Statutis.DbRepository.Migrations;
 using Statutis.Entity;
 using Statutis.Entity.Service;
 using Statutis.Entity.Service.Check;
@@ -62,5 +63,7 @@ public class StatutisContext : DbContext
             m.HasOne(x => x.MainTeam).WithMany(x => x.Children).HasForeignKey(x => x.MainTeamId);
         });
         modelBuilder.Entity<ServiceType>(m => { m.HasKey(x => x.Name); });
+        
+        StatutisInitializer.Initialize(modelBuilder);
     }
 }
