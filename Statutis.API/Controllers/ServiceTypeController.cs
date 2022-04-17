@@ -26,6 +26,7 @@ namespace Statutis.API.Controllers
 
 		[HttpGet, Route("{name}")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ServiceTypeModel))]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> Get(string name)
 		{
 			ServiceType? type = await _serviceType.Get(name);
