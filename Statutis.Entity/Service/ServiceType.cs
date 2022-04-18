@@ -16,6 +16,6 @@ public class ServiceType
 	
 	public byte[]? Icon { get; set; } = null;
 	
-	[StringLength(maximumLength: 10), Required]
+	[StringLength(maximumLength: 10)]
 	public String? Color { get; set; } = null;
 }

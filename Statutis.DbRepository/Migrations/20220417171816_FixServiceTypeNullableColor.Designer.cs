@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Statutis.DbRepository;
@@ -11,9 +12,10 @@ using Statutis.DbRepository;
 namespace Statutis.DbRepository.Migrations
 {
     [DbContext(typeof(StatutisContext))]
-    partial class StatutisContextModelSnapshot : ModelSnapshot
+    [Migration("20220417171816_FixServiceTypeNullableColor")]
+    partial class FixServiceTypeNullableColor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,28 +122,6 @@ namespace Statutis.DbRepository.Migrations
                     b.HasKey("Name");
 
                     b.ToTable("ServiceType");
-
-                    b.HasData(
-                        new
-                        {
-                            Name = "Site Web"
-                        },
-                        new
-                        {
-                            Name = "SMTP"
-                        },
-                        new
-                        {
-                            Name = "DNS"
-                        },
-                        new
-                        {
-                            Name = "SSH"
-                        },
-                        new
-                        {
-                            Name = "Serveur"
-                        });
                 });
 
             modelBuilder.Entity("Statutis.Entity.Team", b =>
