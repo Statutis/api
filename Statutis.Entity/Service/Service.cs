@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Statutis.Entity.History;
 
 namespace Statutis.Entity.Service;
 
@@ -22,5 +23,7 @@ public abstract class Service
 	public ServiceType ServiceType { get; set; }
 
 	public abstract String GetCheckType();
+
+	public List<HistoryEntry> HistoryEntries { get; set; }
 
 }

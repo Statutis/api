@@ -5,6 +5,9 @@ namespace Statutis.Entity.History;
 public class HistoryEntry
 {
 	[Required]
+	public Guid ServiceId { get; set; }
+
+	[Required]
 	public Service.Service Service { get; set; }
 
 	[Required]
@@ -15,7 +18,7 @@ public class HistoryEntry
 
 	public String? message { get; set; } = null;
 
-	public HistoryEntry(Service.Service service) : this(service, System.DateTime.Now)
+	public HistoryEntry(Service.Service service) : this(service, DateTime.Now)
 	{
 
 	}
@@ -34,6 +37,11 @@ public class HistoryEntry
 	public HistoryEntry(Service.Service service, DateTime dateTime, HistoryState state, String? message) : this(service, dateTime, state)
 	{
 		this.message = message;
+	}
+
+	public HistoryEntry()
+	{
+		
 	}
 
 }
