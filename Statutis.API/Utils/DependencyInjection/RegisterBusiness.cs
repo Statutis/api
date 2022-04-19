@@ -11,5 +11,7 @@ public static class RegisterBusiness
 		service.AddScoped<IPasswordHash, PasswordHash>();
 		service.AddScoped<IServiceTypeService, ServiceTypeService>();
 		service.AddScoped<ITeamService, TeamService>();
+		service.AddScoped<IUserService, UserService>();
+		service.AddScoped<IAuthService, AuthService>();
 	}
 }
