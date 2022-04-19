@@ -10,6 +10,7 @@ public static class RegisterBusiness
 	{
 		service.AddScoped<IPasswordHash, PasswordHash>();
 		service.AddScoped<IServiceTypeService, ServiceTypeService>();
+		service.AddScoped<IServiceService, ServiceService>();
 		service.AddScoped<ITeamService, TeamService>();
 	}
 }
