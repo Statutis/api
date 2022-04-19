@@ -20,7 +20,15 @@ public class ServiceController : Controller
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MainStateModel))]
 	public async Task<IActionResult> GetAll()
 	{
-		var res =await _historyEntryService.GetMainState();
-		return Ok(new MainStateModel(){State = res.Item1, LastUpdate = res.Item2});
+		var res = await _historyEntryService.GetMainState();
+		return Ok(new MainStateModel() { State = res.Item1, LastUpdate = res.Item2 });
+	}
+
+	[HttpGet, Route("{guid}")]
+	// [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MainStateModel))]
+	public async Task<IActionResult> Get(Guid guid)
+	{
+		
+		return Ok();
 	}
 }
