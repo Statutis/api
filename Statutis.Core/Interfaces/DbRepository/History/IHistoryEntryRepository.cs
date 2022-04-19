@@ -1,4 +1,5 @@
 using Statutis.Entity.History;
+using Statutis.Entity.Service;
 
 namespace Statutis.Core.Interfaces.DbRepository.History;
 
@@ -39,8 +40,15 @@ public interface IHistoryEntryRepository
 	/// <param name="historyEntry"></param>
 	/// <returns></returns>
 	public Task<HistoryEntry> Add(HistoryEntry historyEntry);
-	
-	
+
+	/// <summary>
+	/// Récupération de la dernière entrée pour chaque service
+	/// </summary>
+	/// <param name="services"></param>
+	/// <returns></returns>
+	public Task<Dictionary<Entity.Service.Service, HistoryEntry?>> GetAllLast(List<Entity.Service.Service> services);
+
+
 
 
 }

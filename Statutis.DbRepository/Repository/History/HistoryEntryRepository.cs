@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Statutis.Core.Interfaces.Business.Service;
 using Statutis.Core.Interfaces.DbRepository.History;
 using Statutis.Entity.History;
+using Statutis.Entity.Service;
 using Statutis.Entity.Service.Check;
 
 namespace Statutis.DbRepository.Repository.History;
@@ -29,17 +30,8 @@ public class HistoryEntryRepository : IHistoryEntryRepository
 
 	public async Task<Dictionary<Entity.Service.Service, HistoryEntry?>> GetAllLast()
 	{
+		return await GetAllLast(await _serviceService.GetAll());
 
-		var req = _ctx.History.AsQueryable();
-
-		return  (await _serviceService.GetAll())
-			.Select(async x => await _ctx.History
-				.OrderByDescending(y => y.DateTime)
-				.FirstOrDefaultAsync(y => y.ServiceId == x.ServiceId)
-			)
-			.Select(x=>x.Result)
-			.Where(x=>x != null).ToDictionary(x => x.Service, x => x);
-		
 
 	}
 
@@ -53,5 +45,17 @@ public class HistoryEntryRepository : IHistoryEntryRepository
 		await _ctx.History.AddAsync(historyEntry);
 		await _ctx.SaveChangesAsync();
 		return historyEntry;
+	}
+
+	public async Task<Dictionary<Entity.Service.Service, HistoryEntry?>> GetAllLast(List<Entity.Service.Service> services)
+	{
+		Dictionary<Entity.Service.Service, HistoryEntry?> dictionary = new Dictionary<Entity.Service.Service, HistoryEntry?>();
+
+		foreach (Entity.Service.Service service in services)
+		{
+			dictionary.Add(service, await GetLast(service));
+		}
+		
+		return dictionary;
 	}
 }

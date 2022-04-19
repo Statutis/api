@@ -29,6 +29,11 @@ public class HistoryEntryService : IHistoryEntryService
 		return _repository.GetAllLast();
 	}
 
+	public Task<Dictionary<Entity.Service.Service, HistoryEntry?>> GetAllLast(List<Entity.Service.Service> services)
+	{
+		return _repository.GetAllLast(services);
+	}
+
 	public Task<List<HistoryEntry>> Get(Service service, int count = 15)
 	{
 		return _repository.Get(service, count);

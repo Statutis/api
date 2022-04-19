@@ -1,4 +1,5 @@
 using Statutis.Entity.History;
+using Statutis.Entity.Service;
 
 namespace Statutis.Core.Interfaces.Business.History;
 
@@ -24,6 +25,12 @@ public interface IHistoryEntryService
 	/// </summary>
 	/// <returns></returns>
 	public Task<Dictionary<Entity.Service.Service, HistoryEntry?>> GetAllLast();
+	
+	/// <summary>
+	/// Récupération de la dernière entrée pour chaque service
+	/// </summary>
+	/// <returns></returns>
+	public Task<Dictionary<Entity.Service.Service, HistoryEntry?>> GetAllLast(List<Entity.Service.Service> services);
 
 	/// <summary>
 	/// Récupéraion des entrées selon un service (par ordre décroissant)
