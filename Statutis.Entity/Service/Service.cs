@@ -7,11 +7,11 @@ public abstract class Service
 {
 
 	public Guid ServiceId { get; set; }
-	
+
 	[StringLength(maximumLength: 30), Required]
 	public String Name { get; set; }
 
-	public Guid GroupId { get; internal set; }
+	public Guid GroupId { get; set; }
 
 	public Group Group { get; set; }
 
@@ -20,6 +20,7 @@ public abstract class Service
 	[StringLength(maximumLength: 128), Required]
 	public String Host { get; set; }
 
+	public String ServiceTypeName { get; set; }
 	public ServiceType ServiceType { get; set; }
 
 	public abstract String GetCheckType();

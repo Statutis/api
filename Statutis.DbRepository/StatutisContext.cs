@@ -43,6 +43,7 @@ public class StatutisContext : DbContext
 		{
 			m.HasKey(x => x.ServiceId);
 			m.HasIndex(x => new { x.Name, x.GroupId }).IsUnique();
+			m.HasOne(x => x.ServiceType).WithMany().HasForeignKey(x => x.ServiceTypeName);
 			m.HasOne(x => x.Group)
 				.WithMany(x => x.Services).HasForeignKey(x => x.GroupId);
 		});
@@ -56,6 +57,7 @@ public class StatutisContext : DbContext
 			m.HasKey(x => x.GroupId);
 			m.HasIndex(x => new { x.Name, x.MainGroupId }).IsUnique();
 			m.HasOne(x => x.MainGroup).WithMany(x => x.Children).HasForeignKey(x => x.MainGroupId);
+			m.HasMany(x => x.Teams).WithMany(x => x.Groups);
 		});
 		modelBuilder.Entity<User>(m => { m.HasKey(x => x.Email); });
 		modelBuilder.Entity<Team>(m =>
@@ -74,4 +76,5 @@ public class StatutisContext : DbContext
 
 		StatutisInitializer.Initialize(modelBuilder);
 	}
+	
 }
