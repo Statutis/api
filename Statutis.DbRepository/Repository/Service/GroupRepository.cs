@@ -22,7 +22,9 @@ public class GroupRepository : IGroupRepository
 
     public async Task<Group?> Get(Guid guid)
     {
-        return await _ctx.Group.FirstOrDefaultAsync(x => x.GroupId == guid);
+        return await _ctx.Group.AsQueryable()
+            .Include(x=>x.Services)
+            .FirstOrDefaultAsync(x => x.GroupId == guid);
     }
 
     public async Task<List<Group>> Get(string name)

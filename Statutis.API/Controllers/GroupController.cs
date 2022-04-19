@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Statutis.API.Models;
 using Statutis.Core.Interfaces.Business.History;
 using Statutis.Core.Interfaces.Business.Service;
+using Statutis.Entity.Service;
 
 namespace Statutis.API.Controllers;
 
@@ -30,10 +31,21 @@ public class GroupController : Controller
 	}
 
 	[HttpGet, Route("{guid}")]
-	// [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MainStateModel))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GroupModel))]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> Get(Guid guid)
 	{
-		return Ok();
+		Group? group = await _groupService.Get(guid);
+		if (group == null)
+			return NotFound();
+
+		// if (HttpContext.User.Identity?.IsAuthenticated ?? false)
+		// {
+		// 	//TODO Restreindre l'accès aux services non public 
+		// }
+		var histories = await _historyEntryService.GetAllLast(group.Services.Where(x => x.IsPublic).ToList());
+
+		return Ok(new GroupModel(group, histories, Url));
 	}
 
 }

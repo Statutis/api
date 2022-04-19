@@ -18,7 +18,7 @@ public class GroupService : IGroupService
 		return _repository.GetAll();
 	}
 
-	public Task<Group> Get(Guid guid)
+	public Task<Group?> Get(Guid guid)
 	{
 		return _repository.Get(guid);
 	}

@@ -6,7 +6,7 @@ public interface IGroupService
 {
     //Get
     Task<List<Entity.Service.Group>> GetAll();
-    Task<Entity.Service.Group> Get(Guid guid);
+    Task<Entity.Service.Group?> Get(Guid guid);
     Task<List<Entity.Service.Group>> Get(string name);
     
     //Insert
