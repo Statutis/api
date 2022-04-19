@@ -11,9 +11,10 @@ public static class RegisterBusiness
 	public static void AddBusiness(this IServiceCollection service)
 	{
 		service.AddScoped<IPasswordHash, PasswordHash>();
+		service.AddScoped<ITeamService, TeamService>();
+		service.AddScoped<IGroupService, GroupService>();
 		service.AddScoped<IServiceTypeService, ServiceTypeService>();
 		service.AddScoped<IServiceService, ServiceService>();
-		service.AddScoped<ITeamService, TeamService>();
 		service.AddScoped<IHistoryEntryService, HistoryEntryService>();
 	}
 }

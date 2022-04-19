@@ -1,3 +1,5 @@
+using Statutis.Entity.Service;
+
 namespace Statutis.Core.Interfaces.Business.Service;
 
 public interface IGroupService
@@ -14,6 +16,8 @@ public interface IGroupService
     Task<Entity.Service.Group> Update(Entity.Service.Group @group);
     
     //Delete
-    Task<Entity.Service.Group> Delete(Entity.Service.Group @group);
+    Task Delete(Entity.Service.Group @group);
+
+    public Task<List<Group>> GetPublicGroup();
 
 }
