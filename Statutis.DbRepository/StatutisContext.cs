@@ -46,6 +46,8 @@ public class StatutisContext : DbContext
 			m.HasOne(x => x.ServiceType).WithMany().HasForeignKey(x => x.ServiceTypeName);
 			m.HasOne(x => x.Group)
 				.WithMany(x => x.Services).HasForeignKey(x => x.GroupId);
+
+			m.Property(x => x.IsPublic).HasDefaultValue(true);
 		});
 		modelBuilder.Entity<HttpService>().ToTable(nameof (HttpService));
 		modelBuilder.Entity<DnsService>().ToTable(nameof (DnsService));
