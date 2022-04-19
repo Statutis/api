@@ -18,6 +18,12 @@ public interface IHistoryEntryRepository
 	/// <param name="state"></param>
 	/// <returns></returns>
 	public Task<HistoryEntry?> GetLast(Entity.Service.Service service, HistoryState state);
+	
+	/// <summary>
+	/// Récupération de la dernière entrée pour chaque service
+	/// </summary>
+	/// <returns></returns>
+	public Task<Dictionary<Entity.Service.Service, HistoryEntry?>> GetAllLast();
 
 	/// <summary>
 	/// Récupéraion des entrées selon un service (par ordre décroissant)
@@ -32,7 +38,9 @@ public interface IHistoryEntryRepository
 	/// </summary>
 	/// <param name="historyEntry"></param>
 	/// <returns></returns>
-	public Task<List<HistoryEntry>> Add(HistoryEntry historyEntry);
+	public Task<HistoryEntry> Add(HistoryEntry historyEntry);
+	
+	
 
 
 }
