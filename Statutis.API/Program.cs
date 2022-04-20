@@ -1,5 +1,9 @@
 using System.Text.Json.Serialization;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Statutis.API.Utils.DependencyInjection;
 using Statutis.DbRepository;
 
@@ -28,6 +32,37 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Add Authentification
+var symKey = Encoding.ASCII.GetBytes(configuration.GetValue<string>("JWT:secret"));
+builder.Services.AddAuthentication(x =>
+{
+	x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x =>
+{
+	x.RequireHttpsMetadata = false;
+	x.SaveToken = true;
+	x.TokenValidationParameters = new TokenValidationParameters()
+	{
+		ValidateIssuer = false,
+		IssuerSigningKey = new SymmetricSecurityKey(symKey),
+		ValidateIssuerSigningKey = false,
+		ValidateAudience = false
+	};
+});
+
+builder.Services.AddSwaggerGen(options =>
+{
+	options.SwaggerDoc("v1", new OpenApiInfo(){Title = "Statutis API", Version = "v1"});
+	options.AddSecurityDefinition("Bearer Authentication", new OpenApiSecurityScheme
+	{
+		Description = "JWT Authorization using Bearer token",
+		In = ParameterLocation.Header,
+		Name = "Authorization",
+		Type = SecuritySchemeType.ApiKey,
+		BearerFormat = "JWT"
+	});
+});
 
 builder.Services.AddDbRepositories();
 builder.Services.AddBusiness();
@@ -64,6 +99,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
