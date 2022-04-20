@@ -6,7 +6,7 @@
 name: Docker image
 
 on:
-  workflow_run:
+  #workflow_run:
     #workflows: ["Compile"]
     #types:
     #  - completed
