@@ -20,6 +20,7 @@ public class AuthService : IAuthService
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("JWT:secret"));
+        var expirationHours = int.Parse(_configuration.GetValue<string>("JWT:expiration_hour"));
 
         var tokenDescription = new SecurityTokenDescriptor()
         {
@@ -28,7 +29,7 @@ public class AuthService : IAuthService
                 new Claim(ClaimTypes.Name, username),
                 new Claim(ClaimTypes.Role, string.Join(",", roles))
             }),
-            Expires = DateTime.UtcNow.AddHours(3),
+            Expires = DateTime.UtcNow.AddHours(expirationHours),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
         };
 
