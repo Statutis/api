@@ -9,11 +9,11 @@ namespace Statutis.Cron.ServiceChecker;
 
 public class DnsCheckerService : BackgroundService
 {
-	private readonly ILogger<HttpCheckerService> _logger;
+	private readonly ILogger<DnsCheckerService> _logger;
 	private readonly IServiceProvider _serviceProvider;
 	private readonly IConfiguration _configuration;
 
-	public DnsCheckerService(ILogger<HttpCheckerService> logger, IServiceProvider serviceProvider, IConfiguration configuration)
+	public DnsCheckerService(ILogger<DnsCheckerService> logger, IServiceProvider serviceProvider, IConfiguration configuration)
 	{
 		_logger = logger;
 		_serviceProvider = serviceProvider;
@@ -29,16 +29,16 @@ public class DnsCheckerService : BackgroundService
 
 			using (IServiceScope scope = _serviceProvider.CreateScope())
 			{
-				_logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-
 				IServiceService serviceService = scope.ServiceProvider.GetRequiredService<IServiceService>();
 				IHistoryEntryService historyService = scope.ServiceProvider.GetRequiredService<IHistoryEntryService>();
-				List<DnsService> pingServices = await serviceService.GetAll<DnsService>();
+				List<DnsService> dnsServices = await serviceService.GetAll<DnsService>();
+;
+				_logger.LogInformation("Lancement des vérifications DNS (" + dnsServices.Count + " services} :");
 
-
-				foreach (DnsService _service in pingServices)
+				foreach (DnsService _service in dnsServices)
 				{
 
+					_logger.LogInformation("Vérifcation du service {0} ({1})", _service.Name, _service.ServiceId);
 					HistoryEntry entry = new HistoryEntry(_service, DateTime.UtcNow, HistoryState.Error);
 
 					QueryType queryType;
@@ -65,7 +65,7 @@ public class DnsCheckerService : BackgroundService
 
 
 					await historyService.Add(entry);
-
+					_logger.LogInformation("Status du service {1}({2}) : {0}", _service.Name, _service.ServiceId, entry.State.ToString());
 				}
 
 

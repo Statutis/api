@@ -29,20 +29,21 @@ public class PingCheckerWorker : BackgroundService
 
 			using (IServiceScope scope = _serviceProvider.CreateScope())
 			{
-				_logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+
 
 				IServiceService serviceService = scope.ServiceProvider.GetRequiredService<IServiceService>();
 				IHistoryEntryService historyService = scope.ServiceProvider.GetRequiredService<IHistoryEntryService>();
 				List<PingService> pingServices = await serviceService.GetAll<PingService>();
+				
+				_logger.LogInformation("Lancement des vérifications Ping (" + pingServices.Count + " services} :");
 
-
-				foreach (PingService pingService in pingServices)
+				foreach (PingService _service in pingServices)
 				{
-
-					HistoryEntry entry = new HistoryEntry(pingService, DateTime.UtcNow);
+					_logger.LogInformation("Vérifcation du service {0} ({1})", _service.Name, _service.ServiceId);
+					HistoryEntry entry = new HistoryEntry(_service, DateTime.UtcNow);
 
 					Ping ping = new Ping();
-					PingReply reply = ping.Send(pingService.Host);
+					PingReply reply = ping.Send(_service.Host);
 					switch (reply.Status)
 					{
 						case IPStatus.Success:
@@ -61,7 +62,7 @@ public class PingCheckerWorker : BackgroundService
 
 
 					await historyService.Add(entry);
-
+					_logger.LogInformation("Status du service {1}({2}) : {0}", _service.Name, _service.ServiceId, entry.State.ToString());
 				}
 
 
