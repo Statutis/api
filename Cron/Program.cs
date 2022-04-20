@@ -20,10 +20,13 @@ IHost host = Host.CreateDefaultBuilder(args)
 		services.AddDbContext<StatutisContext>(opt => opt.UseNpgsql(
 			@"Host=" + hostname + ";Username=" + username + ";Password=" + password + ";Database=" + database + ""));
 
+		services.AddHttpClient();
+		
 		services.AddDbRepositories();
 		services.AddBusiness();
 		
 		services.AddHostedService<PingCheckerWorker>();
+		services.AddHostedService<HttpCheckerService>();
 	})
 	.Build();
 
