@@ -11,16 +11,19 @@ public class PingCheckerWorker : BackgroundService
 {
 	private readonly ILogger<PingCheckerWorker> _logger;
 	private readonly IServiceProvider _serviceProvider;
+	private readonly IConfiguration _configuration;
 
-	public PingCheckerWorker(ILogger<PingCheckerWorker> logger, IServiceProvider serviceProvider)
+	public PingCheckerWorker(ILogger<PingCheckerWorker> logger, IServiceProvider serviceProvider, IConfiguration configuration)
 	{
 		_logger = logger;
 		_serviceProvider = serviceProvider;
+		_configuration = configuration;
 	}
 
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 	{
 
+		int waitingSeconds = _configuration.GetSection("Application").GetSection("secondsBetweenCheck").Get<int>();
 
 		while (!stoppingToken.IsCancellationRequested)
 		{
@@ -66,7 +69,7 @@ public class PingCheckerWorker : BackgroundService
 			}
 
 
-			await Task.Delay(300000, stoppingToken);
+			await Task.Delay(waitingSeconds * 1000, stoppingToken);
 		}
 	}
 }
