@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Statutis.API.Utils.DependencyInjection;
 using Statutis.DbRepository;
@@ -17,7 +18,12 @@ string database = configuration.GetConnectionString("database");
 builder.Services.AddDbContext<StatutisContext>(opt => opt.UseNpgsql(
 	@"Host=" + hostname + ";Username=" + username + ";Password=" + password + ";Database=" + database + ""));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+	.AddJsonOptions(x =>
+	{
+		var enumConverter = new JsonStringEnumConverter();
+		x.JsonSerializerOptions.Converters.Add(enumConverter);
+	});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

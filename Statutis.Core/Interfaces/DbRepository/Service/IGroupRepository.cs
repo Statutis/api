@@ -1,3 +1,5 @@
+using Statutis.Entity.Service;
+
 namespace Statutis.Core.Interfaces.DbRepository.Service;
 
 public interface IGroupRepository
@@ -15,5 +17,11 @@ public interface IGroupRepository
     
     //Delete
     Task Delete(Entity.Service.Group @group);
+
+    /// <summary>
+    /// Touts les groupes qui contiennent au moins un service public
+    /// </summary>
+    /// <returns></returns>
+    public Task<List<Group>> GetPublicGroup();
 
 }

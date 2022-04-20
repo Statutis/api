@@ -22,7 +22,9 @@ public class GroupRepository : IGroupRepository
 
     public async Task<Group?> Get(Guid guid)
     {
-        return await _ctx.Group.FirstOrDefaultAsync(x => x.GroupId == guid);
+        return await _ctx.Group.AsQueryable()
+            .Include(x=>x.Services)
+            .FirstOrDefaultAsync(x => x.GroupId == guid);
     }
 
     public async Task<List<Group>> Get(string name)
@@ -48,5 +50,10 @@ public class GroupRepository : IGroupRepository
     {
         _ctx.Group.Remove(group);
         await _ctx.SaveChangesAsync();
+    }
+
+    public Task<List<Group>> GetPublicGroup()
+    {
+        return _ctx.Group.Where(x => x.Services.Any(x => x.IsPublic)).Include(x=>x.Services).ToListAsync();
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Statutis.DbRepository;
@@ -11,9 +12,10 @@ using Statutis.DbRepository;
 namespace Statutis.DbRepository.Migrations
 {
     [DbContext(typeof(StatutisContext))]
-    partial class StatutisContextModelSnapshot : ModelSnapshot
+    [Migration("20220419152008_AddHistoryEntry")]
+    partial class AddHistoryEntry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,28 +37,6 @@ namespace Statutis.DbRepository.Migrations
                     b.HasIndex("TeamsTeamId");
 
                     b.ToTable("GroupTeam");
-
-                    b.HasData(
-                        new
-                        {
-                            GroupsGroupId = new Guid("2395b8a3-1abb-4e2d-af1e-b3b830da10f9"),
-                            TeamsTeamId = new Guid("582745b3-1c8c-4c89-a772-19f6d9102f42")
-                        },
-                        new
-                        {
-                            GroupsGroupId = new Guid("2395b8a3-1abb-4e2d-af1e-b3b830da10f9"),
-                            TeamsTeamId = new Guid("3074c258-5eb5-4598-aafd-26ab51e2fcfa")
-                        },
-                        new
-                        {
-                            GroupsGroupId = new Guid("cad77a46-5c06-4741-b3ce-76d520d5b4ae"),
-                            TeamsTeamId = new Guid("582745b3-1c8c-4c89-a772-19f6d9102f42")
-                        },
-                        new
-                        {
-                            GroupsGroupId = new Guid("cad77a46-5c06-4741-b3ce-76d520d5b4ae"),
-                            TeamsTeamId = new Guid("3074c258-5eb5-4598-aafd-26ab51e2fcfa")
-                        });
                 });
 
             modelBuilder.Entity("Statutis.Entity.History.HistoryEntry", b =>
@@ -104,20 +84,6 @@ namespace Statutis.DbRepository.Migrations
                         .IsUnique();
 
                     b.ToTable("Group");
-
-                    b.HasData(
-                        new
-                        {
-                            GroupId = new Guid("2395b8a3-1abb-4e2d-af1e-b3b830da10f9"),
-                            Description = "Groupe par défaut",
-                            Name = "Défaut"
-                        },
-                        new
-                        {
-                            GroupId = new Guid("cad77a46-5c06-4741-b3ce-76d520d5b4ae"),
-                            Description = "Groupe par défaut",
-                            Name = "Statutis"
-                        });
                 });
 
             modelBuilder.Entity("Statutis.Entity.Service.Service", b =>
@@ -137,11 +103,6 @@ namespace Statutis.DbRepository.Migrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
-
-                    b.Property<bool>("IsPublic")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -230,27 +191,6 @@ namespace Statutis.DbRepository.Migrations
                         .IsUnique();
 
                     b.ToTable("Team");
-
-                    b.HasData(
-                        new
-                        {
-                            TeamId = new Guid("582745b3-1c8c-4c89-a772-19f6d9102f42"),
-                            Color = "#e74c3c",
-                            Name = "Administrateur"
-                        },
-                        new
-                        {
-                            TeamId = new Guid("3074c258-5eb5-4598-aafd-26ab51e2fcfa"),
-                            Color = "#34495e",
-                            Name = "Default"
-                        },
-                        new
-                        {
-                            TeamId = new Guid("9de07aec-ce5d-43bc-a909-c648a3b4956a"),
-                            Color = "#95a5a6",
-                            MainTeamId = new Guid("3074c258-5eb5-4598-aafd-26ab51e2fcfa"),
-                            Name = "Sub Team"
-                        });
                 });
 
             modelBuilder.Entity("Statutis.Entity.User", b =>
@@ -279,15 +219,6 @@ namespace Statutis.DbRepository.Migrations
                     b.HasKey("Email");
 
                     b.ToTable("User");
-
-                    b.HasData(
-                        new
-                        {
-                            Email = "contact@silvain.eu",
-                            Password = "$argon2id$v=19$m=1024,t=1,p=1$c29tZXNhbHQ$Wg1s/1X6O1f1ZQCQtAvkGaCMwteH+F2h6p6AGDM8om4",
-                            Roles = "ROLE_ADMIN",
-                            Username = "admin"
-                        });
                 });
 
             modelBuilder.Entity("TeamUser", b =>
@@ -303,13 +234,6 @@ namespace Statutis.DbRepository.Migrations
                     b.HasIndex("UsersEmail");
 
                     b.ToTable("TeamUser");
-
-                    b.HasData(
-                        new
-                        {
-                            TeamsTeamId = new Guid("582745b3-1c8c-4c89-a772-19f6d9102f42"),
-                            UsersEmail = "contact@silvain.eu"
-                        });
                 });
 
             modelBuilder.Entity("Statutis.Entity.Service.Check.DnsService", b =>
@@ -325,20 +249,6 @@ namespace Statutis.DbRepository.Migrations
                         .HasColumnType("text");
 
                     b.ToTable("DnsService", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            ServiceId = new Guid("e847af71-cec3-4c0e-9dc1-e67ac54a0cb4"),
-                            Description = "DNS A pour silvain.eu",
-                            GroupId = new Guid("2395b8a3-1abb-4e2d-af1e-b3b830da10f9"),
-                            Host = "silvain.eu",
-                            IsPublic = true,
-                            Name = "DNS Silvain.eu",
-                            ServiceTypeName = "DNS",
-                            Result = "89.234.182.183",
-                            Type = "A"
-                        });
                 });
 
             modelBuilder.Entity("Statutis.Entity.Service.Check.HttpService", b =>
@@ -356,32 +266,6 @@ namespace Statutis.DbRepository.Migrations
                         .HasColumnType("character varying(64)");
 
                     b.ToTable("HttpService", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            ServiceId = new Guid("cbb3d7eb-0c88-46eb-9370-112e90271659"),
-                            Description = "Serveur frontend de statutis",
-                            GroupId = new Guid("cad77a46-5c06-4741-b3ce-76d520d5b4ae"),
-                            Host = "https://statutis.silvain.eu",
-                            IsPublic = true,
-                            Name = "Frontend",
-                            ServiceTypeName = "Site Web",
-                            Code = 200,
-                            Port = 443
-                        },
-                        new
-                        {
-                            ServiceId = new Guid("0cac5b5a-fc9f-4894-849b-2b2b97538c2e"),
-                            Description = "Serveur backend de statutis",
-                            GroupId = new Guid("cad77a46-5c06-4741-b3ce-76d520d5b4ae"),
-                            Host = "https://api.statutis.silvain.eu",
-                            IsPublic = true,
-                            Name = "API",
-                            ServiceTypeName = "Site Web",
-                            Code = 404,
-                            Port = 443
-                        });
                 });
 
             modelBuilder.Entity("Statutis.Entity.Service.Check.PingService", b =>
@@ -389,18 +273,6 @@ namespace Statutis.DbRepository.Migrations
                     b.HasBaseType("Statutis.Entity.Service.Service");
 
                     b.ToTable("PingService", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            ServiceId = new Guid("3b0374ec-9a34-4e87-ade1-7fd3cc4e04f5"),
-                            Description = "Serveur de google",
-                            GroupId = new Guid("2395b8a3-1abb-4e2d-af1e-b3b830da10f9"),
-                            Host = "8.8.8.8",
-                            IsPublic = true,
-                            Name = "Serveur de Google",
-                            ServiceTypeName = "Serveur"
-                        });
                 });
 
             modelBuilder.Entity("Statutis.Entity.Service.Check.SshService", b =>

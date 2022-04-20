@@ -1,6 +1,8 @@
 using Statutis.Core.Interfaces.DbRepository;
+using Statutis.Core.Interfaces.DbRepository.History;
 using Statutis.Core.Interfaces.DbRepository.Service;
 using Statutis.DbRepository.Repository;
+using Statutis.DbRepository.Repository.History;
 using Statutis.DbRepository.Repository.Service;
 
 namespace Statutis.API.Utils.DependencyInjection;
@@ -18,5 +20,6 @@ public static class RegisterDbRepository
 		service.AddScoped<IHttpServiceRepository, HttpServiceRepository>();
 		service.AddScoped<IPingServiceRepository, PingServiceRepository>();
 		service.AddScoped<ISshServiceRepository, SshServiceRepository>();
+		service.AddScoped<IHistoryEntryRepository, HistoryEntryRepository>();
 	}
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Statutis.DbRepository;
@@ -11,9 +12,10 @@ using Statutis.DbRepository;
 namespace Statutis.DbRepository.Migrations
 {
     [DbContext(typeof(StatutisContext))]
-    partial class StatutisContextModelSnapshot : ModelSnapshot
+    [Migration("20220419202729_SeedDatabase2")]
+    partial class SeedDatabase2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,11 +139,6 @@ namespace Statutis.DbRepository.Migrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
-
-                    b.Property<bool>("IsPublic")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -333,7 +330,6 @@ namespace Statutis.DbRepository.Migrations
                             Description = "DNS A pour silvain.eu",
                             GroupId = new Guid("2395b8a3-1abb-4e2d-af1e-b3b830da10f9"),
                             Host = "silvain.eu",
-                            IsPublic = true,
                             Name = "DNS Silvain.eu",
                             ServiceTypeName = "DNS",
                             Result = "89.234.182.183",
@@ -364,7 +360,6 @@ namespace Statutis.DbRepository.Migrations
                             Description = "Serveur frontend de statutis",
                             GroupId = new Guid("cad77a46-5c06-4741-b3ce-76d520d5b4ae"),
                             Host = "https://statutis.silvain.eu",
-                            IsPublic = true,
                             Name = "Frontend",
                             ServiceTypeName = "Site Web",
                             Code = 200,
@@ -376,7 +371,6 @@ namespace Statutis.DbRepository.Migrations
                             Description = "Serveur backend de statutis",
                             GroupId = new Guid("cad77a46-5c06-4741-b3ce-76d520d5b4ae"),
                             Host = "https://api.statutis.silvain.eu",
-                            IsPublic = true,
                             Name = "API",
                             ServiceTypeName = "Site Web",
                             Code = 404,
@@ -397,7 +391,6 @@ namespace Statutis.DbRepository.Migrations
                             Description = "Serveur de google",
                             GroupId = new Guid("2395b8a3-1abb-4e2d-af1e-b3b830da10f9"),
                             Host = "8.8.8.8",
-                            IsPublic = true,
                             Name = "Serveur de Google",
                             ServiceTypeName = "Serveur"
                         });
