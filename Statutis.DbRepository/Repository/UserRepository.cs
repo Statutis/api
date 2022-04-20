@@ -28,6 +28,13 @@ public class UserRepository : IUserRepository
         return await _ctx.User.FirstOrDefaultAsync(x => x.Username == username);
     }
 
+    public async Task<bool> Insert(User user)
+    {
+        _ctx.User.Add(user);
+        int nb = await _ctx.SaveChangesAsync();
+        return nb > 0;
+    }
+
     public async Task<User> Update(User user)
     {
         _ctx.Update(user);
