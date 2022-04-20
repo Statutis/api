@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Statutis.DbRepository", "St
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Statutis.Entity", "Statutis.Entity\Statutis.Entity.csproj", "{8ED66D6E-4BA6-41BA-96AE-048521D2DF44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cron", "Cron\Cron.csproj", "{85E3C6D6-0EA2-4A20-A93F-1769A0F07BE0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Statutis.Cron", "Statutis.Cron\Statutis.Cron.csproj", "{85E3C6D6-0EA2-4A20-A93F-1769A0F07BE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
