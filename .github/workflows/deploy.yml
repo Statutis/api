@@ -20,3 +20,5 @@ jobs:
     uses: Statutis/docker-compose/.github/workflows/deploy.yml@main
     secrets:
       Git: ${{ secrets.Git }}
+      Api: ${{ secrets.API }}
+      
