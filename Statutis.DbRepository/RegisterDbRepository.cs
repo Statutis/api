@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Statutis.Core.Interfaces.DbRepository;
 using Statutis.Core.Interfaces.DbRepository.History;
 using Statutis.Core.Interfaces.DbRepository.Service;
@@ -5,7 +6,7 @@ using Statutis.DbRepository.Repository;
 using Statutis.DbRepository.Repository.History;
 using Statutis.DbRepository.Repository.Service;
 
-namespace Statutis.API.Utils.DependencyInjection;
+namespace Statutis.DbRepository;
 
 public static class RegisterDbRepository
 {

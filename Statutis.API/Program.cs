@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
-using Statutis.API.Utils.DependencyInjection;
+using Statutis.Business;
 using Statutis.DbRepository;
 
 var builder = WebApplication.CreateBuilder(args);
