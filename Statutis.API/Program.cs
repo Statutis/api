@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -33,7 +34,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //Add Authentification
-var symKey = Encoding.ASCII.GetBytes(configuration.GetValue<string>("JWT:secret"));
+
+var symKey = Encoding.ASCII.GetBytes(configuration.GetSection("JWT")["secret"]);
 builder.Services.AddAuthentication(x =>
 {
 	x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
