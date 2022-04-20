@@ -5,6 +5,8 @@ namespace Statutis.Entity.Service.Check;
 public class SshService : Service
 {
 
+	public const String CheckType = "SSH";
+	
 	public int Port { get; set; }
 
 	[StringLength(maximumLength: 255), Required]
@@ -20,6 +22,6 @@ public class SshService : Service
 
 	public override string GetCheckType()
 	{
-		return "SSH";
+		return CheckType;
 	}
 }
