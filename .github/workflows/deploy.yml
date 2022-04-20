@@ -16,6 +16,7 @@ on:
 
 jobs:
   trigger-deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     uses: Statutis/docker-compose/.github/workflows/deploy.yml@main
     secrets:
       Git: ${{ secrets.Git }}
