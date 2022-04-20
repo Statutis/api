@@ -27,6 +27,7 @@ IHost host = Host.CreateDefaultBuilder(args)
 		
 		services.AddHostedService<PingCheckerWorker>();
 		services.AddHostedService<HttpCheckerService>();
+		services.AddHostedService<DnsCheckerService>();
 	})
 	.Build();
 
