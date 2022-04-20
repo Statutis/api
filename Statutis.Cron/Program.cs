@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Statutis.API.Utils.DependencyInjection;
+using Statutis.Business;
 using Statutis.Cron.ServiceChecker;
 using Statutis.DbRepository;
 

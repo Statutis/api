@@ -11,14 +11,22 @@
 
     <ItemGroup>
         <PackageReference Include="DnsClient" Version="1.6.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.4" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+        <PackageReference Include="System.Net.Http" Version="4.3.4" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Statutis.API\Statutis.API.csproj" />
       <ProjectReference Include="..\Statutis.Business\Statutis.Business.csproj" />
       <ProjectReference Include="..\Statutis.Core\Statutis.Core.csproj" />
       <ProjectReference Include="..\Statutis.DbRepository\Statutis.DbRepository.csproj" />
       <ProjectReference Include="..\Statutis.Entity\Statutis.Entity.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 </Project>
