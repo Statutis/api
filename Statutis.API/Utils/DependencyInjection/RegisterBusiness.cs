@@ -1,5 +1,7 @@
 using Statutis.Business;
+using Statutis.Business.History;
 using Statutis.Core.Interfaces.Business;
+using Statutis.Core.Interfaces.Business.History;
 using Statutis.Core.Interfaces.Business.Service;
 
 namespace Statutis.API.Utils.DependencyInjection;
