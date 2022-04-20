@@ -18,6 +18,11 @@ public class ServiceService : IServiceService
 		return _repository.GetAll();
 	}
 
+	public Task<List<T>> GetAll<T>() where T : Service
+	{
+		return _repository.GetAll<T>();
+	}
+
 	public Task<List<Service>> GetByHost(string host)
 	{
 		return _repository.GetByHost(host);

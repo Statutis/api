@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-Cron-B0F7379D-25A7-4D2E-9884-E254AAA283CD</UserSecretsId>
+        <AssemblyName>Statutis.Cron</AssemblyName>
+        <RootNamespace>Statutis.Cron</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="DnsClient" Version="1.6.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Statutis.API\Statutis.API.csproj" />
+      <ProjectReference Include="..\Statutis.Business\Statutis.Business.csproj" />
+      <ProjectReference Include="..\Statutis.Core\Statutis.Core.csproj" />
+      <ProjectReference Include="..\Statutis.DbRepository\Statutis.DbRepository.csproj" />
+      <ProjectReference Include="..\Statutis.Entity\Statutis.Entity.csproj" />
+    </ItemGroup>
+</Project>
