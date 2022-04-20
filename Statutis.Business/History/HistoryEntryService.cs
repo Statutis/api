@@ -52,7 +52,15 @@ public class HistoryEntryService : IHistoryEntryService
 
 		DateTime lastCheck = all.OrderBy(x => x.DateTime).First().DateTime;
 		if (all.Any(x => x.State != HistoryState.Online))
+		{
+			if (all.Any(x => x.State == HistoryState.Error))
+				return new Tuple<HistoryState, DateTime>(HistoryState.Error, lastCheck);
+			
+			if (all.Any(x => x.State == HistoryState.Unreachable))
+				return new Tuple<HistoryState, DateTime>(HistoryState.Unreachable, lastCheck);
+			
 			return new Tuple<HistoryState, DateTime>(HistoryState.Unknown, lastCheck);
+		}
 
 		return new Tuple<HistoryState, DateTime>(HistoryState.Online, lastCheck);
 	}
