@@ -20,7 +20,7 @@ public class GroupModel
 
 	public List<ServiceModel> Services { get; set; }
 
-	public List<String> Teams { get; set; }
+	public List<String> TeamsRef { get; set; }
 
 	public GroupModel(Group group, Dictionary<Service, HistoryEntry?> services, IUrlHelper urlHelper)
 	{
@@ -35,7 +35,7 @@ public class GroupModel
 			: new ServiceModel(x.Key, x.Value, urlHelper)
 		).ToList();
 
-		Teams = group.Teams.Select(x => urlHelper.Action("GetGuid","Team", new {guid = x.TeamId}) ?? String.Empty).ToList();
+		TeamsRef = group.Teams.Select(x => urlHelper.Action("GetGuid","Team", new {guid = x.TeamId}) ?? String.Empty).ToList();
 
 	}
 }
