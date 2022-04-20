@@ -1,6 +1,6 @@
-using Cron;
 using Microsoft.EntityFrameworkCore;
 using Statutis.API.Utils.DependencyInjection;
+using Statutis.Cron.ServiceChecker;
 using Statutis.DbRepository;
 
 var builder = Host.CreateDefaultBuilder(args);

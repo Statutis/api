@@ -5,6 +5,8 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-Cron-B0F7379D-25A7-4D2E-9884-E254AAA283CD</UserSecretsId>
+        <AssemblyName>Statutis.Cron</AssemblyName>
+        <RootNamespace>Statutis.Cron</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

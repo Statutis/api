@@ -1,11 +1,10 @@
 using System.Net.NetworkInformation;
 using Statutis.Core.Interfaces.Business.History;
 using Statutis.Core.Interfaces.Business.Service;
-using Statutis.DbRepository;
 using Statutis.Entity.History;
 using Statutis.Entity.Service.Check;
 
-namespace Cron;
+namespace Statutis.Cron.ServiceChecker;
 
 public class PingCheckerWorker : BackgroundService
 {
