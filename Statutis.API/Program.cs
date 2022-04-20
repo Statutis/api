@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -21,9 +22,15 @@ string database = configuration.GetConnectionString("database");
 builder.Services.AddDbContext<StatutisContext>(opt => opt.UseNpgsql(
 	@"Host=" + hostname + ";Username=" + username + ";Password=" + password + ";Database=" + database + ""));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+	.AddJsonOptions(x =>
+	{
+		var enumConverter = new JsonStringEnumConverter();
+		x.JsonSerializerOptions.Converters.Add(enumConverter);
+	});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 //Add Authentification
 var symKey = Encoding.ASCII.GetBytes(configuration.GetValue<string>("JWT:secret"));

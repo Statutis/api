@@ -1,0 +1,21 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Docker image"]
+    types:
+      - completed
+    branches:
+      - main # or the name of your main branch
+  
+
+jobs:
+  trigger-deploy:
+    uses: Statutis/docker-compose/.github/workflows/deploy.yml@main
+    secrets:
+      Git: ${{ secrets.Git }}
