@@ -29,6 +29,11 @@ public class UserService : IUserService
         return await _userRepository.GetByUsername(email);
     }
 
+    public async Task<bool> Insert(User user)
+    {
+        return await _userRepository.Insert(user);
+    }
+
     public async Task<User> Update(User user)
     {
         return await _userRepository.Update(user);
