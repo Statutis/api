@@ -14,6 +14,7 @@
     <ItemGroup>
       <PackageReference Include="Isopoh.Cryptography.Argon2" Version="1.1.11" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.4" />
     </ItemGroup>
 
 </Project>

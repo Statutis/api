@@ -17,5 +17,7 @@ public static class RegisterBusiness
 		service.AddScoped<IServiceTypeService, ServiceTypeService>();
 		service.AddScoped<IServiceService, ServiceService>();
 		service.AddScoped<IHistoryEntryService, HistoryEntryService>();
+		service.AddScoped<IUserService, UserService>();
+		service.AddScoped<IAuthService, AuthService>();
 	}
 }
