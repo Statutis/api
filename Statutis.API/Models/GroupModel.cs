@@ -28,7 +28,10 @@ public class GroupModel
 		Name = group.Name;
 		Description = group.Description;
 		LastCheck = services.Select(x => x.Value?.DateTime).FirstOrDefault(x => x != null) ?? DateTime.Now;
-		Services = services.Select(x => new GroupServiceModel(x.Key, x.Value?.State ?? HistoryState.Unknown, urlHelper)).ToList();
+		Services = services.Select(x => x.Value == null ?
+			new GroupServiceModel(x.Key, HistoryState.Unknown, urlHelper)
+			: new GroupServiceModel(x.Key, x.Value, urlHelper)
+		).ToList();
 
 	}
 }
@@ -39,9 +42,20 @@ public class GroupServiceModel
 
 	public HistoryState state { get; set; }
 
+	public DateTime lastCheck { get; set; }
+
 	public GroupServiceModel(Service service, HistoryState historyState, IUrlHelper urlHelper)
 	{
 		Ref = urlHelper.Action("Get", "Service", new { guid = service.ServiceId }) ?? String.Empty;
 		state = historyState;
+		lastCheck = DateTime.Now;
 	}
+
+	public GroupServiceModel(Service service, HistoryEntry entry, IUrlHelper urlHelper)
+	{
+		Ref = urlHelper.Action("Get", "Service", new { guid = service.ServiceId }) ?? String.Empty;
+		state = entry.State;
+		lastCheck = entry.DateTime;
+	}
+
 }
