@@ -35,12 +35,12 @@ public class ServiceRepository : IServiceRepository
 
 	public async Task<List<Entity.Service.Service>> Get(string name)
 	{
-		return await _ctx.Service.Where(x => x.Name == name).ToListAsync();
+		return await _ctx.Service.Where(x => x.Name == name).Include(x => x.HistoryEntries).ToListAsync();
 	}
 
 	public async Task<Entity.Service.Service?> Get(Guid guid)
 	{
-		return await _ctx.Service.FirstOrDefaultAsync(x => x.ServiceId == guid);
+		return await _ctx.Service.Include(x => x.HistoryEntries).FirstOrDefaultAsync(x => x.ServiceId == guid);
 	}
 
 	public async Task<Entity.Service.Service> Insert(Entity.Service.Service service)
