@@ -6,14 +6,13 @@ namespace Statutis.Business;
 
 public class UserService : IUserService
 {
-
     private readonly IUserRepository _userRepository;
-    
+
     public UserService(IUserRepository userRepository)
     {
         _userRepository = userRepository;
     }
-    
+
     public async Task<List<User>> GetAll()
     {
         return await _userRepository.GetAll();
@@ -42,5 +41,25 @@ public class UserService : IUserService
     public async Task Delete(User user)
     {
         await _userRepository.Delete(user);
+    }
+
+    public async Task<bool> IsUserInTeam(string email, Team team)
+    {
+        var user = await _userRepository.GetByEmail(email);
+        if (user == null)
+            return false;
+        return user.Teams.Contains(team);
+    }
+    
+    public async Task<bool> IsUserInTeam(User user, List<Team> team)
+    {
+        foreach (Team userTeam in user.Teams)
+        {
+            if (team.Contains(userTeam))
+            {
+                return true;
+            }
+        };
+        return false;
     }
 }

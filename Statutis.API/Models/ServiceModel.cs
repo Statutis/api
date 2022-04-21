@@ -23,6 +23,8 @@ public class ServiceModel
 	public HistoryState State { get; set; }
 
 	public DateTime LastCheck { get; set; }
+	
+	public string HistoryRef { get; set; }
 
 
 	public ServiceModel(Service service, HistoryState historyState, IUrlHelper urlHelper)
@@ -37,6 +39,8 @@ public class ServiceModel
 		Description = service.Description;
 		Host = service.Host;
 		IsPublic = service.IsPublic;
+		//TODO ref to history
+		HistoryRef = "WIP";
 	}
 
 	public ServiceModel(Service service, HistoryEntry entry, IUrlHelper urlHelper) : this(service, entry.State, urlHelper)

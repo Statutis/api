@@ -16,4 +16,7 @@ public interface IUserService
     
     //delete
     Task Delete(User user);
+
+    Task<bool> IsUserInTeam(string email, Team team);
+    Task<bool> IsUserInTeam(User user, List<Team> team);
 }
