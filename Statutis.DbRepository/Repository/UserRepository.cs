@@ -20,12 +20,12 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByEmail(string email)
     {
-        return await _ctx.User.Include(x => x.Teams).FirstOrDefaultAsync(x => x.Email == email);
+        return await _ctx.User.Include(x=>x.Teams).FirstOrDefaultAsync(x => x.Email == email);
     }
 
     public async Task<User?> GetByUsername(string username)
     {
-        return await _ctx.User.Include(x => x.Teams).FirstOrDefaultAsync(x => x.Username == username);
+        return await _ctx.User.Include(x=>x.Teams).FirstOrDefaultAsync(x => x.Username == username);
     }
 
     public async Task<bool> Insert(User user)

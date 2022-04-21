@@ -14,84 +14,97 @@ namespace Statutis.API.Controllers;
 [Authorize]
 public class UserController : Controller
 {
-    private readonly IUserService _userService;
-    private readonly IPasswordHash _passwordHash;
-    
-    public UserController(IUserService userService, IPasswordHash passwordHash)
-    {
-        _userService = userService;
-        _passwordHash = passwordHash;
-    }
+	private readonly IUserService _userService;
+	private readonly IPasswordHash _passwordHash;
 
-    [HttpGet("me")]
-    [Authorize]
-    public async Task<IActionResult> Get()
-    {
-        if (User.Identity == null)
-            return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
-        
-        string email = User.Identity.Name;
-        
-        if (email == null)
-            return StatusCode(StatusCodes.Status404NotFound, new AuthModel(null, Url));
+	public UserController(IUserService userService, IPasswordHash passwordHash)
+	{
+		_userService = userService;
+		_passwordHash = passwordHash;
+	}
 
-        User user = await _userService.GetByEmail(email);
-        if(user == null)
-            return StatusCode(StatusCodes.Status404NotFound, new AuthModel(null, Url));
-        
-        return Ok(user);
-    }
+	[HttpGet("me")]
+	[Authorize]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> Get()
+	{
+		if (User.Identity == null)
+			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
 
-    [HttpGet("email/{email}")]
-    [Authorize(Roles = "ROLE_ADMIN")]
-    public async Task<IActionResult> GetByEmail([Required]string email)
-    {
-        if (User.Identity == null)
-            return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
-        if (email == "")
-            return StatusCode(StatusCodes.Status400BadRequest, "Query parameter email is required !");    
-        User user = await _userService.GetByEmail(email);
+		string? email = User.Identity.Name;
 
-        return Ok(user);
-    }
-    
-    [HttpGet("username/{username}")]
-    [Authorize(Roles = "ROLE_ADMIN")]
-    public async Task<IActionResult> GetByUsername([Required]string username)
-    {
-        if (User.Identity == null)
-            return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
-        if (username == "")
-            return StatusCode(StatusCodes.Status400BadRequest, "Query parameter email is required !");    
-        User user = await _userService.GetByUsername(username);
+		if (email == null)
+			return StatusCode(StatusCodes.Status404NotFound, new AuthModel(null, Url));
 
-        return Ok(user);
-    }
+		User? user = await _userService.GetByEmail(email);
+		if (user == null)
+			return StatusCode(StatusCodes.Status404NotFound, new AuthModel(null, Url));
 
-    [HttpPut]
-    [Authorize]
-    public async Task<IActionResult> update([FromBody] RegistrationForm form)
-    {
-        if (User.Identity == null || User.Identity.Name == null)
-            return StatusCode(401, new AuthModel(null, Url));
+		return Ok(new UserModel(user, Url));
+	}
 
-        var user = await _userService.GetByEmail(User.Identity.Name);
-        if (user == null)
-            return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
+	[HttpGet("email/{email}")]
+	[Authorize(Roles = "ROLE_ADMIN")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> GetByEmail([Required] string email)
+	{
+		if (User.Identity == null)
+			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
+		if (email == "")
+			return StatusCode(StatusCodes.Status400BadRequest, "Query parameter email is required !");
+		User? user = await _userService.GetByEmail(email);
+
+		if (user == null)
+			return NotFound();
+
+		return Ok(new UserModel(user, Url));
+	}
+
+	[HttpGet("username/{username}")]
+	[Authorize(Roles = "ROLE_ADMIN")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> GetByUsername([Required] string username)
+	{
+		if (User.Identity == null)
+			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
+		if (username == "")
+			return StatusCode(StatusCodes.Status400BadRequest, "Query parameter email is required !");
+		User? user = await _userService.GetByUsername(username);
+		if (user == null)
+			return NotFound();
+
+		return Ok(new UserModel(user, Url));
+	}
+
+	[HttpPut]
+	[Authorize]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> Update([FromBody] RegistrationForm form)
+	{
+		if (User.Identity == null || User.Identity.Name == null)
+			return StatusCode(401, new AuthModel(null, Url));
+
+		var user = await _userService.GetByEmail(User.Identity.Name);
+		if (user == null)
+			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
 
 
-        if (form.Email != User.Identity.Name && user.Roles != "ROLE_ADMIN")
-            return StatusCode(StatusCodes.Status403Forbidden, "You don't have enough permissions");
+		if (form.Email != User.Identity.Name && user.Roles != "ROLE_ADMIN")
+			return StatusCode(StatusCodes.Status403Forbidden, "You don't have enough permissions");
 
-        user = await _userService.GetByEmail(form.Email);
+		user = await _userService.GetByEmail(form.Email);
 
-        if (user == null)
-            return StatusCode(StatusCodes.Status404NotFound, "User not found");
-        
-        user.Username = form.Username;
-        user.Password = _passwordHash.Hash(form.Password);
+		if (user == null)
+			return StatusCode(StatusCodes.Status404NotFound, "User not found");
 
-        var userUpdated = await _userService.Update(user);
-        return Ok(userUpdated);
-    }
+		user.Username = form.Username;
+		user.Password = _passwordHash.Hash(form.Password);
+
+		var userUpdated = await _userService.Update(user);
+		return Ok(new UserModel(userUpdated, Url));
+	}
 }
