@@ -19,7 +19,7 @@ public class UserController : Controller
         _userService = userService;
     }
 
-    [HttpGet]
+    [HttpGet("me")]
     [Authorize]
     public async Task<IActionResult> Get()
     {
