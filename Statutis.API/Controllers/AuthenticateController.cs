@@ -60,7 +60,7 @@ public class AuthenticateController : Controller
             return Unauthorized(new LoginModel(null, false, "Username not found", Url));
         }
 
-        string newToken = _authService.GenerateToken(user.Username, new [] {user.Roles});
+        string newToken = _authService.GenerateToken(user.Email, new [] {user.Roles});
         
         return Ok(new LoginModel(newToken, true, null, Url));
     }
