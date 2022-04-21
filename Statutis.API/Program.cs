@@ -20,14 +20,14 @@ string password = configuration.GetConnectionString("password");
 string database = configuration.GetConnectionString("database");
 
 builder.Services.AddDbContext<StatutisContext>(opt => opt.UseNpgsql(
-	@"Host=" + hostname + ";Username=" + username + ";Password=" + password + ";Database=" + database + ""));
+    @"Host=" + hostname + ";Username=" + username + ";Password=" + password + ";Database=" + database + ""));
 
 builder.Services.AddControllers()
-	.AddJsonOptions(x =>
-	{
-		var enumConverter = new JsonStringEnumConverter();
-		x.JsonSerializerOptions.Converters.Add(enumConverter);
-	});
+    .AddJsonOptions(x =>
+    {
+        var enumConverter = new JsonStringEnumConverter();
+        x.JsonSerializerOptions.Converters.Add(enumConverter);
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -36,32 +36,47 @@ builder.Services.AddSwaggerGen();
 var symKey = Encoding.ASCII.GetBytes(configuration.GetValue<string>("JWT:secret"));
 builder.Services.AddAuthentication(x =>
 {
-	x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-	x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(x =>
 {
-	x.RequireHttpsMetadata = false;
-	x.SaveToken = true;
-	x.TokenValidationParameters = new TokenValidationParameters()
-	{
-		ValidateIssuer = false,
-		IssuerSigningKey = new SymmetricSecurityKey(symKey),
-		ValidateIssuerSigningKey = false,
-		ValidateAudience = false
-	};
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = true;
+    x.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = false,
+        IssuerSigningKey = new SymmetricSecurityKey(symKey),
+        ValidateIssuerSigningKey = false,
+        ValidateAudience = false
+    };
 });
 
 builder.Services.AddSwaggerGen(options =>
 {
-	options.SwaggerDoc("v1", new OpenApiInfo(){Title = "Statutis API", Version = "v1"});
-	options.AddSecurityDefinition("Bearer Authentication", new OpenApiSecurityScheme
-	{
-		Description = "JWT Authorization using Bearer token",
-		In = ParameterLocation.Header,
-		Name = "Authorization",
-		Type = SecuritySchemeType.ApiKey,
-		BearerFormat = "JWT"
-	});
+    options.SwaggerDoc("v1", new OpenApiInfo() {Title = "Statutis API", Version = "v1"});
+    options.AddSecurityDefinition("Bearer Authentication", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization using Bearer token. Follow this string : `Bearer <Generated-JWT-Token>`",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme()
+            {
+                Reference = new OpenApiReference()
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer Authentication"
+                }
+            },
+            new string[]{}
+        }
+    });
 });
 
 builder.Services.AddDbRepositories();
@@ -69,13 +84,13 @@ builder.Services.AddBusiness();
 
 builder.Services.AddCors(options =>
 {
-	options.AddDefaultPolicy(builder =>
-	{
-		builder
-			.WithOrigins(configuration.GetSection("Application").GetSection("origin").Get<string[]>())
-			.AllowAnyMethod()
-			.AllowAnyHeader();
-	});
+    options.AddDefaultPolicy(builder =>
+    {
+        builder
+            .WithOrigins(configuration.GetSection("Application").GetSection("origin").Get<string[]>())
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
 });
 
 var app = builder.Build();
@@ -84,15 +99,14 @@ app.UseCors();
 //run migrations
 using (var scope = app.Services.CreateScope())
 {
-	var dataContext = scope.ServiceProvider.GetRequiredService<StatutisContext>();
-	dataContext.Database.Migrate();
+    var dataContext = scope.ServiceProvider.GetRequiredService<StatutisContext>();
+    dataContext.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
-/*if (app.Environment.IsDevelopment())
-{
-    
-}*/
+// if (app.Environment.IsDevelopment())
+// {
+// }
 
 app.UseSwagger();
 app.UseSwaggerUI();

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Statutis.Entity;
 
@@ -18,7 +19,7 @@ public class User
 	[StringLength(maximumLength: 30), Required]
 	public String Username { get; set; }
 
-	[StringLength(maximumLength: 255), Required]
+	[StringLength(maximumLength: 255), Required, JsonIgnore]
 	public String Password { get; set; }
 
 	public byte[]? Avatar { get; set; } = null;
