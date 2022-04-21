@@ -18,7 +18,9 @@ public class GroupModel
 
 	public DateTime LastCheck { get; set; }
 
-	public List<GroupServiceModel> Services { get; set; }
+	public List<ServiceModel> Services { get; set; }
+
+	public List<String> TeamsRef { get; set; }
 
 	public GroupModel(Group group, Dictionary<Service, HistoryEntry?> services, IUrlHelper urlHelper)
 	{
@@ -29,33 +31,11 @@ public class GroupModel
 		Description = group.Description;
 		LastCheck = services.Select(x => x.Value?.DateTime).FirstOrDefault(x => x != null) ?? DateTime.Now;
 		Services = services.Select(x => x.Value == null ?
-			new GroupServiceModel(x.Key, HistoryState.Unknown, urlHelper)
-			: new GroupServiceModel(x.Key, x.Value, urlHelper)
+			new ServiceModel(x.Key, HistoryState.Unknown, urlHelper)
+			: new ServiceModel(x.Key, x.Value, urlHelper)
 		).ToList();
 
+		TeamsRef = group.Teams.Select(x => urlHelper.Action("GetGuid","Team", new {guid = x.TeamId}) ?? String.Empty).ToList();
+
 	}
-}
-
-public class GroupServiceModel
-{
-	public String Ref { get; set; }
-
-	public HistoryState state { get; set; }
-
-	public DateTime lastCheck { get; set; }
-
-	public GroupServiceModel(Service service, HistoryState historyState, IUrlHelper urlHelper)
-	{
-		Ref = urlHelper.Action("Get", "Service", new { guid = service.ServiceId }) ?? String.Empty;
-		state = historyState;
-		lastCheck = DateTime.Now;
-	}
-
-	public GroupServiceModel(Service service, HistoryEntry entry, IUrlHelper urlHelper)
-	{
-		Ref = urlHelper.Action("Get", "Service", new { guid = service.ServiceId }) ?? String.Empty;
-		state = entry.State;
-		lastCheck = entry.DateTime;
-	}
-
 }

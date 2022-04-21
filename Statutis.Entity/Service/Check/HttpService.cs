@@ -4,6 +4,9 @@ namespace Statutis.Entity.Service.Check;
 
 public class HttpService : Service
 {
+	
+	public const String CheckType = "Requête Http";
+	
 	public int Port { get; set; }
 
 	public int? Code { get; set; } = null;
@@ -13,6 +16,6 @@ public class HttpService : Service
 
 	public override string GetCheckType()
 	{
-		return "Requête Http";
+		return CheckType;
 	}
 }

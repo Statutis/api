@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Statutis.API.Models;
 using Statutis.Core.Interfaces.Business.History;
-using Statutis.Entity.History;
+using Statutis.Entity.Service.Check;
 
 namespace Statutis.API.Controllers;
 
@@ -14,6 +14,13 @@ public class ServiceController : Controller
 	public ServiceController(IHistoryEntryService historyEntryService)
 	{
 		_historyEntryService = historyEntryService;
+	}
+	
+	[HttpGet, Route("checks")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<String>))]
+	public async Task<IActionResult> GetCheckType()
+	{
+		return Ok(new List<String>(){DnsService.CheckType, HttpService.CheckType, PingService.CheckType});
 	}
 
 	[HttpGet, Route("state")]
