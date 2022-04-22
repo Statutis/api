@@ -1,5 +1,6 @@
 using Statutis.Core.Interfaces.Business.Service;
 using Statutis.Core.Interfaces.DbRepository.Service;
+using Statutis.Entity;
 using Statutis.Entity.Service;
 
 namespace Statutis.Business;
@@ -46,5 +47,10 @@ public class GroupService : IGroupService
 	public Task<List<Group>> GetPublicGroup()
 	{
 		return _repository.GetPublicGroup();
+	}
+
+	public Task<List<Group>> GetFromUser(User user)
+	{
+		return _repository.GetFromUser(user);
 	}
 }

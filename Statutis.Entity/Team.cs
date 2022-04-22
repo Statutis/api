@@ -11,11 +11,6 @@ public class Team
 		Color = color;
 	}
 
-	public Team(string name, string? color = null, Team? mainTeam = null) : this(name, color)
-	{
-		MainTeam = mainTeam;
-	}
-
 
 	public Guid TeamId { get; set; }
 
@@ -24,13 +19,8 @@ public class Team
 
 	[StringLength(maximumLength: 10)]
 	public String? Color { get; set; } = null;
-
-	public Guid? MainTeamId { get; set; } = null;
-	public Team? MainTeam { get; set; } = null;
-
+	
 	public List<User> Users { get; set; } = new List<User>();
-
-	public List<Team> Children { get; set; } = new List<Team>();
 
 	public List<Group> Groups { get; set; } = new List<Group>();
 
