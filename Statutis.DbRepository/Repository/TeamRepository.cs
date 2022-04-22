@@ -15,12 +15,12 @@ public class TeamRepository : ITeamRepository
     
     public async Task<List<Team>> GetAll()
     {
-        return await _ctx.Team.ToListAsync();
+        return await _ctx.Team.Include(x=>x.Groups).Include(x=>x.Users).ToListAsync();
     }
 
     public async Task<Team?> Get(Guid guid)
     {
-        return await _ctx.Team.FirstOrDefaultAsync(x => x.TeamId == guid);
+        return await _ctx.Team.Include(x=>x.Groups).Include(x=>x.Users).FirstOrDefaultAsync(x => x.TeamId == guid);
     }
 
     public async Task<Team?> Get(string name)
