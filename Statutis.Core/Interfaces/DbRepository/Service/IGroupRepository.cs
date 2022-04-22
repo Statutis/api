@@ -1,3 +1,4 @@
+using Statutis.Entity;
 using Statutis.Entity.Service;
 
 namespace Statutis.Core.Interfaces.DbRepository.Service;
@@ -23,5 +24,12 @@ public interface IGroupRepository
     /// </summary>
     /// <returns></returns>
     public Task<List<Group>> GetPublicGroup();
+
+    /// <summary>
+    /// Récupérer la liste des groupes acessible grâce à l'utilisateur
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    public Task<List<Group>> GetFromUser(User user);
 
 }
