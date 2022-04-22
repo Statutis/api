@@ -43,7 +43,11 @@ public class GroupController : Controller
 		// {
 		// 	//TODO Restreindre l'accès aux services non public 
 		// }
-		var histories = await _historyEntryService.GetAllLast(group.Services.Where(x => x.IsPublic).ToList());
+
+		if (!group.IsPublic)
+			return Forbid();
+
+		var histories = await _historyEntryService.GetAllLast(group.Services);
 
 		return Ok(new GroupModel(group, histories, Url));
 	}

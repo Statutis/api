@@ -14,6 +14,8 @@ public class GroupModel
 
 	public String Description { get; set; }
 
+	public bool IsPublic { get; set; }
+
 	public DateTime LastCheck { get; set; }
 
 	public List<ServiceModel> Services { get; set; }
@@ -25,13 +27,18 @@ public class GroupModel
 		Ref = urlHelper.Action("Get", "Group", new { guid = group.GroupId }) ?? String.Empty;
 		Name = group.Name;
 		Description = group.Description;
+		IsPublic = group.IsPublic;
+		
+		// History
 		LastCheck = services.Select(x => x.Value?.DateTime).FirstOrDefault(x => x != null) ?? DateTime.Now;
 		Services = services.Select(x => x.Value == null ?
 			new ServiceModel(x.Key, HistoryState.Unknown, urlHelper)
 			: new ServiceModel(x.Key, x.Value, urlHelper)
 		).ToList();
 
-		TeamsRef = group.Teams.Select(x => urlHelper.Action("GetGuid","Team", new {guid = x.TeamId}) ?? String.Empty).ToList();
+		
+		//Team
+		TeamsRef = group.Teams.Select(x => urlHelper.Action("GetGuid", "Team", new { guid = x.TeamId }) ?? String.Empty).ToList();
 
 	}
 }

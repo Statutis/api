@@ -55,7 +55,7 @@ public class GroupRepository : IGroupRepository
     public Task<List<Group>> GetPublicGroup()
     {
         return _ctx.Group
-            .Where(x => x.Services.Any(x => x.IsPublic))
+            .Where(x => x.IsPublic)
             .Include(x=>x.Services)
             .Include(x=>x.Teams)
             .ToListAsync();

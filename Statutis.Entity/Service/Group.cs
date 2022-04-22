@@ -20,4 +20,7 @@ public class Group
 	public List<Team> Teams { get; set; } = new List<Team>();
 
 	public List<Service> Services { get; set; } = new List<Service>();
+	
+
+	public bool IsPublic { get; set; } = true;
 }
