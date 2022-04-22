@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Statutis.Entity;
 
 namespace Statutis.Core.Interfaces.Business;
@@ -16,6 +17,8 @@ public interface IUserService
     
     //delete
     Task Delete(User user);
+
+    public Task<User?> GetUserAsync(ClaimsPrincipal principal);
 
     Task<bool> IsUserInTeam(string email, Team team);
     Task<bool> IsUserInTeam(User user, List<Team> team);

@@ -27,7 +27,7 @@ public static class StatutisInitializer
 
 		Team adminTeam = new Team("Administrateur", "#e74c3c") { TeamId = Guid.Parse("582745B3-1C8C-4C89-A772-19F6D9102F42") };
 		Team defaultTeam = new Team("Default", "#34495e") { TeamId = Guid.Parse("3074C258-5EB5-4598-AAFD-26AB51E2FCFA") };
-		Team subDefaultTeam = new Team("Sub Team", "#95a5a6") { TeamId = Guid.Parse("9DE07AEC-CE5D-43BC-A909-C648A3B4956A"), MainTeamId = defaultTeam.TeamId };
+		Team subDefaultTeam = new Team("Sub Team", "#95a5a6") { TeamId = Guid.Parse("9DE07AEC-CE5D-43BC-A909-C648A3B4956A") };
 
 		builder.Entity<Team>().HasData(adminTeam, defaultTeam, subDefaultTeam);
 

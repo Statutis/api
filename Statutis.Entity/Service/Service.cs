@@ -23,8 +23,6 @@ public abstract class Service
 	public String ServiceTypeName { get; set; }
 	public ServiceType ServiceType { get; set; }
 
-	public bool IsPublic { get; set; } = true;
-
 	public abstract String GetCheckType();
 
 	public List<HistoryEntry> HistoryEntries { get; set; }
