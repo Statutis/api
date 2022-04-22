@@ -13,8 +13,6 @@ public class TeamModel
 		this.Name = team.Name;
 		this.Color = team.Color;
 		this.Ref = urlHelper.Action("GetGuid", "Team", new { guid = team.TeamId }) ?? "";
-		if (team.MainTeamId != null)
-			this.MainTeamRef = urlHelper.Action("GetGuid", "Team", new { guid = team.MainTeamId }) ?? "";
 	}
 
 
@@ -25,6 +23,4 @@ public class TeamModel
 
 	[StringLength(maximumLength: 10)]
 	public String? Color { get; set; } = null;
-
-	public string? MainTeamRef { get; set; } = null;
 }

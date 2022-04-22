@@ -18,9 +18,9 @@ public class ServiceController : Controller
 	
 	[HttpGet, Route("checks")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<String>))]
-	public async Task<IActionResult> GetCheckType()
+	public Task<IActionResult> GetCheckType()
 	{
-		return Ok(new List<String>(){DnsService.CheckType, HttpService.CheckType, PingService.CheckType});
+		return Task.FromResult<IActionResult>(Ok(new List<String>(){DnsService.CheckType, HttpService.CheckType, PingService.CheckType}));
 	}
 
 	[HttpGet, Route("state")]
@@ -35,7 +35,6 @@ public class ServiceController : Controller
 	// [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MainStateModel))]
 	public async Task<IActionResult> Get(Guid guid)
 	{
-		
 		return Ok();
 	}
 }

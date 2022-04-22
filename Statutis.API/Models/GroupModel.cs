@@ -10,8 +10,6 @@ public class GroupModel
 
 	public String Ref { get; set; }
 
-	public String? MainGroupRef { get; set; } = null;
-
 	public String Name { get; set; }
 
 	public String Description { get; set; }
@@ -25,8 +23,6 @@ public class GroupModel
 	public GroupModel(Group group, Dictionary<Service, HistoryEntry?> services, IUrlHelper urlHelper)
 	{
 		Ref = urlHelper.Action("Get", "Group", new { guid = group.GroupId }) ?? String.Empty;
-		if (group.MainGroupId != null)
-			MainGroupRef = Ref = urlHelper.Action("Get", "Group", new { guid = group.MainGroupId }) ?? String.Empty;
 		Name = group.Name;
 		Description = group.Description;
 		LastCheck = services.Select(x => x.Value?.DateTime).FirstOrDefault(x => x != null) ?? DateTime.Now;

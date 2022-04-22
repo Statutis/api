@@ -57,26 +57,24 @@ public class StatutisContext : DbContext
 		modelBuilder.Entity<Group>(m =>
 		{
 			m.HasKey(x => x.GroupId);
-			m.HasIndex(x => new { x.Name, x.MainGroupId }).IsUnique();
-			m.HasOne(x => x.MainGroup).WithMany(x => x.Children).HasForeignKey(x => x.MainGroupId);
+			m.HasIndex(x => new { x.Name }).IsUnique();
 			m.HasMany(x => x.Teams).WithMany(x => x.Groups);
 		});
 		modelBuilder.Entity<User>(m => { m.HasKey(x => x.Email); });
 		modelBuilder.Entity<Team>(m =>
 		{
 			m.HasKey(x => new { x.TeamId });
-			m.HasIndex(x => new { x.Name, x.MainTeamId }).IsUnique();
-			m.HasOne(x => x.MainTeam).WithMany(x => x.Children).HasForeignKey(x => x.MainTeamId);
+			m.HasIndex(x => new { x.Name }).IsUnique();
 		});
 		modelBuilder.Entity<ServiceType>(m => { m.HasKey(x => x.Name); });
 
 		modelBuilder.Entity<HistoryEntry>(m =>
 		{
 			m.HasKey(x => new { x.ServiceId, x.DateTime });
-			m.HasOne(x => x.Service).WithMany(x=>x.HistoryEntries).HasForeignKey(x=>x.ServiceId);
+			m.HasOne(x => x.Service).WithMany(x => x.HistoryEntries).HasForeignKey(x => x.ServiceId);
 		});
 
 		StatutisInitializer.Initialize(modelBuilder);
 	}
-	
+
 }
