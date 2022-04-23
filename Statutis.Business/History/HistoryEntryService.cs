@@ -1,7 +1,9 @@
+using System.ComponentModel;
 using Statutis.Core.Interfaces.Business.History;
 using Statutis.Core.Interfaces.DbRepository.History;
 using Statutis.Entity.History;
 using Statutis.Entity.Service;
+using Statutis.Entity.Service.Check;
 
 namespace Statutis.Business.History;
 
@@ -24,7 +26,7 @@ public class HistoryEntryService : IHistoryEntryService
 		return _repository.GetLast(service, state);
 	}
 
-	public Task<Dictionary<Service, HistoryEntry?>> GetAllLast()
+	public Task<Dictionary<Entity.Service.Service, HistoryEntry?>> GetAllLast()
 	{
 		return _repository.GetAllLast();
 	}
@@ -34,9 +36,9 @@ public class HistoryEntryService : IHistoryEntryService
 		return _repository.GetAllLast(services);
 	}
 
-	public Task<List<HistoryEntry>> Get(Service service, int count = 15)
+	public Task<List<HistoryEntry>> Get(Entity.Service.Service service, int count = 15, ListSortDirection order = ListSortDirection.Descending)
 	{
-		return _repository.Get(service, count);
+		return _repository.Get(service, count, order);
 	}
 
 	public Task<HistoryEntry> Add(HistoryEntry historyEntry)
@@ -63,5 +65,34 @@ public class HistoryEntryService : IHistoryEntryService
 		}
 
 		return new Tuple<HistoryState, DateTime>(HistoryState.Online, lastCheck);
+	}
+
+	public async Task<List<HistoryEntry>> GetHistoryEntryFromAGroup(Group group, ListSortDirection order = ListSortDirection.Descending)
+	{
+		List<HistoryEntry> res = new List<HistoryEntry>();
+		
+		if (group.Services.Count == 0)
+			return res;
+
+		foreach (Service service in group.Services)
+		{
+			var historyEntry = await this.Get(service,15);
+			historyEntry.ForEach(x => { x.Service = null;});
+			if(historyEntry.Count == 0)
+				continue;
+			
+			res.AddRange(historyEntry);
+		}
+
+		if (order == ListSortDirection.Ascending)
+		{
+			res = res.OrderBy(x => x.DateTime).ToList();
+		}
+		else
+		{
+			res = res.OrderByDescending(x => x.DateTime).ToList();
+		}
+
+		return res;
 	}
 }

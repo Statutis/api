@@ -39,12 +39,7 @@ public class UserService : IUserService
 		return await _userRepository.Update(user);
 	}
 
-    public async Task Delete(User user)
-    {
-        await _userRepository.Delete(user);
-    }
-
-    public async Task<bool> IsUserInTeam(string email, Team team)
+	public async Task<bool> IsUserInTeam(string email, Team team)
     {
         var user = await _userRepository.GetByEmail(email);
         if (user == null)

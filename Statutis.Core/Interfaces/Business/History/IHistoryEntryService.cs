@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Statutis.Entity.History;
 using Statutis.Entity.Service;
 
@@ -38,7 +39,7 @@ public interface IHistoryEntryService
 	/// <param name="service"></param>
 	/// <param name="count">Nombre limite d'entrée</param>
 	/// <returns></returns>
-	public Task<List<HistoryEntry>> Get(Entity.Service.Service service, int count = 15);
+	public Task<List<HistoryEntry>> Get(Entity.Service.Service service, int count = 15, ListSortDirection order = ListSortDirection.Descending);
 
 	/// <summary>
 	/// Ajout d'une entrée
@@ -52,4 +53,6 @@ public interface IHistoryEntryService
 	/// </summary>
 	/// <returns></returns>
 	public Task<Tuple<HistoryState, DateTime>> GetMainState();
+
+	public Task<List<HistoryEntry>> GetHistoryEntryFromAGroup(Group group, ListSortDirection order = ListSortDirection.Descending);
 }

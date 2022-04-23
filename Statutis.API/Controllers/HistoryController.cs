@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Statutis.API.Models;
@@ -14,11 +15,13 @@ public class HistoryController : Controller
 
     private readonly IHistoryEntryService _historyEntryService;
     private readonly IServiceService _serviceService;
+    private readonly IGroupService _groupService;
 
-    public HistoryController(IHistoryEntryService historyEntryService, IServiceService serviceService)
+    public HistoryController(IHistoryEntryService historyEntryService, IServiceService serviceService, IGroupService groupService)
     {
         _historyEntryService = historyEntryService;
         _serviceService = serviceService;
+        _groupService = groupService;
     }
     
     [HttpGet("service/{guid}")]
@@ -32,6 +35,23 @@ public class HistoryController : Controller
         var history = await _historyEntryService.Get(service, 30);
         List<HistoryEntryModel> list = new List<HistoryEntryModel>();
         foreach (HistoryEntry historyEntry in history)
+        {
+            list.Add(new HistoryEntryModel(historyEntry, Url));
+        }
+
+        return Ok(list);
+    }
+
+    [HttpGet("group/{guid}")]
+    public async Task<IActionResult> GetFromAGroup([Required] Guid guid)
+    {
+        var group = await _groupService.Get(guid);
+        if (group == null)
+            return Forbid();
+
+        var res = await _historyEntryService.GetHistoryEntryFromAGroup(group, ListSortDirection.Ascending);
+        List<HistoryEntryModel> list = new List<HistoryEntryModel>();
+        foreach (HistoryEntry historyEntry in res)
         {
             list.Add(new HistoryEntryModel(historyEntry, Url));
         }

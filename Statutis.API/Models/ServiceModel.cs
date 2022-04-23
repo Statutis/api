@@ -42,8 +42,7 @@ public class ServiceModel
 		// History
 		State = historyState;
 		LastCheck = DateTime.Now;
-		//TODO ref to history
-		HistoryRef = "WIP";
+		HistoryRef = urlHelper.Action("Get","History", new {Guid = service.ServiceId}) ?? String.Empty;
 	}
 
 	public ServiceModel(Service service, HistoryEntry entry, IUrlHelper urlHelper) : this(service, entry.State, urlHelper)

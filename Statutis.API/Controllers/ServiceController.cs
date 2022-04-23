@@ -44,7 +44,7 @@ public class ServiceController : Controller
 		var res = await _serviceService.Get(guid);
 		var user = await _userService.GetByEmail(User.Identity.Name);
 
-		if (!res.IsPublic && User.Identity is {IsAuthenticated: false} && await _userService.IsUserInTeam(user, res.Group.Teams))
+		if (User.Identity is {IsAuthenticated: false} && await _userService.IsUserInTeam(user, res.Group.Teams))
 		{
 			return StatusCode(StatusCodes.Status401Unauthorized,new AuthModel(null, Url));
 		}
