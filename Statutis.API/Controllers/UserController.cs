@@ -81,9 +81,9 @@ public class UserController : Controller
 
 	[HttpPut, Route("{email}")]
 	[Authorize]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserPutModel))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> Update([FromBody] RegistrationForm form)
+	public async Task<IActionResult> Update([FromBody] UserPutModel form, String email)
 	{
 		if (User.Identity == null || User.Identity.Name == null)
 			return StatusCode(401, new AuthModel(null, Url));
@@ -93,20 +93,20 @@ public class UserController : Controller
 			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
 
 
-		if (form.Email != User.Identity.Name && user.Roles != "ROLE_ADMIN")
+		if (email != User.Identity.Name && user.Roles != "ROLE_ADMIN")
 			return StatusCode(StatusCodes.Status403Forbidden, "You don't have enough permissions");
 
-		user = await _userService.GetByEmail(form.Email);
+		User? targetUser = await _userService.GetByEmail(email);
 
-		if (user == null)
+		if (targetUser == null)
 			return StatusCode(StatusCodes.Status404NotFound, "User not found");
 
-		user.Username = form.Username;
-		user.Firstname = form.Firstname;
-		user.Name = form.Name;
-		user.Password = _passwordHash.Hash(form.Password);
+		targetUser.Username = form.Username;
+		targetUser.Firstname = form.Firstname;
+		targetUser.Name = form.Name;
+		targetUser.Password = _passwordHash.Hash(form.Password);
 
-		var userUpdated = await _userService.Update(user);
+		var userUpdated = await _userService.Update(targetUser);
 		return Ok(new UserModel(userUpdated, Url));
 	}
 
@@ -160,9 +160,6 @@ public class UserController : Controller
 		var userUpdated = await _userService.Update(user);
 		return Ok(new UserModel(userUpdated, Url));
 	}
-
-
-
 
 	[HttpGet]
 	[Authorize]
