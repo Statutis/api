@@ -20,7 +20,9 @@ public class UserModel
 	{
 		Email = user.Email;
 		Username = user.Username;
-		AvatarRef = url.Action("GetAvatar","User",new {email = Email});
+		if (user.Avatar != null && user.AvatarContentType != null)
+			AvatarRef = url.Action("GetAvatar", "User", new { email = Email });
+
 		Roles.Add(user.Roles);
 
 		TeamsRef = user.Teams.Select(x => url.Action("GetGuid", "Team", new { guid = x.TeamId }) ?? String.Empty).ToList();
