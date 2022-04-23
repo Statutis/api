@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Statutis.API.Form;
 using Statutis.API.Models;
 using Statutis.Core.Form;
 using Statutis.Core.Interfaces.Business;
@@ -78,7 +79,7 @@ public class UserController : Controller
 		return Ok(new UserModel(user, Url));
 	}
 
-	[HttpPut]
+	[HttpPut, Route("{email}")]
 	[Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -101,11 +102,66 @@ public class UserController : Controller
 			return StatusCode(StatusCodes.Status404NotFound, "User not found");
 
 		user.Username = form.Username;
+		user.Firstname = form.Firstname;
+		user.Name = form.Name;
 		user.Password = _passwordHash.Hash(form.Password);
 
 		var userUpdated = await _userService.Update(user);
 		return Ok(new UserModel(userUpdated, Url));
 	}
+
+	[HttpPatch, Route("{email}")]
+	[Authorize]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> Update([FromBody] UserPatchModel form, string email)
+	{
+		if (User.Identity == null || User.Identity.Name == null)
+			return StatusCode(401, new AuthModel(null, Url));
+
+		var user = await _userService.GetUserAsync(User);
+		if (user == null)
+			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
+
+
+		if (email != user.Email && user.Roles != "ROLE_ADMIN")
+			return StatusCode(StatusCodes.Status403Forbidden, "You don't have enough permissions");
+
+		User? targetUser = await _userService.GetByEmail(email);
+
+		if (targetUser == null)
+			return StatusCode(StatusCodes.Status404NotFound, "User not found");
+
+		if (!String.IsNullOrWhiteSpace(form.Username))
+		{
+			if (form.Username.Length < 3)
+				return StatusCode(StatusCodes.Status403Forbidden, "The field Username must be a string a minimum length of '3'.");
+			targetUser.Username = form.Username;
+		}
+		if (!String.IsNullOrWhiteSpace(form.Firstname))
+		{
+			if (form.Firstname.Length < 3)
+				return StatusCode(StatusCodes.Status403Forbidden, "The field Firstname must be a string a minimum length of '3'.");
+			targetUser.Firstname = form.Firstname;
+		}
+		if (!String.IsNullOrWhiteSpace(form.Name))
+		{
+			if (form.Name.Length < 3)
+				return StatusCode(StatusCodes.Status403Forbidden, "The field Name must be a string a minimum length of '3'.");
+			targetUser.Name = form.Name;
+		}
+		if (!String.IsNullOrWhiteSpace(form.Password))
+		{
+			if (form.Password.Length < 8)
+				return StatusCode(StatusCodes.Status403Forbidden, "The field Password must be a string a minimum length of '8'.");
+			targetUser.Password = _passwordHash.Hash(form.Password);
+		}
+
+		var userUpdated = await _userService.Update(user);
+		return Ok(new UserModel(userUpdated, Url));
+	}
+
+
 
 
 	[HttpGet]
