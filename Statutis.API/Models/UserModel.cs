@@ -20,7 +20,7 @@ public class UserModel
 	{
 		Email = user.Email;
 		Username = user.Username;
-		// Avatar = user.Avatar; TODO Metter la ref vers l'avatar
+		AvatarRef = url.Action("GetAvatar","User",new {email = Email});
 		Roles.Add(user.Roles);
 
 		TeamsRef = user.Teams.Select(x => url.Action("GetGuid", "Team", new { guid = x.TeamId }) ?? String.Empty).ToList();

@@ -23,6 +23,8 @@ public class User
 	public String Password { get; set; }
 
 	public byte[]? Avatar { get; set; } = null;
+	
+	public String? AvatarContentType { get; set; } = null;
 
 	public String Roles { get; set; }
 

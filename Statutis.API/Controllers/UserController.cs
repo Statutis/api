@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Statutis.API.Models;
@@ -106,5 +105,80 @@ public class UserController : Controller
 
 		var userUpdated = await _userService.Update(user);
 		return Ok(new UserModel(userUpdated, Url));
+	}
+
+
+	[HttpGet]
+	[Authorize]
+	[Route("avatar")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> GetAvatar()
+	{
+		var email = User.Identity?.Name;
+		if (email == null)
+			return Forbid();
+		return await GetAvatar(email);
+	}
+
+	[HttpGet]
+	[AllowAnonymous]
+	[Route("avatar/{email}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> GetAvatar(String email)
+	{
+		var targetUser = await _userService.GetByEmail(email);
+		if (targetUser.Avatar == null || targetUser.AvatarContentType == null)
+			return NotFound();
+		return File(targetUser.Avatar, targetUser.AvatarContentType);
+	}
+
+	[HttpPatch]
+	[Authorize]
+	[Route("avatar")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public Task<IActionResult> UploadAvatar(IFormFile? form = null)
+	{
+		return UploadAvatar(form, User.Identity?.Name);
+	}
+
+	[HttpPatch]
+	[Authorize]
+	[Route("avatar/{email}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> UploadAvatar(IFormFile? form = null, string? email = null)
+	{
+
+		var user = await _userService.GetUserAsync(User);
+		if (user == null)
+			return StatusCode(401, new AuthModel(null, Url));
+
+		var targetUser = String.IsNullOrWhiteSpace(email) ? user : await _userService.GetByEmail(email);
+		if (targetUser == null || (user.Email != targetUser.Email && user.Roles != "ROLE_ADMIN"))
+			return NotFound();
+
+
+		if (form == null)
+		{
+			targetUser.Avatar = null;
+			targetUser.AvatarContentType = null;
+		}
+		else
+		{
+			using (var memoryStream = new MemoryStream())
+			{
+				await form.CopyToAsync(memoryStream);
+				targetUser.Avatar = memoryStream.ToArray();
+			}
+			targetUser.AvatarContentType = form.ContentType;
+		}
+
+
+		await _userService.Update(targetUser);
+
+		return Ok();
 	}
 }
