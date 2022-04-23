@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Microsoft.EntityFrameworkCore;
 using Statutis.Core.Interfaces.Business.Service;
 using Statutis.Core.Interfaces.DbRepository.History;
@@ -35,9 +36,13 @@ public class HistoryEntryRepository : IHistoryEntryRepository
 
 	}
 
-	public Task<List<HistoryEntry>> Get(Entity.Service.Service service, int count = 15)
+	public Task<List<HistoryEntry>> Get(Entity.Service.Service service, int count = 15, ListSortDirection order = ListSortDirection.Descending)
 	{
-		return _ctx.History.OrderByDescending(x => x.DateTime).Where(x => x.ServiceId == service.ServiceId).Take(count).ToListAsync();
+		var ctx = _ctx.History;
+		if(order == ListSortDirection.Descending)
+			return ctx.OrderByDescending(x => x.DateTime).Where(x => x.ServiceId == service.ServiceId).Take(count).ToListAsync();
+		else
+			return ctx.OrderBy(x => x.DateTime).Where(x => x.ServiceId == service.ServiceId).Take(count).ToListAsync();
 	}
 
 	public async Task<HistoryEntry> Add(HistoryEntry historyEntry)

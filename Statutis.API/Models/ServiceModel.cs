@@ -21,6 +21,8 @@ public class ServiceModel
 	public HistoryState State { get; set; }
 
 	public DateTime LastCheck { get; set; }
+	
+	public string HistoryRef { get; set; }
 
 	public String GroupRef { get; set; }
 
@@ -40,6 +42,7 @@ public class ServiceModel
 		// History
 		State = historyState;
 		LastCheck = DateTime.Now;
+		HistoryRef = urlHelper.Action("Get","History", new {Guid = service.ServiceId}) ?? String.Empty;
 	}
 
 	public ServiceModel(Service service, HistoryEntry entry, IUrlHelper urlHelper) : this(service, entry.State, urlHelper)
