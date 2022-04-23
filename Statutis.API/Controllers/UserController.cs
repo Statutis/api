@@ -187,7 +187,7 @@ public class UserController : Controller
 		return File(targetUser.Avatar, targetUser.AvatarContentType);
 	}
 
-	[HttpPatch]
+	[HttpPut]
 	[Authorize]
 	[Route("avatar")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
@@ -197,7 +197,7 @@ public class UserController : Controller
 		return UploadAvatar(form, User.Identity?.Name);
 	}
 
-	[HttpPatch]
+	[HttpPut]
 	[Authorize]
 	[Route("avatar/{email}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
