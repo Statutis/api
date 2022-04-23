@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Statutis.Core.Form;
+namespace Statutis.API.Form;
 
-public class RegistrationForm
+public class UserPutModel
 {
 	[Required, MinLength(3)]
 	public string Username { get; set; }
@@ -15,7 +15,4 @@ public class RegistrationForm
 
 	[Required, MinLength(8)]
 	public string Password { get; set; }
-
-	[Required, EmailAddress]
-	public string Email { get; set; }
 }
