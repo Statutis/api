@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Statutis.DbRepository;
@@ -11,9 +12,10 @@ using Statutis.DbRepository;
 namespace Statutis.DbRepository.Migrations
 {
     [DbContext(typeof(StatutisContext))]
-    partial class StatutisContextModelSnapshot : ModelSnapshot
+    [Migration("20220423105626_AddUserAvatarContentType")]
+    partial class AddUserAvatarContentType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,14 +258,6 @@ namespace Statutis.DbRepository.Migrations
                     b.Property<string>("AvatarContentType")
                         .HasColumnType("text");
 
-                    b.Property<string>("Firstname")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -286,8 +280,6 @@ namespace Statutis.DbRepository.Migrations
                         new
                         {
                             Email = "contact@silvain.eu",
-                            Firstname = "Super",
-                            Name = "Administrateur",
                             Password = "$argon2id$v=19$m=1024,t=1,p=1$c29tZXNhbHQ$Wg1s/1X6O1f1ZQCQtAvkGaCMwteH+F2h6p6AGDM8om4",
                             Roles = "ROLE_ADMIN",
                             Username = "admin"

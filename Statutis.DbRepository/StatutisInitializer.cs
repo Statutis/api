@@ -86,10 +86,12 @@ public static class StatutisInitializer
 
 		#region User
 
-		User admin = new User("contact@silvain.eu", "admin", @"$argon2id$v=19$m=1024,t=1,p=1$c29tZXNhbHQ$Wg1s/1X6O1f1ZQCQtAvkGaCMwteH+F2h6p6AGDM8om4") { Roles = "ROLE_ADMIN"};
+		User admin = new User("contact@silvain.eu", "admin", @"$argon2id$v=19$m=1024,t=1,p=1$c29tZXNhbHQ$Wg1s/1X6O1f1ZQCQtAvkGaCMwteH+F2h6p6AGDM8om4") { Roles = "ROLE_ADMIN" };
+		admin.Name = "Administrateur";
+		admin.Firstname = "Super";
 
 		builder.Entity<User>().HasData(admin);
-		
+
 		builder.Entity<User>()
 			.HasMany(x => x.Teams)
 			.WithMany(x => x.Users).UsingEntity(j => j.HasData(
