@@ -137,5 +137,32 @@ public class GroupController : Controller
 		return Ok(new GroupModel(group, histories, Url));
 
 	}
+	
+	[HttpDelete, Route("{guid}"), Authorize]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> Delete(Guid guid)
+	{
+		Group? group = await _groupService.Get(guid);
+		if (group == null)
+			return NotFound();
+
+
+		if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
+			return Forbid();
+
+
+		var user = await _userService.GetUserAsync(User);
+		var teamUserId = user.Teams.Select(x => x.TeamId);
+		if (!group.Teams.Any(x => teamUserId.Contains(x.TeamId)))
+			return Forbid();
+
+
+		await _groupService.Delete(group);
+			
+		
+		return Ok();
+
+	}
 
 }
