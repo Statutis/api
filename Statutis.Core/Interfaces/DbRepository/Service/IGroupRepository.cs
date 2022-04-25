@@ -9,6 +9,8 @@ public interface IGroupRepository
     Task<List<Entity.Service.Group>> GetAll();
     Task<Entity.Service.Group?> Get(Guid guid);
     Task<List<Entity.Service.Group>> Get(string name);
+
+    Task<List<Group>> GetByTeamId(Guid guid);
     
     //Insert
     Task<Entity.Service.Group> Insert(Entity.Service.Group @group);
