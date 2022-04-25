@@ -5,7 +5,7 @@ using Statutis.Entity;
 
 namespace Statutis.API.Controllers;
 
-[Route("api/team/")]
+[Route("api/teams/")]
 [ApiController]
 public class TeamController : Controller
 {
