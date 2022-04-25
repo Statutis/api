@@ -8,6 +8,7 @@ namespace Statutis.API.Models;
 public class GroupModel
 {
 
+	public String Id { get; set; }
 	public String Ref { get; set; }
 
 	public String Name { get; set; }
@@ -24,6 +25,7 @@ public class GroupModel
 
 	public GroupModel(Group group, Dictionary<Service, HistoryEntry?> services, IUrlHelper urlHelper)
 	{
+		Id = group.GroupId.ToString();
 		Ref = urlHelper.Action("Get", "Group", new { guid = group.GroupId }) ?? String.Empty;
 		Name = group.Name;
 		Description = group.Description;
