@@ -14,6 +14,8 @@ public interface ITeamRepository
     //Update
     Task<Team> Update(Team team);
     
+    Task Add(Team team);
+    
     //delete
     Task Delete(Team team);
 }

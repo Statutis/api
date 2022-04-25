@@ -7,14 +7,15 @@ namespace Statutis.API.Models;
 public class UserModel
 {
 
+	public String Ref { get; set; }
 	public String Email { get; set; }
 
 	public String Username { get; set; }
 
 	public String? AvatarRef { get; set; } = null;
-	
+
 	public String? Name { get; set; }
-	
+
 	public String? Firstname { get; set; }
 	public List<String> Roles { get; set; } = new List<string>();
 
@@ -22,11 +23,12 @@ public class UserModel
 
 	public UserModel(User user, IUrlHelper url)
 	{
+		Ref = url.Action("GetByEmail", "User", new { email = user.Email }) ?? String.Empty;
 		Email = user.Email;
 		Username = user.Username;
 		Name = user.Name;
 		Firstname = user.Firstname;
-		
+
 		if (user.Avatar != null && user.AvatarContentType != null)
 			AvatarRef = url.Action("GetAvatar", "User", new { email = Email });
 
