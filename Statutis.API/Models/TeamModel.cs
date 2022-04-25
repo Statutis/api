@@ -10,6 +10,7 @@ public class TeamModel
 
 	public TeamModel(Team team, IUrlHelper urlHelper)
 	{
+		this.Id = team.TeamId.ToString();
 		this.Name = team.Name;
 		this.Color = team.Color;
 		this.Ref = urlHelper.Action("GetGuid", "Team", new { guid = team.TeamId }) ?? "";
@@ -19,6 +20,7 @@ public class TeamModel
 	}
 
 
+	public string Id { get; set; }
 	public string Ref { get; set; }
 
 	[StringLength(maximumLength: 30)]
