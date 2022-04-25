@@ -45,13 +45,11 @@ public class UserController : Controller
 	}
 
 	[HttpGet("email/{email}")]
-	[Authorize(Roles = "ROLE_ADMIN")]
+	[Authorize()]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetByEmail([Required] string email)
 	{
-		if (User.Identity == null)
-			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
 		if (email == "")
 			return StatusCode(StatusCodes.Status400BadRequest, "Query parameter email is required !");
 		User? user = await _userService.GetByEmail(email);
@@ -68,8 +66,7 @@ public class UserController : Controller
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetByUsername([Required] string username)
 	{
-		if (User.Identity == null)
-			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
+		
 		if (username == "")
 			return StatusCode(StatusCodes.Status400BadRequest, "Query parameter email is required !");
 		User? user = await _userService.GetByUsername(username);
