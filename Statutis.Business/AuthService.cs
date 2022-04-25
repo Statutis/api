@@ -43,7 +43,7 @@ public class AuthService : IAuthService
         return tokenHandler.WriteToken(token);
     }
 
-    public async Task<Tuple<string, bool>> Registration(string username, string password, string email)
+    public async Task<Tuple<string, bool>> Registration(string username, string password, string email, string? name = null, string? firstname = null)
     {
         //Check if username exists
         var isUsernameNull = (await _userService.GetByUsername(username) == null);
@@ -55,6 +55,8 @@ public class AuthService : IAuthService
             return new Tuple<string, bool>("Email already taken", false);
 
         User user = new User(email, username, _passwordHash.Hash(password)){Roles = "ROLE_USER"};
+        user.Name = name;
+        user.Firstname = firstname;
         bool status = await _userService.Insert(user);
 
         return new Tuple<string, bool>("", status);
