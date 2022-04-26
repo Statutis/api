@@ -14,6 +14,7 @@ public class TeamModel
 		this.Name = team.Name;
 		this.Color = team.Color;
 		this.Ref = urlHelper.Action("GetGuid", "Team", new { guid = team.TeamId }) ?? "";
+		this.AvatarRef = team.Avatar != null && team.AvatarContentType != null ? urlHelper.Action("GetAvatar", "Team", new { guid = team.TeamId }) ?? null : null;
 
 		this.UserRef = team.Users.Select(x => urlHelper.Action("GetByEmail", "User", new { email = x.Email }) ?? String.Empty).ToList();
 		this.GroupRef = team.Groups.Select(x => urlHelper.Action("Get", "Group", new { guid = x.GroupId }) ?? String.Empty).ToList();
@@ -32,4 +33,6 @@ public class TeamModel
 	public List<string> UserRef { get; set; }
 
 	public List<string> GroupRef { get; set; }
+	
+	public String? AvatarRef { get; set; }
 }
