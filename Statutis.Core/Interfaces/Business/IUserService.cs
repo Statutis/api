@@ -22,4 +22,6 @@ public interface IUserService
 
     Task<bool> IsUserInTeam(string email, Team team);
     Task<bool> IsUserInTeam(User user, List<Team> team);
+
+    Task<bool> isUserInGroup(User user, Guid guid);
 }
