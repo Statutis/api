@@ -34,6 +34,11 @@ public class TeamService : ITeamService
 		return _teamRepository.GetTeamsOfUser(user);
 	}
 
+	public Task Add(Team team)
+	{
+		return _teamRepository.Add(team);
+	}
+
 	public Task<Team> Update(Team team)
 	{
 		return _teamRepository.Update(team);
@@ -43,4 +48,6 @@ public class TeamService : ITeamService
 	{
 		return _teamRepository.Delete(team);
 	}
+	
+	
 }

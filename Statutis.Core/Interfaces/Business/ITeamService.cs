@@ -12,6 +12,9 @@ public interface ITeamService
     Task<List<Team>> GetTeamsOfUser(User user);
     
     //Update
+    Task Add(Team team);
+    
+    
     Task<Team> Update(Team team);
     
     //delete

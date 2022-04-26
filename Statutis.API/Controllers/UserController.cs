@@ -45,13 +45,11 @@ public class UserController : Controller
 	}
 
 	[HttpGet("email/{email}")]
-	[Authorize(Roles = "ROLE_ADMIN")]
+	[Authorize()]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetByEmail([Required] string email)
 	{
-		if (User.Identity == null)
-			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
 		if (email == "")
 			return StatusCode(StatusCodes.Status400BadRequest, "Query parameter email is required !");
 		User? user = await _userService.GetByEmail(email);
@@ -63,13 +61,12 @@ public class UserController : Controller
 	}
 
 	[HttpGet("username/{username}")]
-	[Authorize(Roles = "ROLE_ADMIN")]
+	[Authorize()]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetByUsername([Required] string username)
 	{
-		if (User.Identity == null)
-			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
+
 		if (username == "")
 			return StatusCode(StatusCodes.Status400BadRequest, "Query parameter email is required !");
 		User? user = await _userService.GetByUsername(username);
@@ -78,6 +75,19 @@ public class UserController : Controller
 
 		return Ok(new UserModel(user, Url));
 	}
+
+	[HttpGet("")]
+	[Authorize]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<UserModel>))]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> GetAll()
+	{
+
+		List<User> users = await _userService.GetAll();
+
+		return Ok(users.Select(x => new UserModel(x, Url)));
+	}
+
 
 	[HttpPut, Route("{email}")]
 	[Authorize]
