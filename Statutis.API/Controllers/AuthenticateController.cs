@@ -68,7 +68,7 @@ public class AuthenticateController : Controller
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegistrationForm registrationForm)
     {
-        var res = await _authService.Registration(registrationForm.Username, registrationForm.Password, registrationForm.Email);
+        var res = await _authService.Registration(registrationForm.Username, registrationForm.Password, registrationForm.Email, registrationForm.Name, registrationForm.Firstname);
 
         if (!res.Item2)
             return StatusCode(406, new AuthModel(res.Item1, Url));

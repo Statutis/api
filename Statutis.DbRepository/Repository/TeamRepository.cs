@@ -40,6 +40,12 @@ public class TeamRepository : ITeamRepository
         return team;
     }
 
+    public async Task Add(Team team)
+    {
+        _ctx.Team.Add(team);
+        await _ctx.SaveChangesAsync();
+    }
+
     public async Task Delete(Team team)
     {
         _ctx.Team.Remove(team);
