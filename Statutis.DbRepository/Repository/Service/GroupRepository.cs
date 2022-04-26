@@ -46,6 +46,13 @@ public class GroupRepository : IGroupRepository
 		return await _ctx.Group.Where(x => x.Name == name).ToListAsync();
 	}
 
+	public async Task<List<Group>> GetByTeamId(Guid teamGuid)
+	{
+		List<Group> groups = await _ctx.Group.Where(x => x.Teams.Select(y => y.TeamId).Contains(teamGuid)).ToListAsync();
+
+		return groups;
+	}
+
 	public async Task<Group> Insert(Group @group)
 	{
 		_ctx.Group.Add(group);
