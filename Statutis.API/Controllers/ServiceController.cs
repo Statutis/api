@@ -6,6 +6,8 @@ using Statutis.Core.Interfaces.Business;
 using Statutis.Core.Interfaces.Business.History;
 using Statutis.Core.Interfaces.Business.Service;
 using Statutis.Entity;
+using Statutis.Entity.History;
+using Statutis.Entity.Service;
 using Statutis.Entity.Service.Check;
 
 namespace Statutis.API.Controllers;
@@ -17,13 +19,15 @@ public class ServiceController : Controller
     private IHistoryEntryService _historyEntryService;
     private IServiceService _serviceService;
     private readonly IUserService _userService;
+    private readonly IServiceTypeService _serviceTypeService;
 
     public ServiceController(IHistoryEntryService historyEntryService, IServiceService service,
-        IUserService userService)
+        IUserService userService, IServiceTypeService serviceTypeService)
     {
         _historyEntryService = historyEntryService;
         _serviceService = service;
         _userService = userService;
+        _serviceTypeService = serviceTypeService;
     }
 
     [HttpPost("add/dns")]
@@ -35,23 +39,33 @@ public class ServiceController : Controller
 
         User user = await _userService.GetUserAsync(User);
 
-        if (!(await _userService.isUserInGroup(user, form.GroupId)))
+        bool canParse = Guid.TryParse(form.GroupRef.Split("/").Last(), out Guid groupId);
+
+        if (!canParse)
+            return Forbid();
+        
+        if (!(await _userService.isUserInGroup(user, groupId)))
         {
             return Forbid();
         }
 
+        string serviceTypeName = form.ServiceTypeRef.Split("/").Last();
+
+        if (await _serviceTypeService.Get(serviceTypeName) == null)
+            return Forbid();
+
         DnsService dnsService = new DnsService()
         {
             Description = form.Description,
-            GroupId = form.GroupId,
+            GroupId = groupId,
             Host = form.Host,
             Name = form.Name,
             Result = form.Result,
             Type = form.Type,
-            ServiceTypeName = form.ServiceTypeName
+            ServiceTypeName = serviceTypeName
         };
-        await _serviceService.Insert(dnsService);
-        return Ok();
+        Service service = await _serviceService.Insert(dnsService);
+        return Ok(new DnsServiceModel(dnsService, HistoryState.Unknown, Url));
     }
 
     [HttpGet, Route("checks")]
