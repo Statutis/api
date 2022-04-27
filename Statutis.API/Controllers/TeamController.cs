@@ -65,7 +65,7 @@ public class TeamController : Controller
 			var teamId = formTeam.Replace(Url.Action("GetByEmail", "User", new { email = "<d>" })?.Replace("%3Cd%3E", "") ?? "", "");
 			team.Users.Add((await _userService.GetByEmail(teamId))!);
 		}
-		
+
 		if (user.Roles != "ROLE_ADMIN" && !team.Users.Contains(user))
 			team.Users.Add(user);
 
@@ -86,19 +86,19 @@ public class TeamController : Controller
 			var teamId = formTeam.Replace(Url.Action("GetByEmail", "User", new { email = "<d>" })?.Replace("%3Cd%3E", "") ?? "", "");
 			team.Users.Add((await _userService.GetByEmail(teamId))!);
 		}
-		
+
 		if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
 			return Forbid();
 
 		var user = await _userService.GetUserAsync(User);
 		if (user.Roles != "ROLE_ADMIN" && !team.Users.Contains(user))
 			team.Users.Add(user);
-		
+
 		await _teamService.Add(team);
 
 		return Ok(new TeamModel(team, Url));
 	}
-	
+
 	[HttpDelete, Route("{guid}"), Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -117,9 +117,64 @@ public class TeamController : Controller
 
 
 		await _teamService.Delete(team);
-			
-		
+
+
 		return Ok();
 
+	}
+
+	[HttpGet]
+	[AllowAnonymous]
+	[Route("avatar/{guid}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> GetAvatar(Guid guid)
+	{
+		var targetTeam = await _teamService.Get(guid);
+		if (targetTeam == null || targetTeam.Avatar == null || targetTeam.AvatarContentType == null)
+			return NotFound();
+
+		//Todo : Vérifier si il s'agit d'une équipe publique
+
+		return File(targetTeam.Avatar, targetTeam.AvatarContentType);
+	}
+
+	[HttpPut, Authorize]
+	[Authorize]
+	[Route("avatar/{guid}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> UploadAvatar(Guid guid, IFormFile? form = null)
+	{
+
+		var user = await _userService.GetUserAsync(User);
+		if (user == null)
+			return StatusCode(401, new AuthModel(null, Url));
+
+		var targetTeam = await _teamService.Get(guid);
+		var userTeam = await _teamService.GetTeamsOfUser(user);
+		if (targetTeam == null || (user.Roles != "ROLE_ADMIN" && userTeam.Contains(targetTeam)))
+			return NotFound();
+
+
+		if (form == null)
+		{
+			targetTeam.Avatar = null;
+			targetTeam.AvatarContentType = null;
+		}
+		else
+		{
+			using (var memoryStream = new MemoryStream())
+			{
+				await form.CopyToAsync(memoryStream);
+				targetTeam.Avatar = memoryStream.ToArray();
+			}
+			targetTeam.AvatarContentType = form.ContentType;
+		}
+
+
+		await _teamService.Update(targetTeam);
+
+		return Ok();
 	}
 }

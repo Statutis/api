@@ -24,4 +24,8 @@ public class Team
 
 	public List<Group> Groups { get; set; } = new List<Group>();
 
+	public byte[]? Avatar { get; set; } = null;
+
+	public String? AvatarContentType { get; set; } = null;
+
 }
