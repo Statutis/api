@@ -164,5 +164,62 @@ public class GroupController : Controller
 		return Ok();
 
 	}
+	
+	[HttpGet]
+	[AllowAnonymous]
+	[Route("avatar/{guid}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> GetAvatar(Guid guid)
+	{
+		var targetGroup = await _groupService.Get(guid);
+		if (targetGroup == null || targetGroup.Avatar == null || targetGroup.AvatarContentType == null)
+			return NotFound();
+
+		//Todo : Vérifier si il s'agit d'une équipe/groupe publique
+
+		return File(targetGroup.Avatar, targetGroup.AvatarContentType);
+	}
+
+	[HttpPut, Authorize]
+	[Authorize]
+	[Route("avatar/{guid}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> UploadAvatar(Guid guid, IFormFile? form = null)
+	{
+
+		var user = await _userService.GetUserAsync(User);
+		if (user == null)
+			return StatusCode(401, new AuthModel(null, Url));
+
+		var targetGroup = await _groupService.Get(guid);
+		var userGroups = await _groupService.GetFromUser(user);
+		
+		if (targetGroup == null || (user.Roles != "ROLE_ADMIN" && userGroups.Contains(targetGroup)))
+			return NotFound();
+
+
+		if (form == null)
+		{
+			targetGroup.Avatar = null;
+			targetGroup.AvatarContentType = null;
+		}
+		else
+		{
+			using (var memoryStream = new MemoryStream())
+			{
+				await form.CopyToAsync(memoryStream);
+				targetGroup.Avatar = memoryStream.ToArray();
+			}
+			targetGroup.AvatarContentType = form.ContentType;
+		}
+
+
+		await _groupService.Update(targetGroup);
+
+		return Ok();
+	}
+	
 
 }
