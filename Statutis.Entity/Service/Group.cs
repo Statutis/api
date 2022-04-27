@@ -21,6 +21,9 @@ public class Group
 
 	public List<Service> Services { get; set; } = new List<Service>();
 	
-
 	public bool IsPublic { get; set; } = true;
+
+	public byte[]? Avatar { get; set; } = null;
+
+	public String? AvatarContentType { get; set; } = null;
 }

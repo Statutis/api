@@ -23,10 +23,13 @@ public class GroupModel
 
 	public List<String> TeamsRef { get; set; }
 
+	public String? AvatarRef { get; set; }
+
 	public GroupModel(Group group, Dictionary<Service, HistoryEntry?> services, IUrlHelper urlHelper)
 	{
 		Id = group.GroupId.ToString();
 		Ref = urlHelper.Action("Get", "Group", new { guid = group.GroupId }) ?? String.Empty;
+		AvatarRef = group.Avatar != null && group.AvatarContentType != null ? urlHelper.Action("GetAvatar", "Group", new { guid = group.GroupId }) ?? null : null;
 		Name = group.Name;
 		Description = group.Description;
 		IsPublic = group.IsPublic;
