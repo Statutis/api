@@ -9,6 +9,9 @@ using Statutis.Entity.Service;
 
 namespace Statutis.API.Controllers;
 
+/// <summary>
+/// Controlleur sur les goupes
+/// </summary>
 [Tags("Groupe")]
 [Route("api/groups")]
 [ApiController]
@@ -19,6 +22,13 @@ public class GroupController : Controller
 	private readonly IUserService _userService;
 	private readonly ITeamService _teamService;
 
+	/// <summary>
+	/// Constructeur
+	/// </summary>
+	/// <param name="historyEntryService"></param>
+	/// <param name="groupService"></param>
+	/// <param name="userService"></param>
+	/// <param name="teamService"></param>
 	public GroupController(IHistoryEntryService historyEntryService, IGroupService groupService, IUserService userService, ITeamService teamService)
 	{
 		_historyEntryService = historyEntryService;

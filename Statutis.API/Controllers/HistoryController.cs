@@ -8,6 +8,9 @@ using Statutis.Entity.History;
 
 namespace Statutis.API.Controllers;
 
+/// <summary>
+/// Controlleur sur l'historique des services
+/// </summary>
 [Tags("Historique")]
 [Route("api/history")]
 [ApiController]
@@ -18,6 +21,12 @@ public class HistoryController : Controller
 	private readonly IServiceService _serviceService;
 	private readonly IGroupService _groupService;
 
+	/// <summary>
+	/// Constructeur
+	/// </summary>
+	/// <param name="historyEntryService"></param>
+	/// <param name="serviceService"></param>
+	/// <param name="groupService"></param>
 	public HistoryController(IHistoryEntryService historyEntryService, IServiceService serviceService, IGroupService groupService)
 	{
 		_historyEntryService = historyEntryService;

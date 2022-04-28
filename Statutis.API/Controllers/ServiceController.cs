@@ -12,6 +12,9 @@ using Statutis.Entity.Service.Check;
 
 namespace Statutis.API.Controllers;
 
+/// <summary>
+/// Controlleur sur les services
+/// </summary>
 [Route("api/services")]
 [ApiController]
 public class ServiceController : Controller
@@ -21,6 +24,13 @@ public class ServiceController : Controller
 	private readonly IUserService _userService;
 	private readonly IServiceTypeService _serviceTypeService;
 
+	/// <summary>
+	/// Constructeur
+	/// </summary>
+	/// <param name="historyEntryService"></param>
+	/// <param name="service"></param>
+	/// <param name="userService"></param>
+	/// <param name="serviceTypeService"></param>
 	public ServiceController(IHistoryEntryService historyEntryService,
 		IServiceService service,
 		IUserService userService,
@@ -100,7 +110,7 @@ public class ServiceController : Controller
 		}
 
 		var user = await _userService.GetUserAsync(User);
-		if (user == null || await _userService.IsUserInTeam(user, res.Group.Teams))
+		if (user == null || _userService.IsUserInTeam(user, res.Group.Teams))
 			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
 
 		return Ok(new ServiceModel(res, res.HistoryEntries.Last(), Url));

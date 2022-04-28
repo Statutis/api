@@ -11,6 +11,7 @@ public class User
 		this.Username = username;
 		this.Password = password;
 		this.Avatar = null;
+		this.Roles = String.Empty;
 	}
 
 

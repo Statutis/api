@@ -6,6 +6,9 @@ using Statutis.Core.Interfaces.Business;
 
 namespace Statutis.API.Controllers;
 
+/// <summary>
+/// Controlleur sur l'identification
+/// </summary>
 [Tags("Authentification")]
 [ApiController]
 [Route("api/auth")]
@@ -15,6 +18,12 @@ public class AuthenticateController : Controller
     private readonly IUserService _userService;
     private readonly IAuthService _authService;
     
+    /// <summary>
+    /// Constructeur
+    /// </summary>
+    /// <param name="passwordHash"></param>
+    /// <param name="userService"></param>
+    /// <param name="authService"></param>
     public AuthenticateController(IPasswordHash passwordHash, IUserService userService, IAuthService authService)
     {
         _passwordHash = passwordHash;

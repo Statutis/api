@@ -5,6 +5,9 @@ using Statutis.Entity.Service;
 
 namespace Statutis.API.Controllers;
 
+/// <summary>
+/// Controlleur sur les types de service
+/// </summary>
 [Tags("Type de service")]
 [Route("api/services/types/")]
 [ApiController]
@@ -13,6 +16,10 @@ public class ServiceTypeController : Controller
 
 	private IServiceTypeService _serviceType;
 
+	/// <summary>
+	/// Constructeur
+	/// </summary>
+	/// <param name="serviceType"></param>
 	public ServiceTypeController(IServiceTypeService serviceType)
 	{
 		_serviceType = serviceType;
@@ -26,7 +33,7 @@ public class ServiceTypeController : Controller
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ServiceTypeModel>))]
 	public async Task<IActionResult> GetAll()
 	{
-		return Ok((await _serviceType.GetAll()).Select(x => new ServiceTypeModel(x, this.Url.Action("Get", new { name = x.Name }) ?? "")));
+		return Ok((await _serviceType.GetAll()).Select(x => new ServiceTypeModel(x, this.Url)));
 	}
 
 	/// <summary>
@@ -43,6 +50,6 @@ public class ServiceTypeController : Controller
 		ServiceType? type = await _serviceType.Get(name);
 		if (type == null)
 			return NotFound();
-		return Ok(new ServiceTypeModel(type, this.Url.Action("Get", new { name = type.Name }) ?? ""));
+		return Ok(new ServiceTypeModel(type, this.Url));
 	}
 }

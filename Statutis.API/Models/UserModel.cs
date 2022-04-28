@@ -4,22 +4,51 @@ using Statutis.Entity;
 
 namespace Statutis.API.Models;
 
+/// <summary>
+/// Modèle d'un utilisateur
+/// </summary>
 public class UserModel
 {
 
+	/// <summary>
+	/// Référence vers un utilisateur
+	/// </summary>
 	public String Ref { get; set; }
+	
+	/// <summary>
+	/// Identifiant et Email d'un utilisateur
+	/// </summary>
 	public String Email { get; set; }
 
+	/// <summary>
+	/// Nom d'utilisateur
+	/// </summary>
 	public String Username { get; set; }
 
+	/// <summary>
+	/// Référence vers l'avatar de l'utilisateur
+	/// </summary>
 	public String? AvatarRef { get; set; } = null;
 
+	/// <summary>
+	/// Nom de l'utilisateur
+	/// </summary>
 	public String? Name { get; set; }
 
+	/// <summary>
+	/// Prènom de l'utilisateur
+	/// </summary>
 	public String? Firstname { get; set; }
+	
+	/// <summary>
+	/// Liste des roles de l'utilisateur
+	/// </summary>
 	public List<String> Roles { get; set; } = new List<string>();
 
-	public List<String> TeamsRef { get; set; } = new List<String>();
+	/// <summary>
+	/// Références vers les équipes de l'utilisateur
+	/// </summary>
+	public List<String> TeamsRef { get; set; }
 
 	public UserModel(User user, IUrlHelper url)
 	{

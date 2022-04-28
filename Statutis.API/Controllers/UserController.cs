@@ -8,6 +8,9 @@ using Statutis.Entity;
 
 namespace Statutis.API.Controllers;
 
+/// <summary>
+/// Controlleur sur les utilitseurs
+/// </summary>
 [Tags("Utilisateurs")]
 [Route("api/users")]
 [ApiController]
@@ -17,6 +20,11 @@ public class UserController : Controller
 	private readonly IUserService _userService;
 	private readonly IPasswordHash _passwordHash;
 
+	/// <summary>
+	/// Contructeur
+	/// </summary>
+	/// <param name="userService"></param>
+	/// <param name="passwordHash"></param>
 	public UserController(IUserService userService, IPasswordHash passwordHash)
 	{
 		_userService = userService;
@@ -87,6 +95,7 @@ public class UserController : Controller
 	/// <summary>
 	/// Modification d'un utilisateur
 	/// </summary>
+	/// <param name="form">Information sur l'utilisateur</param>
 	/// <param name="email">Adresse mail de l'utilisaur cible</param>
 	/// <returns>Un utilisateur</returns>
 	/// <response code="401">Si vous n'êtes pas authentifié.</response>
@@ -129,6 +138,7 @@ public class UserController : Controller
 	/// Modification d'un utilisateur
 	/// </summary>
 	/// <param name="email">Adresse mail de l'utilisaur cible</param>
+	/// <param name="form">Information sur l'utilisateur</param>
 	/// <returns>Un utilisateur</returns>
 	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	/// <response code="403">Si vous n'êtes pas l'utilisateur cible ou un administrateur.</response>
@@ -209,7 +219,7 @@ public class UserController : Controller
 	/// <summary>
 	/// Récupération d'un avatar d'un utilisateur
 	/// </summary>
-	/// <param name="guid">Identifiant d'un utilisateur cible</param>
+	/// <param name="email">Identifiant d'un utilisateur cible</param>
 	/// <returns>Avatar de l'utilisateur</returns>
 	/// <response code="404">Si l'utilisateur visé n'existe pas ou qu'il ne dispose pas d'avatar.</response>
 	[HttpGet]

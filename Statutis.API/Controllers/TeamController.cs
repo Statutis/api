@@ -7,6 +7,10 @@ using Statutis.Entity;
 
 namespace Statutis.API.Controllers;
 
+
+/// <summary>
+/// Controlleur sur les équipes
+/// </summary>
 [Tags("Equipe")]
 [Route("api/teams/")]
 [ApiController]
@@ -15,10 +19,15 @@ public class TeamController : Controller
 	private ITeamService _teamService;
 	private readonly IUserService _userService;
 
-	public TeamController(ITeamService teamService, IUserService _userService)
+	/// <summary>
+	/// Constructeur
+	/// </summary>
+	/// <param name="teamService"></param>
+	/// <param name="userService"></param>
+	public TeamController(ITeamService teamService, IUserService userService)
 	{
 		_teamService = teamService;
-		this._userService = _userService;
+		this._userService = userService;
 	}
 
 	/// <summary>
@@ -41,7 +50,7 @@ public class TeamController : Controller
 	/// <remarks>Si pas authentifié, récupération possible seulement des éuipes publiques, sinon pas de limitations.</remarks>
 	/// <returns>Une équipes</returns>
 	/// <response code="404">Si l'équipe visée n'existe pas.</response>
-	/// <response code="403">Vous ne disposez pas des droits suffisant.response>
+	/// <response code="403">Vous ne disposez pas des droits suffisant.</response>
 	[HttpGet, Route("{guid}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TeamModel))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -114,7 +123,6 @@ public class TeamController : Controller
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> Add([FromBody] TeamForm form)
 	{
-
 		Team team = new Team(form.Name, form.Color);
 		foreach (string formTeam in form.Users)
 		{

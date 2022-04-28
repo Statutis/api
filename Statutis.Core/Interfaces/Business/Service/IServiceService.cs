@@ -15,7 +15,7 @@ public interface IServiceService
 
 	Task<List<Entity.Service.Service>> Get(string name);
 
-	Task<Entity.Service.Service> Get(Guid guid);
+	Task<Entity.Service.Service?> Get(Guid guid);
 
 	//insert
 	Task<Entity.Service.Service> Insert(Entity.Service.Service service);
