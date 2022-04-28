@@ -30,42 +30,80 @@ public class ServiceController : Controller
         _serviceTypeService = serviceTypeService;
     }
 
-    [HttpPost("add/dns")]
-    [Authorize]
-    public async Task<IActionResult> Add([FromBody] DnsForm form)
+    private bool canAddService(ServiceForm form, out Guid groupGuid, out string serviceTypeName)
     {
+        groupGuid = new Guid();
+        serviceTypeName = "";
+        
         if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
-            return Forbid();
+            return false;
 
-        User user = await _userService.GetUserAsync(User);
+        User user = _userService.GetUserAsync(User).Result;
 
-        bool canParse = Guid.TryParse(form.GroupRef.Split("/").Last(), out Guid groupId);
+        bool canParse = Guid.TryParse(form.GroupRef.Split("/").Last(), out groupGuid);
 
         if (!canParse)
-            return Forbid();
+            return false;
         
-        if (!(await _userService.isUserInGroup(user, groupId)))
+        if (!(_userService.isUserInGroup(user, groupGuid).Result))
         {
-            return Forbid();
+            return false;
         }
 
-        string serviceTypeName = form.ServiceTypeRef.Split("/").Last();
+        serviceTypeName = form.ServiceTypeRef.Split("/").Last();
 
-        if (await _serviceTypeService.Get(serviceTypeName) == null)
+        if (_serviceTypeService.Get(serviceTypeName).Result == null)
+            return false;
+
+        return true;
+    }
+    
+    [HttpPost("dns")]
+    [Authorize]
+    public async Task<IActionResult> AddDns([FromBody] DnsForm form)
+    {
+        bool status = canAddService(form, out Guid groupGuid, out string serviceTypeName);
+        if (!status)
             return Forbid();
 
         DnsService dnsService = new DnsService()
         {
             Description = form.Description,
-            GroupId = groupId,
-            Host = form.Host,
+            GroupId = groupGuid,
             Name = form.Name,
-            Result = form.Result,
+            Host = form.Host,
+            ServiceTypeName = serviceTypeName,
+            //Specific to dns
             Type = form.Type,
-            ServiceTypeName = serviceTypeName
+            Result = form.Result,
+
         };
         Service service = await _serviceService.Insert(dnsService);
         return Ok(new DnsServiceModel(dnsService, HistoryState.Unknown, Url));
+    }
+
+    [HttpPost("http")]
+    public async Task<IActionResult> AddHttpService([FromBody]HttpForm form)
+    {
+        bool status = canAddService(form, out Guid groupGuid, out string serviceTypeName);
+        if (!status)
+            return Forbid();
+
+        HttpService httpService = new HttpService()
+        {
+            Description = form.Description,
+            GroupId = groupGuid,
+            Name = form.Name,
+            Host = form.Host,
+            ServiceTypeName = serviceTypeName,
+            //Specific to HTTP
+            Port = form.Port,
+            Code = form.Code,
+            RedirectUrl = form.RedirectUrl
+        };
+
+        Service service = await _serviceService.Insert(httpService);
+        return Ok(new HttpServiceModel(httpService, HistoryState.Unknown, Url));
     }
 
     [HttpGet, Route("checks")]
