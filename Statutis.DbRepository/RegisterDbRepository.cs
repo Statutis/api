@@ -16,10 +16,7 @@ public static class RegisterDbRepository
 		service.AddScoped<IServiceRepository, ServiceRepository>();
 		service.AddScoped<ITeamRepository, TeamRepository>();
 		service.AddScoped<IUserRepository, UserRepository>();
-		service.AddScoped<IDnsServiceRepository, DnsServiceRepository>();
 		service.AddScoped<IGroupRepository, GroupRepository>();
-		service.AddScoped<IHttpServiceRepository, HttpServiceRepository>();
-		service.AddScoped<IPingServiceRepository, PingServiceRepository>();
 		service.AddScoped<IHistoryEntryRepository, HistoryEntryRepository>();
 	}
 }
