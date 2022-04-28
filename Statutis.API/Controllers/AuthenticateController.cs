@@ -6,6 +6,7 @@ using Statutis.Core.Interfaces.Business;
 
 namespace Statutis.API.Controllers;
 
+[Tags("Authentification")]
 [ApiController]
 [Route("api/auth")]
 public class AuthenticateController : Controller
@@ -21,6 +22,12 @@ public class AuthenticateController : Controller
         _authService = authService;
     }
 
+    
+    /// <summary>
+    /// Connection d'un utilisateur
+    /// </summary>
+    /// <param name="form">Formulaire de connexion</param>
+    /// <returns>Token</returns>
     [HttpPost]
     [Route("login")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginModel))]
@@ -44,6 +51,11 @@ public class AuthenticateController : Controller
         return Ok(new LoginModel(token, true, null, Url));
     }
 
+    
+    /// <summary>
+    /// Rafraichissement d'un token
+    /// </summary>
+    /// <returns>Nouveau token</returns>
     [HttpPost]
     [Authorize]
     [Route("refresh")]
@@ -65,6 +77,12 @@ public class AuthenticateController : Controller
         return Ok(new LoginModel(newToken, true, null, Url));
     }
     
+    
+    /// <summary>
+    /// Enregistrement d'un nouvel utilisateur
+    /// </summary>
+    /// <param name="registrationForm">Informations sur ce nouvel utilisateur</param>
+    /// <returns></returns>
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegistrationForm registrationForm)
     {
