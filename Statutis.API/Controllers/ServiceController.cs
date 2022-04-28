@@ -143,6 +143,37 @@ public class ServiceController : Controller
 		Service service = await _serviceService.Insert(pingService);
 		return Ok(new PingServiceModel(pingService, HistoryState.Unknown, Url));
 	}
+	
+	
+	/// <summary>
+	/// Ajout d'un service avec un mode de vérification par AtlassianStatusPage
+	/// </summary>
+	/// <param name="form">Informations sur ce nouveau service</param>
+	/// <returns>Le nouveau service avec un mode de vérification par AtlassianStatusPage</returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
+	/// <response code="403">Si l'utilisateur courant n'a pas les droits sur le groupe cible.</response>
+	[HttpPost, Route("atlassian_status_page"), Authorize]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AtlassianStatusPageModel))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	public async Task<IActionResult> AddAtlassianStatusPageService([FromBody] AtlassianStatusPageForm form)
+	{
+		bool status = CanAddService(form, out Guid groupGuid, out string serviceTypeName);
+		if (!status)
+			return Forbid();
+
+		AtlassianStatusPageService atlassianService = new AtlassianStatusPageService()
+		{
+			Description = form.Description,
+			GroupId = groupGuid,
+			Name = form.Name,
+			Host = form.Host,
+			ServiceTypeName = serviceTypeName,
+		};
+
+		Service service = await _serviceService.Insert(atlassianService);
+		return Ok(new AtlassianStatusPageModel(atlassianService, HistoryState.Unknown, Url));
+	}
 
 	/// <summary>
 	/// Récupération des modes de vérifications

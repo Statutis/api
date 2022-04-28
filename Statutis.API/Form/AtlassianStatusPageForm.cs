@@ -5,5 +5,5 @@ namespace Statutis.API.Form;
 /// </summary>
 public class AtlassianStatusPageForm : ServiceForm
 {
-	public String JsonUrl { get; set; }
+	
 }
