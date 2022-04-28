@@ -106,6 +106,26 @@ public class ServiceController : Controller
         return Ok(new HttpServiceModel(httpService, HistoryState.Unknown, Url));
     }
 
+    [HttpPost, Route("ping")]
+    public async Task<IActionResult> AddPingService([FromBody] PingForm form)
+    {
+        bool status = canAddService(form, out Guid groupGuid, out string serviceTypeName);
+        if (!status)
+            return Forbid();
+        
+        PingService pingService = new PingService()
+        {
+            Description = form.Description,
+            GroupId = groupGuid,
+            Name = form.Name,
+            Host = form.Host,
+            ServiceTypeName = serviceTypeName,
+        };
+
+        Service service = await _serviceService.Insert(pingService);
+        return Ok(new PingServiceModel(pingService, HistoryState.Unknown, Url));
+    }
+
     [HttpGet, Route("checks")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<String>))]
     public Task<IActionResult> GetCheckType()
