@@ -31,7 +31,24 @@
 
     <ItemGroup>
       <None Remove="Content\favicon.png" />
-      <EmbeddedResource Include="Content\favicon.png" />
+      <EmbeddedResource Include="Content\favicon.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Content\favicon_white.png" />
+      <EmbeddedResource Include="Content\favicon_white.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Content\favicon.svg" />
+      <EmbeddedResource Include="Content\favicon.svg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Content\css.css" />
+      <Content Include="Content\css.css">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
