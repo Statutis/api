@@ -212,13 +212,16 @@ public class GroupController : Controller
 	/// Récupération d'un avatar d'un groupe
 	/// </summary>
 	/// <param name="guid">Identifiant du groupe cible</param>
+	/// <remarks>Lorsque l'on est pas authetifier, il n'est possible de récupérer que les avatars des groupes publics</remarks>
 	/// <returns></returns>
 	/// <response code="404">Si le groupe visé n'existe pas ou qu'il ne dispose pas d'avatar.</response>
+	/// <response code="403">Vous ne disposez pas des droits suffisant.</response>
 	[HttpGet]
 	[AllowAnonymous]
 	[Route("avatar/{guid}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> GetAvatar(Guid guid)
 	{
 		var targetGroup = await _groupService.Get(guid);
@@ -236,8 +239,11 @@ public class GroupController : Controller
 	/// <param name="guid">Identifiant du groupe cible</param>
 	/// <param name="form">Informations sur le nouvel avatar (null si l'on souhaite supprimer celui courant)</param>
 	/// <returns></returns>
+	/// 
+	/// <remarks>Il n'est possible de modifier l'avatar que si l'utilisateur à un accès</remarks>
 	/// <response code="404">Si le groupe visé n'existe pas.</response>
 	/// <response code="401">Si vous n'êtes pas authentifié.</response>
+	/// <response code="403">Vous ne disposez pas des droits suffisant.</response>
 	[HttpPut, Authorize]
 	[Authorize]
 	[Route("avatar/{guid}")]
@@ -255,7 +261,7 @@ public class GroupController : Controller
 		var userGroups = await _groupService.GetFromUser(user);
 
 		if (targetGroup == null || (user.Roles != "ROLE_ADMIN" && userGroups.Contains(targetGroup)))
-			return NotFound();
+			return Forbid();
 
 
 		if (form == null)
