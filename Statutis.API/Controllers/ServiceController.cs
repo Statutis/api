@@ -1,3 +1,5 @@
+using System.Text.Encodings.Web;
+using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Statutis.API.Form;
@@ -51,8 +53,10 @@ public class ServiceController : Controller
         }
 
         serviceTypeName = form.ServiceTypeRef.Split("/").Last();
-
-        if (_serviceTypeService.Get(serviceTypeName).Result == null)
+        
+        
+        
+        if (_serviceTypeService.Get(Uri.UnescapeDataString(serviceTypeName)).Result == null)
             return false;
 
         return true;
@@ -85,6 +89,7 @@ public class ServiceController : Controller
     [HttpPost("http")]
     public async Task<IActionResult> AddHttpService([FromBody]HttpForm form)
     {
+        form.ServiceTypeRef = Uri.UnescapeDataString(form.ServiceTypeRef);
         bool status = canAddService(form, out Guid groupGuid, out string serviceTypeName);
         if (!status)
             return Forbid();
