@@ -20,7 +20,6 @@ public static class RegisterDbRepository
 		service.AddScoped<IGroupRepository, GroupRepository>();
 		service.AddScoped<IHttpServiceRepository, HttpServiceRepository>();
 		service.AddScoped<IPingServiceRepository, PingServiceRepository>();
-		service.AddScoped<ISshServiceRepository, SshServiceRepository>();
 		service.AddScoped<IHistoryEntryRepository, HistoryEntryRepository>();
 	}
 }

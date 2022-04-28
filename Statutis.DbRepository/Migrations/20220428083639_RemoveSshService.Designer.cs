@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Statutis.DbRepository;
@@ -11,9 +12,10 @@ using Statutis.DbRepository;
 namespace Statutis.DbRepository.Migrations
 {
     [DbContext(typeof(StatutisContext))]
-    partial class StatutisContextModelSnapshot : ModelSnapshot
+    [Migration("20220428083639_RemoveSshService")]
+    partial class RemoveSshService
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
