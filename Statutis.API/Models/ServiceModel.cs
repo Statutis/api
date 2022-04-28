@@ -89,6 +89,12 @@ public class ServiceModel
 		HistoryRef = urlHelper.Action("Get","History", new {Guid = service.ServiceId}) ?? String.Empty;
 	}
 
+	/// <summary>
+	/// Constructeur
+	/// </summary>
+	/// <param name="service"></param>
+	/// <param name="entry"></param>
+	/// <param name="urlHelper"></param>
 	public ServiceModel(Service service, HistoryEntry entry, IUrlHelper urlHelper) : this(service, entry.State, urlHelper)
 	{
 		LastCheck = entry.DateTime;

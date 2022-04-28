@@ -50,6 +50,11 @@ public class UserModel
 	/// </summary>
 	public List<String> TeamsRef { get; set; }
 
+	/// <summary>
+	/// Constructeur
+	/// </summary>
+	/// <param name="user"></param>
+	/// <param name="url"></param>
 	public UserModel(User user, IUrlHelper url)
 	{
 		Ref = url.Action("GetByEmail", "User", new { email = user.Email }) ?? String.Empty;
