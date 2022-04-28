@@ -18,6 +18,7 @@ public class StatutisContext : DbContext
 	public DbSet<HttpService> HttpService { get; set; } = null!;
 	public DbSet<DnsService> DnsService { get; set; } = null!;
 	public DbSet<PingService> PingService { get; set; } = null!;
+	public DbSet<AtlassianStatusPage> AtlassianStatusPage { get; set; } = null!;
 	public DbSet<HistoryEntry> History { get; set; } = null!;
 
 	public StatutisContext()
@@ -49,6 +50,7 @@ public class StatutisContext : DbContext
 		modelBuilder.Entity<HttpService>().ToTable(nameof (HttpService));
 		modelBuilder.Entity<DnsService>().ToTable(nameof (DnsService));
 		modelBuilder.Entity<PingService>().ToTable(nameof (PingService));
+		modelBuilder.Entity<AtlassianStatusPage>().ToTable(nameof (AtlassianStatusPage));
 		
 		modelBuilder.Entity<Group>(m =>
 		{
