@@ -12,7 +12,7 @@ using Statutis.DbRepository;
 namespace Statutis.DbRepository.Migrations
 {
     [DbContext(typeof(StatutisContext))]
-    [Migration("20220428154705_AddAtlassianStatusPage")]
+    [Migration("20220428160716_AddAtlassianStatusPage")]
     partial class AddAtlassianStatusPage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -333,10 +333,6 @@ namespace Statutis.DbRepository.Migrations
             modelBuilder.Entity("Statutis.Entity.Service.Check.AtlassianStatusPageService", b =>
                 {
                     b.HasBaseType("Statutis.Entity.Service.Service");
-
-                    b.Property<string>("JsonUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.ToTable("AtlassianStatusPageService", (string)null);
                 });

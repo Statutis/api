@@ -13,8 +13,7 @@ namespace Statutis.DbRepository.Migrations
                 name: "AtlassianStatusPageService",
                 columns: table => new
                 {
-                    ServiceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    JsonUrl = table.Column<string>(type: "text", nullable: false)
+                    ServiceId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {

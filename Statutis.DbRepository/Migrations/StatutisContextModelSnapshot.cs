@@ -332,10 +332,6 @@ namespace Statutis.DbRepository.Migrations
                 {
                     b.HasBaseType("Statutis.Entity.Service.Service");
 
-                    b.Property<string>("JsonUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.ToTable("AtlassianStatusPageService", (string)null);
                 });
 
