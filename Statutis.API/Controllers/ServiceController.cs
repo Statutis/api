@@ -58,7 +58,8 @@ public class ServiceController : Controller
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> AddDns([FromBody] DnsForm form)
 	{
-		bool status = CanAddService(form, out Guid groupGuid, out string serviceTypeName);
+		form.ServiceTypeRef = Uri.UnescapeDataString(form.ServiceTypeRef);
+        bool status = CanAddService(form, out Guid groupGuid, out string serviceTypeName);
 		if (!status)
 			return Forbid();
 
@@ -127,7 +128,8 @@ public class ServiceController : Controller
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> AddPingService([FromBody] PingForm form)
 	{
-		bool status = CanAddService(form, out Guid groupGuid, out string serviceTypeName);
+		form.ServiceTypeRef = Uri.UnescapeDataString(form.ServiceTypeRef);
+        bool status = CanAddService(form, out Guid groupGuid, out string serviceTypeName);
 		if (!status)
 			return Forbid();
 
