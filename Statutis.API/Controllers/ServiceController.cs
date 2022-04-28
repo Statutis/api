@@ -42,8 +42,20 @@ public class ServiceController : Controller
 		_serviceTypeService = serviceTypeService;
 	}
 
-	[HttpPost("add/dns")]
+	/// <summary>
+	/// Ajout d'un service DNS
+	/// </summary>
+	/// <param name="form">Informations sur le service</param>
+	/// <returns>Un service DNS</returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
+	/// <response code="404">Si la référence vers le groupe ou le type de service ne sont pas trouvés.</response>
+	/// <response code="403">Si l'utilisateur courant n'a pas les droits sur le groupe cible.</response>
+	[HttpPost("dns")]
 	[Authorize]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DnsServiceModel))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> Add([FromBody] DnsForm form)
 	{
 		if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
@@ -51,12 +63,12 @@ public class ServiceController : Controller
 
 		User? user = await _userService.GetUserAsync(User);
 		if (user == null)
-			return Forbid();
+			return Unauthorized();
 
 		bool canParse = Guid.TryParse(form.GroupRef.Split("/").Last(), out Guid groupId);
 
 		if (!canParse)
-			return Forbid();
+			return NotFound();
 
 		if (!(await _userService.isUserInGroup(user, groupId)))
 		{
@@ -66,7 +78,7 @@ public class ServiceController : Controller
 		string serviceTypeName = form.ServiceTypeRef.Split("/").Last();
 
 		if (await _serviceTypeService.Get(serviceTypeName) == null)
-			return Forbid();
+			return NotFound();
 
 		DnsService dnsService = new DnsService()
 		{
@@ -82,6 +94,10 @@ public class ServiceController : Controller
 		return Ok(new DnsServiceModel(dnsService, HistoryState.Unknown, Url));
 	}
 
+	/// <summary>
+	/// Récupération des modes de vérifications
+	/// </summary>
+	/// <returns>Liste des modes de vérifications</returns>
 	[HttpGet, Route("checks")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<String>))]
 	public Task<IActionResult> GetCheckType()
@@ -90,6 +106,10 @@ public class ServiceController : Controller
 			{ DnsService.CheckType, HttpService.CheckType, PingService.CheckType }));
 	}
 
+	/// <summary>
+	/// Récupération de l'état global
+	/// </summary>
+	/// <returns></returns>
 	[HttpGet, Route("state")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MainStateModel))]
 	public async Task<IActionResult> GetAll()
@@ -98,20 +118,28 @@ public class ServiceController : Controller
 		return Ok(new MainStateModel() { State = res.Item1, LastUpdate = res.Item2 });
 	}
 
-	[HttpGet, Route("{guid}")]
-	// [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MainStateModel))]
+	/// <summary>
+	/// Récupération d'un service
+	/// </summary>
+	/// <param name="guid">Identifiant du service cible</param>
+	/// <returns>Un service</returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
+	/// <response code="404">Si le service n'est pas trouvé.</response>
+	/// <response code="403">Si l'utilisateur courant n'a pas les droits sur le groupe cible.</response>
+	[HttpGet, Route("{guid}"), Authorize]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ServiceModel))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> Get(Guid guid)
 	{
 		var res = await _serviceService.Get(guid);
-
-		if (User.Identity is { IsAuthenticated: false })
-		{
-			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
-		}
-
+		if (res == null)
+			return NotFound();
+		
 		var user = await _userService.GetUserAsync(User);
 		if (user == null || _userService.IsUserInTeam(user, res.Group.Teams))
-			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
+			return Forbid();
 
 		return Ok(new ServiceModel(res, res.HistoryEntries.Last(), Url));
 	}
