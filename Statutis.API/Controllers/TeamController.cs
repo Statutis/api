@@ -52,7 +52,7 @@ public class TeamController : Controller
 			return Forbid();
 
 		var user = await _userService.GetUserAsync(User);
-		if (user.Roles != "ROLE_ADMIN" && !team.Users.Contains(user))
+		if (user == null || user.Roles != "ROLE_ADMIN" && !team.Users.Contains(user))
 			return Forbid();
 
 		team.Name = form.Name;
@@ -91,7 +91,7 @@ public class TeamController : Controller
 			return Forbid();
 
 		var user = await _userService.GetUserAsync(User);
-		if (user.Roles != "ROLE_ADMIN" && !team.Users.Contains(user))
+		if (user != null && user.Roles != "ROLE_ADMIN" && !team.Users.Contains(user))
 			team.Users.Add(user);
 
 		await _teamService.Add(team);
@@ -112,7 +112,7 @@ public class TeamController : Controller
 			return Forbid();
 
 		var user = await _userService.GetUserAsync(User);
-		if (user.Roles != "ROLE_ADMIN" && !team.Users.Contains(user))
+		if (user != null && user.Roles != "ROLE_ADMIN" && !team.Users.Contains(user))
 			return Forbid();
 
 

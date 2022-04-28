@@ -192,7 +192,7 @@ public class UserController : Controller
 	public async Task<IActionResult> GetAvatar(String email)
 	{
 		var targetUser = await _userService.GetByEmail(email);
-		if (targetUser.Avatar == null || targetUser.AvatarContentType == null)
+		if (targetUser == null || targetUser.Avatar == null || targetUser.AvatarContentType == null)
 			return NotFound();
 		return File(targetUser.Avatar, targetUser.AvatarContentType);
 	}

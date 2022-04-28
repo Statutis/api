@@ -38,7 +38,8 @@ public class GroupController : Controller
 		if (HttpContext.User.Identity?.IsAuthenticated ?? false)
 		{
 			var user = await _userService.GetUserAsync(User);
-			res.AddRange(await _groupService.GetFromUser(user));
+			if (user != null)
+				res.AddRange(await _groupService.GetFromUser(user));
 		}
 
 		return Ok(
@@ -64,6 +65,9 @@ public class GroupController : Controller
 
 
 			var user = await _userService.GetUserAsync(User);
+			if (user == null)
+				return Forbid();
+
 			var teamUserId = user.Teams.Select(x => x.TeamId);
 			if (!group.Teams.Any(x => teamUserId.Contains(x.TeamId)))
 				return Forbid();
@@ -89,6 +93,9 @@ public class GroupController : Controller
 
 
 		var user = await _userService.GetUserAsync(User);
+		if (user == null)
+			return Forbid();
+
 		var teamUserId = user.Teams.Select(x => x.TeamId);
 		if (!group.Teams.Any(x => teamUserId.Contains(x.TeamId)))
 			return Forbid();
@@ -137,7 +144,7 @@ public class GroupController : Controller
 		return Ok(new GroupModel(group, histories, Url));
 
 	}
-	
+
 	[HttpDelete, Route("{guid}"), Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -153,18 +160,21 @@ public class GroupController : Controller
 
 
 		var user = await _userService.GetUserAsync(User);
+		if (user == null)
+			return Forbid();
+		
 		var teamUserId = user.Teams.Select(x => x.TeamId);
 		if (!group.Teams.Any(x => teamUserId.Contains(x.TeamId)))
 			return Forbid();
 
 
 		await _groupService.Delete(group);
-			
-		
+
+
 		return Ok();
 
 	}
-	
+
 	[HttpGet]
 	[AllowAnonymous]
 	[Route("avatar/{guid}")]
@@ -195,7 +205,7 @@ public class GroupController : Controller
 
 		var targetGroup = await _groupService.Get(guid);
 		var userGroups = await _groupService.GetFromUser(user);
-		
+
 		if (targetGroup == null || (user.Roles != "ROLE_ADMIN" && userGroups.Contains(targetGroup)))
 			return NotFound();
 
@@ -220,6 +230,6 @@ public class GroupController : Controller
 
 		return Ok();
 	}
-	
+
 
 }

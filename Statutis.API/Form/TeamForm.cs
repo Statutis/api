@@ -4,7 +4,7 @@ namespace Statutis.API.Form;
 
 public class TeamForm
 {
-	public String Name { get; set; }
+	public String Name { get; set; }= String.Empty;
 
 	[StringLength(maximumLength: 10)]
 	public String? Color { get; set; } = null;

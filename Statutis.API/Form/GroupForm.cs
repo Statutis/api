@@ -5,9 +5,9 @@ namespace Statutis.API.Form;
 public class GroupForm
 {
 	[StringLength(maximumLength: 30), Required]
-	public String Name { get; set; }
+	public String Name { get; set; }= String.Empty;
 
-	public String Description { get; set; }
+	public String Description { get; set; }= String.Empty;
 
 	public List<String> Teams { get; set; } = new List<String>();
 
