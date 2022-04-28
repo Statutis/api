@@ -1,6 +1,6 @@
 namespace Statutis.Entity.Service.Check;
 
-public class AtlassianStatusPage : Service
+public class AtlassianStatusPageService : Service
 {
 	public const String CheckType = "Atlassian Status Page";
 

@@ -12,7 +12,7 @@ using Statutis.DbRepository;
 namespace Statutis.DbRepository.Migrations
 {
     [DbContext(typeof(StatutisContext))]
-    [Migration("20220428153728_AddAtlassianStatusPage")]
+    [Migration("20220428154705_AddAtlassianStatusPage")]
     partial class AddAtlassianStatusPage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -330,7 +330,7 @@ namespace Statutis.DbRepository.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Statutis.Entity.Service.Check.AtlassianStatusPage", b =>
+            modelBuilder.Entity("Statutis.Entity.Service.Check.AtlassianStatusPageService", b =>
                 {
                     b.HasBaseType("Statutis.Entity.Service.Service");
 
@@ -338,7 +338,7 @@ namespace Statutis.DbRepository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.ToTable("AtlassianStatusPage", (string)null);
+                    b.ToTable("AtlassianStatusPageService", (string)null);
                 });
 
             modelBuilder.Entity("Statutis.Entity.Service.Check.DnsService", b =>
@@ -483,11 +483,11 @@ namespace Statutis.DbRepository.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Statutis.Entity.Service.Check.AtlassianStatusPage", b =>
+            modelBuilder.Entity("Statutis.Entity.Service.Check.AtlassianStatusPageService", b =>
                 {
                     b.HasOne("Statutis.Entity.Service.Service", null)
                         .WithOne()
-                        .HasForeignKey("Statutis.Entity.Service.Check.AtlassianStatusPage", "ServiceId")
+                        .HasForeignKey("Statutis.Entity.Service.Check.AtlassianStatusPageService", "ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

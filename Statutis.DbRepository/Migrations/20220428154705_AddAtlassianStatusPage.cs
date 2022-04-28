@@ -10,7 +10,7 @@ namespace Statutis.DbRepository.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AtlassianStatusPage",
+                name: "AtlassianStatusPageService",
                 columns: table => new
                 {
                     ServiceId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -18,9 +18,9 @@ namespace Statutis.DbRepository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AtlassianStatusPage", x => x.ServiceId);
+                    table.PrimaryKey("PK_AtlassianStatusPageService", x => x.ServiceId);
                     table.ForeignKey(
-                        name: "FK_AtlassianStatusPage_Service_ServiceId",
+                        name: "FK_AtlassianStatusPageService_Service_ServiceId",
                         column: x => x.ServiceId,
                         principalTable: "Service",
                         principalColumn: "ServiceId",
@@ -31,7 +31,7 @@ namespace Statutis.DbRepository.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AtlassianStatusPage");
+                name: "AtlassianStatusPageService");
         }
     }
 }
