@@ -45,22 +45,20 @@ public class ServiceController : Controller
 	}
 
 	/// <summary>
-	/// Ajout d'un service DNS
+	/// Ajout d'un service avec un mode de vérification par DNS
 	/// </summary>
-	/// <param name="form">Informations sur le service</param>
-	/// <returns>Un service DNS</returns>
+	/// <param name="form">Informations sur ce nouveau service</param>
+	/// <returns>Le nouveau service avec un mode de vérification par DNS</returns>
 	/// <response code="401">Si vous n'êtes pas authentifié.</response>
-	/// <response code="404">Si la référence vers le groupe ou le type de service ne sont pas trouvés.</response>
 	/// <response code="403">Si l'utilisateur courant n'a pas les droits sur le groupe cible.</response>
 	[HttpPost("dns")]
 	[Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DnsServiceModel))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> AddDns([FromBody] DnsForm form)
 	{
-		bool status = canAddService(form, out Guid groupGuid, out string serviceTypeName);
+		bool status = CanAddService(form, out Guid groupGuid, out string serviceTypeName);
 		if (!status)
 			return Forbid();
 
@@ -80,56 +78,78 @@ public class ServiceController : Controller
 		return Ok(new DnsServiceModel(dnsService, HistoryState.Unknown, Url));
 	}
 
+	
+
+	/// <summary>
+	/// Ajout d'un service avec un mode de vérification par HTTP
+	/// </summary>
+	/// <param name="form">Informations sur ce nouveau service</param>
+	/// <returns>Le nouveau service avec un mode de vérification par HTTP</returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
+	/// <response code="403">Si l'utilisateur courant n'a pas les droits sur le groupe cible.</response>
+	[HttpPost("http"), Authorize]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HttpServiceModel))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	public async Task<IActionResult> AddHttpService([FromBody] HttpForm form)
+	{
+		form.ServiceTypeRef = Uri.UnescapeDataString(form.ServiceTypeRef);
+		bool status = CanAddService(form, out Guid groupGuid, out string serviceTypeName);
+		if (!status)
+			return Forbid();
+
+		HttpService httpService = new HttpService()
+		{
+			Description = form.Description,
+			GroupId = groupGuid,
+			Name = form.Name,
+			Host = form.Host,
+			ServiceTypeName = serviceTypeName,
+			//Specific to HTTP
+			Port = form.Port,
+			Code = form.Code,
+			RedirectUrl = form.RedirectUrl
+		};
+
+		Service service = await _serviceService.Insert(httpService);
+		return Ok(new HttpServiceModel(httpService, HistoryState.Unknown, Url));
+	}
+
+	/// <summary>
+	/// Ajout d'un service avec un mode de vérification par PING
+	/// </summary>
+	/// <param name="form">Informations sur ce nouveau service</param>
+	/// <returns>Le nouveau service avec un mode de vérification par PING</returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
+	/// <response code="403">Si l'utilisateur courant n'a pas les droits sur le groupe cible.</response>
+	[HttpPost, Route("ping"), Authorize]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PingServiceModel))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	public async Task<IActionResult> AddPingService([FromBody] PingForm form)
+	{
+		bool status = CanAddService(form, out Guid groupGuid, out string serviceTypeName);
+		if (!status)
+			return Forbid();
+
+		PingService pingService = new PingService()
+		{
+			Description = form.Description,
+			GroupId = groupGuid,
+			Name = form.Name,
+			Host = form.Host,
+			ServiceTypeName = serviceTypeName,
+		};
+
+		Service service = await _serviceService.Insert(pingService);
+		return Ok(new PingServiceModel(pingService, HistoryState.Unknown, Url));
+	}
+
 	/// <summary>
 	/// Récupération des modes de vérifications
 	/// </summary>
-	/// <returns>Liste des modes de vérifications</returns>
-	[HttpPost("http")]
-    public async Task<IActionResult> AddHttpService([FromBody]HttpForm form)
-    {
-        form.ServiceTypeRef = Uri.UnescapeDataString(form.ServiceTypeRef);
-        bool status = canAddService(form, out Guid groupGuid, out string serviceTypeName);
-        if (!status)
-            return Forbid();
-
-        HttpService httpService = new HttpService()
-        {
-            Description = form.Description,
-            GroupId = groupGuid,
-            Name = form.Name,
-            Host = form.Host,
-            ServiceTypeName = serviceTypeName,
-            //Specific to HTTP
-            Port = form.Port,
-            Code = form.Code,
-            RedirectUrl = form.RedirectUrl
-        };
-
-        Service service = await _serviceService.Insert(httpService);
-        return Ok(new HttpServiceModel(httpService, HistoryState.Unknown, Url));
-    }
-
-    [HttpPost, Route("ping")]
-    public async Task<IActionResult> AddPingService([FromBody] PingForm form)
-    {
-        bool status = canAddService(form, out Guid groupGuid, out string serviceTypeName);
-        if (!status)
-            return Forbid();
-        
-        PingService pingService = new PingService()
-        {
-            Description = form.Description,
-            GroupId = groupGuid,
-            Name = form.Name,
-            Host = form.Host,
-            ServiceTypeName = serviceTypeName,
-        };
-
-        Service service = await _serviceService.Insert(pingService);
-        return Ok(new PingServiceModel(pingService, HistoryState.Unknown, Url));
-    }
-
-    [HttpGet, Route("checks")]
+	/// <returns>Liste de modes de vérifications</returns>
+	[HttpGet, Route("checks")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<String>))]
 	public Task<IActionResult> GetCheckType()
 	{
@@ -167,38 +187,47 @@ public class ServiceController : Controller
 		var res = await _serviceService.Get(guid);
 		if (res == null)
 			return NotFound();
-		
+
 		var user = await _userService.GetUserAsync(User);
 		if (user == null || _userService.IsUserInTeam(user, res.Group.Teams))
 			return Forbid();
 
 		return Ok(new ServiceModel(res, res.HistoryEntries.Last(), Url));
 	}
-	
-	private bool canAddService(ServiceForm form, out Guid groupGuid, out string serviceTypeName)
+
+
+	/// <summary>
+	/// Vérification si il est possible d'ajouter un utilisateur
+	/// </summary>
+	/// <param name="form">Formulaire du service</param>
+	/// <param name="groupGuid">Groupe cible</param>
+	/// <param name="serviceTypeName">Type de service cible</param>
+	/// <returns></returns>
+	private bool CanAddService(ServiceForm form, out Guid groupGuid, out string serviceTypeName)
 	{
 		groupGuid = new Guid();
 		serviceTypeName = "";
-        
+
 		if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
 			return false;
 
-		User user = _userService.GetUserAsync(User).Result;
+		User? user = _userService.GetUserAsync(User).Result;
+		if (user == null)
+			return false;
 
 		bool canParse = Guid.TryParse(form.GroupRef.Split("/").Last(), out groupGuid);
 
 		if (!canParse)
 			return false;
-        
+
 		if (!(_userService.isUserInGroup(user, groupGuid).Result))
 		{
 			return false;
 		}
 
 		serviceTypeName = form.ServiceTypeRef.Split("/").Last();
-        
-        
-        
+
+
 		if (_serviceTypeService.Get(Uri.UnescapeDataString(serviceTypeName)).Result == null)
 			return false;
 
