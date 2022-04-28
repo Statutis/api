@@ -9,7 +9,7 @@ using Statutis.Entity.History;
 namespace Statutis.API.Controllers;
 
 /// <summary>
-/// Controlleur sur l'historique des services
+/// Controleur sur l'historique des services
 /// </summary>
 [Tags("Historique")]
 [Route("api/history")]

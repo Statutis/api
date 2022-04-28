@@ -57,7 +57,7 @@ public class TeamModel
 	
 	
 	/// <summary>
-	/// Références vers l'avatar de cette équipe 
+	/// Référence vers l'avatar de cette équipe 
 	/// </summary>
 	public String? AvatarRef { get; }
 }

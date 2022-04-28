@@ -15,7 +15,7 @@ using Statutis.Entity.Service.Check;
 namespace Statutis.API.Controllers;
 
 /// <summary>
-/// Controlleur sur les services
+/// Controleur sur les services
 /// </summary>
 [Route("api/services")]
 [ApiController]
@@ -196,7 +196,7 @@ public class ServiceController : Controller
 
 
 	/// <summary>
-	/// Vérification si il est possible d'ajouter un utilisateur
+	/// Vérification s'il est possible d'ajouter un utilisateur
 	/// </summary>
 	/// <param name="form">Formulaire du service</param>
 	/// <param name="groupGuid">Groupe cible</param>

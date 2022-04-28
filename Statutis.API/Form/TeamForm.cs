@@ -21,7 +21,7 @@ public class TeamForm
 	public String? Color { get; set; } = null;
 	
 	/// <summary>
-	/// Liste de référence d'utilisateurs
+	/// Liste de références d'utilisateurs
 	/// </summary>
 	public List<String> Users { get; set; } = new List<String>();
 }

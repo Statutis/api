@@ -9,7 +9,7 @@ namespace Statutis.API.Controllers;
 
 
 /// <summary>
-/// Controlleur sur les équipes
+/// Controleur sur les équipes
 /// </summary>
 [Tags("Equipe")]
 [Route("api/teams/")]
@@ -33,7 +33,7 @@ public class TeamController : Controller
 	/// <summary>
 	/// Récupération de toutes les équipes
 	/// </summary>
-	/// <remarks>Si pas authentifié, récupération seulement des éuipes publiques, sinon récupération de toutes les équipes existantes.</remarks>
+	/// <remarks>Si pas authentifié, récupération seulement des équipes publiques, sinon récupération de toutes les équipes existantes.</remarks>
 	/// <returns>Liste d'équipes</returns>
 	[HttpGet, Route("")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TeamModel))]
@@ -44,13 +44,13 @@ public class TeamController : Controller
 	}
 
 	/// <summary>
-	/// Récupération d'une équipes
+	/// Récupération d'une équipe
 	/// </summary>
 	/// <param name="guid">Identifiant de l'équipe cible</param>
-	/// <remarks>Si pas authentifié, récupération possible seulement des éuipes publiques, sinon pas de limitations.</remarks>
-	/// <returns>Une équipes</returns>
+	/// <remarks>Si pas authentifié, récupération possible seulement des équipes publiques, sinon pas de limitations.</remarks>
+	/// <returns>Une équipe</returns>
 	/// <response code="404">Si l'équipe visée n'existe pas.</response>
-	/// <response code="403">Vous ne disposez pas des droits suffisant.</response>
+	/// <response code="403">Vous ne disposez pas des droits suffisants.</response>
 	[HttpGet, Route("{guid}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TeamModel))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -64,16 +64,16 @@ public class TeamController : Controller
 	}
 
 	/// <summary>
-	/// Mise à jour d'une équipes
+	/// Mise à jour d'une équipe
 	/// </summary>
 	/// <param name="guid">Identifiant de l'équipe cible</param>
 	/// <param name="form">Nouvelles informations sur l'équipe</param>
 	/// <remarks>
-	/// Pour pouvoir modifier une équipes il faut soit être administrateur, soit être membre de cette équipe.
+	/// Pour pouvoir modifier une équipe il faut soit être administrateur, soit être membre de cette équipe.
 	/// </remarks>
-	/// <returns>Une équipes</returns>
+	/// <returns>Une équipe</returns>
 	/// <response code="404">Si l'équipe visée n'existe pas.</response>
-	/// <response code="403">Vous ne disposez pas des droits suffisant.</response>
+	/// <response code="403">Vous ne disposez pas des droits suffisants.</response>
 	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	[HttpPut, Route("{guid}"), Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TeamModel))]
@@ -113,10 +113,10 @@ public class TeamController : Controller
 	}
 
 	/// <summary>
-	/// Ajout d'une équipes
+	/// Ajout d'une équipe
 	/// </summary>
 	/// <param name="form">Nouvelles informations de la nouvelle équipe</param>
-	/// <returns>Une équipes</returns>
+	/// <returns>Une équipe</returns>
 	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	[HttpPost, Route(""), Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TeamModel))]
@@ -143,14 +143,14 @@ public class TeamController : Controller
 	}
 
 	/// <summary>
-	/// Suppression d'une équipes
+	/// Suppression d'une équipe
 	/// </summary>
 	/// <param name="guid">Identifiant de l'équipe cible</param>
 	/// <remarks>
-	/// Pour pouvoir supprimer une équipes il faut soit être administrateur, soit être membre de cette équipe.
+	/// Pour pouvoir supprimer une équipe il faut soit être administrateur, soit être membre de cette équipe.
 	/// </remarks>
 	/// <response code="404">Si l'équipe visée n'existe pas.</response>
-	/// <response code="403">Vous ne disposez pas des droits suffisant.</response>
+	/// <response code="403">Vous ne disposez pas des droits suffisants.</response>
 	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	[HttpDelete, Route("{guid}"), Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK)]
@@ -182,10 +182,10 @@ public class TeamController : Controller
 	/// <param name="guid">Identifiant d'une équipe cible</param>
 	/// <returns>Avatar de l'équipe</returns>
 	/// <remarks>
-	/// Pour pouvoir modifier l'avatar d'une équipes il faut soit être administrateur, soit être membre de cette équipe.
+	/// Pour pouvoir modifier l'avatar d'une équipe il faut soit être administrateur, soit être membre de cette équipe.
 	/// </remarks>
 	/// <response code="404">Si l'équipe visée n'existe pas ou qu'elle ne dispose pas d'avatar.</response>
-	/// <response code="403">Vous ne disposez pas des droits suffisant.</response>
+	/// <response code="403">Vous ne disposez pas des droits suffisants.</response>
 	[HttpGet]
 	[AllowAnonymous]
 	[Route("avatar/{guid}")]
@@ -210,7 +210,7 @@ public class TeamController : Controller
 	/// <param name="form">Informations sur le nouvel avatar (null si l'on souhaite supprimer celui courant)</param>
 	/// <returns></returns>
 	/// <response code="404">Si l'équipe visée n'existe pas.</response>
-	/// <response code="403">Vous ne disposez pas des droits suffisant.</response>
+	/// <response code="403">Vous ne disposez pas des droits suffisants.</response>
 	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	[HttpPut, Authorize]
 	[Authorize]

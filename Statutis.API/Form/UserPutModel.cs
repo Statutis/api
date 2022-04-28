@@ -4,7 +4,7 @@ namespace Statutis.API.Form;
 
 
 /// <summary>
-/// Fomulaire de modification de l'utilisateur
+/// Fomulaire de modifications de l'utilisateur
 /// </summary>
 public class UserPutModel
 {

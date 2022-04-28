@@ -6,7 +6,7 @@ using Statutis.Entity.Service;
 namespace Statutis.API.Controllers;
 
 /// <summary>
-/// Controlleur sur les types de service
+/// Controleur sur les types de service
 /// </summary>
 [Tags("Type de service")]
 [Route("api/services/types/")]
@@ -26,9 +26,9 @@ public class ServiceTypeController : Controller
 	}
 
 	/// <summary>
-	/// Liste de tout les type de services
+	/// Liste de tous les type de services
 	/// </summary>
-	/// <returns>Types de service</returns>
+	/// <returns>Types de services</returns>
 	[HttpGet, Route("")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ServiceTypeModel>))]
 	public async Task<IActionResult> GetAll()
@@ -40,7 +40,7 @@ public class ServiceTypeController : Controller
 	/// Récupération d'un type de service spécifique
 	/// </summary>
 	/// <param name="name">Identifiant du type de service cible.</param>
-	/// <returns>Type de service</returns>
+	/// <returns>Type de services</returns>
 	/// <response code="404">Si le type de service visé n'existe pas.</response>
 	[HttpGet, Route("{name}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ServiceTypeModel))]

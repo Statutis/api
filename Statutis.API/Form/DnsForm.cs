@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Statutis.API.Form;
 
 /// <summary>
-/// Formulaire pour les serices de Type DNS
+/// Formulaire pour les services de Type DNS
 /// </summary>
 public class DnsForm : ServiceForm
 {

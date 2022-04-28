@@ -10,7 +10,7 @@ using Statutis.Entity.Service;
 namespace Statutis.API.Controllers;
 
 /// <summary>
-/// Controlleur sur les goupes
+/// Controleur sur les goupes
 /// </summary>
 [Tags("Groupe")]
 [Route("api/groups")]
@@ -38,9 +38,9 @@ public class GroupController : Controller
 	}
 
 	/// <summary>
-	/// Récupration de touts les groupes
+	/// Récupration de tous les groupes
 	/// </summary>
-	/// <returns>Groupes publis si pas authentifié, sinon touts les groupes existants</returns>
+	/// <returns>Groupes public si pas authentifié, sinon tous les groupes existants</returns>
 	[HttpGet, Route("")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GroupModel>))]
 	public async Task<IActionResult> GetAll()
@@ -222,10 +222,10 @@ public class GroupController : Controller
 	/// Récupération d'un avatar d'un groupe
 	/// </summary>
 	/// <param name="guid">Identifiant du groupe cible</param>
-	/// <remarks>Lorsque l'on est pas authetifier, il n'est possible de récupérer que les avatars des groupes publics</remarks>
+	/// <remarks>Lorsque l'on est pas authentifié, il n'est possible de récupérer que les avatars des groupes publics</remarks>
 	/// <returns></returns>
 	/// <response code="404">Si le groupe visé n'existe pas ou qu'il ne dispose pas d'avatar.</response>
-	/// <response code="403">Vous ne disposez pas des droits suffisant.</response>
+	/// <response code="403">Vous ne disposez pas des droits suffisants.</response>
 	[HttpGet]
 	[AllowAnonymous]
 	[Route("avatar/{guid}")]
@@ -253,7 +253,7 @@ public class GroupController : Controller
 	/// <remarks>Il n'est possible de modifier l'avatar que si l'utilisateur à un accès</remarks>
 	/// <response code="404">Si le groupe visé n'existe pas.</response>
 	/// <response code="401">Si vous n'êtes pas authentifié.</response>
-	/// <response code="403">Vous ne disposez pas des droits suffisant.</response>
+	/// <response code="403">Vous ne disposez pas des droits suffisants.</response>
 	[HttpPut, Authorize]
 	[Authorize]
 	[Route("avatar/{guid}")]

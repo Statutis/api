@@ -1,7 +1,7 @@
 namespace Statutis.API.Form;
 
 /// <summary>
-/// Fomulaire de modification sur l'utilisateur
+/// Fomulaire de modifications sur l'utilisateur
 /// </summary>
 public class UserPatchModel
 {

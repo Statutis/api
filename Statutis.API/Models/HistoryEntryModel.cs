@@ -5,7 +5,7 @@ using Statutis.Entity.Service;
 namespace Statutis.API.Models;
 
 /// <summary>
-/// Model pour une entreé d'historique
+/// Model pour une entrée d'historique
 /// </summary>
 public class HistoryEntryModel
 {

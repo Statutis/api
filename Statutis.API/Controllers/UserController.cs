@@ -9,7 +9,7 @@ using Statutis.Entity;
 namespace Statutis.API.Controllers;
 
 /// <summary>
-/// Controlleur sur les utilitseurs
+/// Controleur sur les utilitseurs
 /// </summary>
 [Tags("Utilisateurs")]
 [Route("api/users")]
@@ -76,7 +76,7 @@ public class UserController : Controller
 	}
 
 	/// <summary>
-	/// Récupération de touts les utilisateurs
+	/// Récupération de tous les utilisateurs
 	/// </summary>
 	/// <returns>Liste des utilisateurs</returns>
 	/// <response code="401">Si vous n'êtes pas authentifié.</response>
@@ -236,7 +236,7 @@ public class UserController : Controller
 	}
 
 	/// <summary>
-	/// Mie à jour de l'avatar de l'utilisateur courant
+	/// Mise à jour de l'avatar de l'utilisateur courant
 	/// </summary>
 	/// <see cref="UploadAvatar(string,Microsoft.AspNetCore.Http.IFormFile?)"/>
 	/// <returns></returns>
@@ -258,8 +258,8 @@ public class UserController : Controller
 	/// <param name="email">Identifiant de l'utilisateur cible</param>
 	/// <param name="form">Informations sur le nouvel avatar (null si l'on souhaite supprimer celui courant)</param>
 	/// <returns></returns>
-	/// <response code="404">Si l'utilisateur visée n'existe pas.</response>
-	/// <response code="403">Vous ne disposez pas des droits suffisant.</response>
+	/// <response code="404">Si l'utilisateur visé n'existe pas.</response>
+	/// <response code="403">Vous ne disposez pas des droits suffisants.</response>
 	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	[HttpPut]
 	[Authorize]

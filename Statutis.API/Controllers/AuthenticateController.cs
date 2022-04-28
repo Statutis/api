@@ -7,7 +7,7 @@ using Statutis.Core.Interfaces.Business;
 namespace Statutis.API.Controllers;
 
 /// <summary>
-/// Controlleur sur l'identification
+/// Controleur sur l'identification
 /// </summary>
 [Tags("Authentification")]
 [ApiController]
