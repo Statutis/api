@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Statutis.DbRepository;
@@ -11,9 +12,10 @@ using Statutis.DbRepository;
 namespace Statutis.DbRepository.Migrations
 {
     [DbContext(typeof(StatutisContext))]
-    partial class StatutisContextModelSnapshot : ModelSnapshot
+    [Migration("20220428083639_RemoveSshService")]
+    partial class RemoveSshService
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -363,6 +365,9 @@ namespace Statutis.DbRepository.Migrations
                     b.Property<int?>("Code")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Port")
+                        .HasColumnType("integer");
+
                     b.Property<string>("RedirectUrl")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
@@ -378,7 +383,8 @@ namespace Statutis.DbRepository.Migrations
                             Host = "https://statutis.silvain.eu",
                             Name = "Frontend",
                             ServiceTypeName = "Site Web",
-                            Code = 200
+                            Code = 200,
+                            Port = 443
                         },
                         new
                         {
@@ -388,7 +394,8 @@ namespace Statutis.DbRepository.Migrations
                             Host = "https://api.statutis.silvain.eu",
                             Name = "API",
                             ServiceTypeName = "Site Web",
-                            Code = 404
+                            Code = 404,
+                            Port = 443
                         });
                 });
 

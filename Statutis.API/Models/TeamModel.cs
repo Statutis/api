@@ -5,14 +5,21 @@ using Statutis.Entity;
 
 namespace Statutis.API.Models;
 
+/// <summary>
+/// Modèle des équipes
+/// </summary>
 public class TeamModel
 {
 
+	/// <summary>
+	/// Constructeur
+	/// </summary>
+	/// <param name="team"></param>
+	/// <param name="urlHelper"></param>
 	public TeamModel(Team team, IUrlHelper urlHelper)
 	{
 		this.Id = team.TeamId.ToString();
 		this.Name = team.Name;
-		this.Color = team.Color;
 		this.Ref = urlHelper.Action("GetGuid", "Team", new { guid = team.TeamId }) ?? "";
 		this.AvatarRef = team.Avatar != null && team.AvatarContentType != null ? urlHelper.Action("GetAvatar", "Team", new { guid = team.TeamId }) ?? null : null;
 
@@ -21,18 +28,36 @@ public class TeamModel
 	}
 
 
-	public string Id { get; set; }
-	public string Ref { get; set; }
-
-	[StringLength(maximumLength: 30)]
-	public String Name { get; set; }
-
-	[StringLength(maximumLength: 10)]
-	public String? Color { get; set; } = null;
-
-	public List<string> UserRef { get; set; }
-
-	public List<string> GroupRef { get; set; }
+	/// <summary>
+	/// Identifiant unique de l'équipe
+	/// </summary>
+	public string Id { get; }
 	
-	public String? AvatarRef { get; set; }
+	/// <summary>
+	/// Référence de l'équipe
+	/// </summary>
+	public string Ref { get; }
+
+	/// <summary>
+	/// Nom de l'équipe
+	/// </summary>
+	[StringLength(maximumLength: 30)]
+	public String Name { get; }
+
+	/// <summary>
+	/// Références vers les utilisateurs de cette équipe 
+	/// </summary>
+	public List<string> UserRef { get; }
+
+	
+	/// <summary>
+	/// Références vers les groupes de cette équipe 
+	/// </summary>
+	public List<string> GroupRef { get; }
+	
+	
+	/// <summary>
+	/// Référence vers l'avatar de cette équipe 
+	/// </summary>
+	public String? AvatarRef { get; }
 }

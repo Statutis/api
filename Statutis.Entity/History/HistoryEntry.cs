@@ -8,7 +8,7 @@ public class HistoryEntry
 	public Guid ServiceId { get; set; }
 
 	[Required]
-	public Service.Service Service { get; set; }
+	public Service.Service Service { get; set; } = null!;
 
 	[Required]
 	public DateTime DateTime { get; set; }

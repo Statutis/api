@@ -57,13 +57,11 @@ public static class StatutisInitializer
 		{
 			ServiceId = Guid.Parse("CBB3D7EB-0C88-46EB-9370-112E90271659"), ServiceTypeName = webType.Name,
 			Code = 200, Description = "Serveur frontend de statutis", Host = "https://statutis.silvain.eu", Name = "Frontend", GroupId = statutisGroup.GroupId,
-			Port = 443
 		};
 		HttpService statutisApiService = new HttpService()
 		{
 			ServiceId = Guid.Parse("0CAC5B5A-FC9F-4894-849B-2B2B97538C2E"), ServiceTypeName = webType.Name,
 			Code = 404, Description = "Serveur backend de statutis", Host = "https://api.statutis.silvain.eu", Name = "API", GroupId = statutisGroup.GroupId,
-			Port = 443
 		};
 		PingService serverGoogle = new PingService()
 		{

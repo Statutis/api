@@ -1,0 +1,12 @@
+img[alt="Swagger UI"] {
+    display: block;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    content: url('/Content/favicon_white.png');
+    max-width: 100%;
+    max-height: 100%;
+    /*width: 256px;*/
+    width: auto;
+    object-fit: contain;
+    height: 75px;
+}

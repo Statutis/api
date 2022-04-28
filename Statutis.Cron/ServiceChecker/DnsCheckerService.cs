@@ -49,23 +49,32 @@ public class DnsCheckerService : BackgroundService
 						continue;
 					}
 
-					var lookup = new LookupClient();
+					try
+					{
+						var lookup = new LookupClient();	var result = await lookup.QueryAsync(_service.Host, queryType);
 
-					var result = await lookup.QueryAsync(_service.Host, queryType);
-
-					if (!result.HasError)
+						if (!result.HasError )
 					{
 						if (isValid(_service.Result, result))
-							entry.State = HistoryState.Online;
-						else
+							entry.State = HistoryState.Online;else
 							entry.State = HistoryState.Error;
-					}
-					else
-					{
-						entry.State = HistoryState.Unreachable;
-						entry.message = result.ErrorMessage;
-					}
+						}
+						else
+						{
+							entry.State = HistoryState.Unreachable;
+							entry.message = result.ErrorMessage;
+						}
 
+					}
+					catch (Exception e)
+					{
+						Console.WriteLine(e);
+						entry.State = HistoryState.Unreachable;
+						entry.message = e.Message;
+					}
+					
+
+				
 
 					await historyService.Add(entry);
 					_logger.LogInformation("Status du service {1}({2}) : {0}", _service.Name, _service.ServiceId, entry.State.ToString());

@@ -48,7 +48,7 @@ public class HistoryEntryService : IHistoryEntryService
 
 	public async Task<Tuple<HistoryState, DateTime>> GetMainState()
 	{
-		List<HistoryEntry> all = (await GetAllLast()).Where(x => x.Value != null).Select(x => x.Value).ToList();
+		List<HistoryEntry> all = (await GetAllLast()).Where(x => x.Value != null).Select(x => x.Value).ToList()!;
 		if (!all.Any())
 			return new Tuple<HistoryState, DateTime>(HistoryState.Unknown, DateTime.Now);
 
@@ -77,7 +77,7 @@ public class HistoryEntryService : IHistoryEntryService
 		foreach (Service service in group.Services)
 		{
 			var historyEntry = await this.Get(service,15);
-			historyEntry.ForEach(x => { x.Service = null;});
+			historyEntry.ForEach(x => { x.Service = null!;});
 			if(historyEntry.Count == 0)
 				continue;
 			

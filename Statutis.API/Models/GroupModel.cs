@@ -1,30 +1,66 @@
 using Microsoft.AspNetCore.Mvc;
-using Statutis.Business;
 using Statutis.Entity.History;
 using Statutis.Entity.Service;
 
 namespace Statutis.API.Models;
 
+/// <summary>
+/// Modèle de groupe
+/// </summary>
 public class GroupModel
 {
 
+	/// <summary>
+	/// Identifiant du groupe
+	/// </summary>
 	public String Id { get; set; }
+	
+	/// <summary>
+	/// Référence vers le groupe cible
+	/// </summary>
 	public String Ref { get; set; }
 
+	/// <summary>
+	/// Nom du groupe
+	/// </summary>
 	public String Name { get; set; }
 
+	/// <summary>
+	/// Description du groupe
+	/// </summary>
 	public String Description { get; set; }
-
+	
+	/// <summary>
+	/// Visibilité du groupe 
+	/// </summary>
 	public bool IsPublic { get; set; }
 
+	/// <summary>
+	/// Dernière vérification de l'état du groupe
+	/// </summary>
 	public DateTime LastCheck { get; set; }
 
+	/// <summary>
+	/// Liste des services du groupe
+	/// </summary>
 	public List<ServiceModel> Services { get; set; }
 
+	/// <summary>
+	/// Références vers les équipes de ce groupe
+	/// </summary>
 	public List<String> TeamsRef { get; set; }
 
+	/// <summary>
+	/// Référence vers l'avatar du groupe
+	/// </summary>
 	public String? AvatarRef { get; set; }
 
+	/// <summary>
+	/// Constructeur
+	/// </summary>
+	/// <param name="group"></param>
+	/// <param name="services"></param>
+	/// <param name="urlHelper"></param>
 	public GroupModel(Group group, Dictionary<Service, HistoryEntry?> services, IUrlHelper urlHelper)
 	{
 		Id = group.GroupId.ToString();

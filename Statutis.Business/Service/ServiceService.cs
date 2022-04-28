@@ -38,7 +38,7 @@ public class ServiceService : IServiceService
 		return _repository.Get(name);
 	}
 
-	public Task<Service> Get(Guid guid)
+	public Task<Service?> Get(Guid guid)
 	{
 		return _repository.Get(guid);
 	}

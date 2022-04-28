@@ -51,7 +51,7 @@ public class UserService : IUserService
         return user.Teams.Contains(team);
     }
     
-    public async Task<bool> IsUserInTeam(User user, List<Team> team)
+    public bool IsUserInTeam(User user, List<Team> team)
     {
         foreach (Team userTeam in user.Teams)
         {

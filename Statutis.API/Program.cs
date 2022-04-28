@@ -1,7 +1,9 @@
-using System.Text.Json.Serialization;
+using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Statutis.Business;
@@ -20,14 +22,14 @@ string password = configuration.GetConnectionString("password");
 string database = configuration.GetConnectionString("database");
 
 builder.Services.AddDbContext<StatutisContext>(opt => opt.UseNpgsql(
-    @"Host=" + hostname + ";Username=" + username + ";Password=" + password + ";Database=" + database + ""));
+	@"Host=" + hostname + ";Username=" + username + ";Password=" + password + ";Database=" + database + ""));
 
 builder.Services.AddControllers()
-    .AddJsonOptions(x =>
-    {
-        var enumConverter = new JsonStringEnumConverter();
-        x.JsonSerializerOptions.Converters.Add(enumConverter);
-    });
+	.AddJsonOptions(x =>
+	{
+		var enumConverter = new JsonStringEnumConverter();
+		x.JsonSerializerOptions.Converters.Add(enumConverter);
+	});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -36,47 +38,66 @@ builder.Services.AddSwaggerGen();
 var symKey = Encoding.ASCII.GetBytes(configuration.GetValue<string>("JWT:secret"));
 builder.Services.AddAuthentication(x =>
 {
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+	x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(x =>
 {
-    x.RequireHttpsMetadata = false;
-    x.SaveToken = true;
-    x.TokenValidationParameters = new TokenValidationParameters()
-    {
-        ValidateIssuer = false,
-        IssuerSigningKey = new SymmetricSecurityKey(symKey),
-        ValidateIssuerSigningKey = false,
-        ValidateAudience = false
-    };
+	x.RequireHttpsMetadata = false;
+	x.SaveToken = true;
+	x.TokenValidationParameters = new TokenValidationParameters()
+	{
+		ValidateIssuer = false,
+		IssuerSigningKey = new SymmetricSecurityKey(symKey),
+		ValidateIssuerSigningKey = false,
+		ValidateAudience = false
+	};
 });
 
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo() {Title = "Statutis API", Version = "v1"});
-    options.AddSecurityDefinition("Bearer Authentication", new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization using Bearer token. Follow this string : `Bearer <Generated-JWT-Token>`",
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        BearerFormat = "JWT",
-        Scheme = "Bearer"
-    });
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-    {
-        {
-            new OpenApiSecurityScheme()
-            {
-                Reference = new OpenApiReference()
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer Authentication"
-                }
-            },
-            new string[]{}
-        }
-    });
+	options.SwaggerDoc("v1", new OpenApiInfo()
+	{
+		Title = "Statutis API",
+		Version = "v1",
+		Description = "API pour les status de vos service sur Statutis",
+		TermsOfService = new Uri("https://statutis.silvain.eu/legal/notice"),
+		Contact = new OpenApiContact()
+		{
+			Email = "contact@silvain.eu",
+			Name = "Contact Silvain.eu",
+			Url = new Uri("https://silvain.eu/contact")
+		},
+		License = new OpenApiLicense
+		{
+			Name = "GNU General Public License v3.0",
+			Url = new Uri("https://github.com/Statutis/api/blob/main/LICENSE")
+		}
+	});
+	options.AddSecurityDefinition("Bearer Authentication", new OpenApiSecurityScheme
+	{
+		Description = "JWT Authorization using Bearer token. Follow this string : `Bearer <Generated-JWT-Token>`",
+		In = ParameterLocation.Header,
+		Name = "Authorization",
+		Type = SecuritySchemeType.ApiKey,
+		BearerFormat = "JWT",
+		Scheme = "Bearer"
+	});
+	options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+	{
+		{
+			new OpenApiSecurityScheme()
+			{
+				Reference = new OpenApiReference()
+				{
+					Type = ReferenceType.SecurityScheme,
+					Id = "Bearer Authentication"
+				}
+			},
+			new string[] { }
+		}
+	});
+	var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+	options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 builder.Services.AddDbRepositories();
@@ -84,13 +105,13 @@ builder.Services.AddBusiness();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
-    {
-        builder
-            .WithOrigins(configuration.GetSection("Application").GetSection("origin").Get<string[]>())
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
+	options.AddDefaultPolicy(builder =>
+	{
+		builder
+			.WithOrigins(configuration.GetSection("Application").GetSection("origin").Get<string[]>())
+			.AllowAnyMethod()
+			.AllowAnyHeader();
+	});
 });
 
 var app = builder.Build();
@@ -99,8 +120,8 @@ app.UseCors();
 //run migrations
 using (var scope = app.Services.CreateScope())
 {
-    var dataContext = scope.ServiceProvider.GetRequiredService<StatutisContext>();
-    dataContext.Database.Migrate();
+	var dataContext = scope.ServiceProvider.GetRequiredService<StatutisContext>();
+	dataContext.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
@@ -108,8 +129,18 @@ using (var scope = app.Services.CreateScope())
 // {
 // }
 
+app.UseStaticFiles(new StaticFileOptions()
+{
+	FileProvider = new PhysicalFileProvider(
+		Path.Combine(Directory.GetCurrentDirectory(), "Content")),
+	RequestPath = "/Content"
+});
+
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(setupAction =>
+{
+	setupAction.InjectStylesheet("/Content/css.css");
+});
 
 app.UseHttpsRedirection();
 

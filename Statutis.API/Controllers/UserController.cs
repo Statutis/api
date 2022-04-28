@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Statutis.API.Form;
 using Statutis.API.Models;
-using Statutis.Core.Form;
 using Statutis.Core.Interfaces.Business;
 using Statutis.Entity;
 
 namespace Statutis.API.Controllers;
 
+/// <summary>
+/// Controleur sur les utilitseurs
+/// </summary>
+[Tags("Utilisateurs")]
 [Route("api/users")]
 [ApiController]
 [Authorize]
@@ -17,33 +20,45 @@ public class UserController : Controller
 	private readonly IUserService _userService;
 	private readonly IPasswordHash _passwordHash;
 
+	/// <summary>
+	/// Contructeur
+	/// </summary>
+	/// <param name="userService"></param>
+	/// <param name="passwordHash"></param>
 	public UserController(IUserService userService, IPasswordHash passwordHash)
 	{
 		_userService = userService;
 		_passwordHash = passwordHash;
 	}
 
+	/// <summary>
+	/// Récupération de l'utilisateur courant
+	/// </summary>
+	/// <returns>Un utilisateur</returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	[HttpGet("me")]
 	[Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(AuthModel))]
 	public async Task<IActionResult> Get()
 	{
 		if (User.Identity == null)
 			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
 
-		string? email = User.Identity.Name;
-
-		if (email == null)
-			return StatusCode(StatusCodes.Status404NotFound, new AuthModel(null, Url));
-
-		User? user = await _userService.GetByEmail(email);
+		User? user = await _userService.GetUserAsync(User);
 		if (user == null)
-			return StatusCode(StatusCodes.Status404NotFound, new AuthModel(null, Url));
+			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
 
 		return Ok(new UserModel(user, Url));
 	}
 
+	/// <summary>
+	/// Récupération d'un utilisateur
+	/// </summary>
+	/// <param name="email">Adresse mail de l'utilisaur cible</param>
+	/// <returns>Un utilisateur</returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
+	/// <response code="404">Si l'utilisateur cible n'existe pas.</response>
 	[HttpGet("email/{email}")]
 	[Authorize()]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
@@ -60,26 +75,15 @@ public class UserController : Controller
 		return Ok(new UserModel(user, Url));
 	}
 
-	[HttpGet("username/{username}")]
-	[Authorize()]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> GetByUsername([Required] string username)
-	{
-
-		if (username == "")
-			return StatusCode(StatusCodes.Status400BadRequest, "Query parameter email is required !");
-		User? user = await _userService.GetByUsername(username);
-		if (user == null)
-			return NotFound();
-
-		return Ok(new UserModel(user, Url));
-	}
-
+	/// <summary>
+	/// Récupération de tous les utilisateurs
+	/// </summary>
+	/// <returns>Liste des utilisateurs</returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	[HttpGet("")]
 	[Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<UserModel>))]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> GetAll()
 	{
 
@@ -88,17 +92,27 @@ public class UserController : Controller
 		return Ok(users.Select(x => new UserModel(x, Url)));
 	}
 
-
+	/// <summary>
+	/// Modification d'un utilisateur
+	/// </summary>
+	/// <param name="form">Information sur l'utilisateur</param>
+	/// <param name="email">Adresse mail de l'utilisaur cible</param>
+	/// <returns>Un utilisateur</returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
+	/// <response code="403">Si vous n'êtes pas l'utilisateur cible ou un administrateur.</response>
+	/// <response code="404">Si l'utilisateur cible n'existe pas.</response>
 	[HttpPut, Route("{email}")]
 	[Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserPutModel))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> Update([FromBody] UserPutModel form, String email)
 	{
 		if (User.Identity == null || User.Identity.Name == null)
 			return StatusCode(401, new AuthModel(null, Url));
 
-		var user = await _userService.GetByEmail(User.Identity.Name);
+		var user = await _userService.GetUserAsync(User);
 		if (user == null)
 			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
 
@@ -120,6 +134,15 @@ public class UserController : Controller
 		return Ok(new UserModel(userUpdated, Url));
 	}
 
+	/// <summary>
+	/// Modification d'un utilisateur
+	/// </summary>
+	/// <param name="email">Adresse mail de l'utilisaur cible</param>
+	/// <param name="form">Information sur l'utilisateur</param>
+	/// <returns>Un utilisateur</returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
+	/// <response code="403">Si vous n'êtes pas l'utilisateur cible ou un administrateur.</response>
+	/// <response code="404">Si l'utilisateur cible n'existe pas.</response>
 	[HttpPatch, Route("{email}")]
 	[Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
@@ -171,19 +194,34 @@ public class UserController : Controller
 		return Ok(new UserModel(userUpdated, Url));
 	}
 
+
+	/// <summary>
+	/// Recupération de l'avatar de l'utilisateur courant
+	/// </summary>
+	/// <see cref="GetAvatar(String)"/>
+	/// <returns>L'avatar de l'utilisateur courant</returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	[HttpGet]
 	[Authorize]
 	[Route("avatar")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> GetAvatar()
 	{
 		var email = User.Identity?.Name;
 		if (email == null)
-			return Forbid();
+			return Unauthorized();
 		return await GetAvatar(email);
 	}
 
+	
+	/// <summary>
+	/// Récupération d'un avatar d'un utilisateur
+	/// </summary>
+	/// <param name="email">Identifiant d'un utilisateur cible</param>
+	/// <returns>Avatar de l'utilisateur</returns>
+	/// <response code="404">Si l'utilisateur visé n'existe pas ou qu'il ne dispose pas d'avatar.</response>
 	[HttpGet]
 	[AllowAnonymous]
 	[Route("avatar/{email}")]
@@ -192,27 +230,45 @@ public class UserController : Controller
 	public async Task<IActionResult> GetAvatar(String email)
 	{
 		var targetUser = await _userService.GetByEmail(email);
-		if (targetUser.Avatar == null || targetUser.AvatarContentType == null)
+		if (targetUser == null || targetUser.Avatar == null || targetUser.AvatarContentType == null)
 			return NotFound();
 		return File(targetUser.Avatar, targetUser.AvatarContentType);
 	}
 
+	/// <summary>
+	/// Mise à jour de l'avatar de l'utilisateur courant
+	/// </summary>
+	/// <see cref="UploadAvatar(string,Microsoft.AspNetCore.Http.IFormFile?)"/>
+	/// <returns></returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	[HttpPut]
 	[Authorize]
 	[Route("avatar")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public Task<IActionResult> UploadAvatar(IFormFile? form = null)
 	{
-		return UploadAvatar(form, User.Identity?.Name);
+		return UploadAvatar( User.Identity?.Name ?? String.Empty,form);
 	}
 
+
+	/// <summary>
+	/// Mettre à jour l'avatar d'un utilisateur
+	/// </summary>
+	/// <param name="email">Identifiant de l'utilisateur cible</param>
+	/// <param name="form">Informations sur le nouvel avatar (null si l'on souhaite supprimer celui courant)</param>
+	/// <returns></returns>
+	/// <response code="404">Si l'utilisateur visé n'existe pas.</response>
+	/// <response code="403">Vous ne disposez pas des droits suffisants.</response>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	[HttpPut]
 	[Authorize]
 	[Route("avatar/{email}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> UploadAvatar(IFormFile? form = null, string? email = null)
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	public async Task<IActionResult> UploadAvatar(string email, IFormFile? form = null)
 	{
 
 		var user = await _userService.GetUserAsync(User);
@@ -220,8 +276,10 @@ public class UserController : Controller
 			return StatusCode(401, new AuthModel(null, Url));
 
 		var targetUser = String.IsNullOrWhiteSpace(email) ? user : await _userService.GetByEmail(email);
-		if (targetUser == null || (user.Email != targetUser.Email && user.Roles != "ROLE_ADMIN"))
+		if (targetUser == null)
 			return NotFound();
+		if (user.Email != targetUser.Email && user.Roles != "ROLE_ADMIN")
+			return Forbid();
 
 
 		if (form == null)
