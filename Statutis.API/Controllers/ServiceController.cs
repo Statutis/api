@@ -106,7 +106,6 @@ public class ServiceController : Controller
 			Host = form.Host,
 			ServiceTypeName = serviceTypeName,
 			//Specific to HTTP
-			Port = form.Port,
 			Code = form.Code,
 			RedirectUrl = form.RedirectUrl
 		};
