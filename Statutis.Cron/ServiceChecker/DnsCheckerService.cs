@@ -32,7 +32,7 @@ public class DnsCheckerService : BackgroundService
 				IServiceService serviceService = scope.ServiceProvider.GetRequiredService<IServiceService>();
 				IHistoryEntryService historyService = scope.ServiceProvider.GetRequiredService<IHistoryEntryService>();
 				List<DnsService> dnsServices = await serviceService.GetAll<DnsService>();
-;
+				;
 				_logger.LogInformation("Lancement des vérifications DNS (" + dnsServices.Count + " services} :");
 
 				foreach (DnsService _service in dnsServices)
@@ -53,9 +53,11 @@ public class DnsCheckerService : BackgroundService
 					{
 						var lookup = new LookupClient();	var result = await lookup.QueryAsync(_service.Host, queryType);
 
-						if (!result.HasError && result.Answers.AddressRecords().Any(x => x.Address.ToString() == _service.Result))
-						{
-							entry.State = HistoryState.Online;
+						if (!result.HasError )
+					{
+						if (isValid(_service.Result, result))
+							entry.State = HistoryState.Online;else
+							entry.State = HistoryState.Error;
 						}
 						else
 						{
@@ -85,4 +87,22 @@ public class DnsCheckerService : BackgroundService
 			await Task.Delay(waitingSeconds * 1000, stoppingToken);
 		}
 	}
+
+	private bool isValid(string expected, IDnsQueryResponse result)
+	{
+		expected = expected.ToLower().Trim();
+
+		return result.Answers.MxRecords().Any(x=>isStringValid(x.Exchange, expected))
+		       || result.Answers.AddressRecords().Any(x => isStringValid(x.Address.ToString(), expected))
+		       || result.Answers.PtrRecords().Any(x => isStringValid(x.PtrDomainName.Value, expected))
+		       || result.Answers.CnameRecords().Any(x => isStringValid(x.CanonicalName.Value, expected))
+		       || result.Answers.AaaaRecords().Any(x => isStringValid(x.Address.ToString(), expected))
+		       || result.Answers.NsRecords().Any(x => isStringValid(x.NSDName.Value, expected))
+		       || result.Answers.SrvRecords().Any(x => isStringValid(x.Target.Value, expected))
+		       || result.Answers.ARecords().Any(x => isStringValid(x.Address.ToString(), expected))
+		       || result.Answers.TxtRecords().Any(x => x.Text.Any(y=>isStringValid(y, expected)))
+		       ;
+	}
+
+	private bool isStringValid(string value, string expected) => value.Trim().ToLower() == expected || value.Trim().ToLower() == expected + ".";
 }
