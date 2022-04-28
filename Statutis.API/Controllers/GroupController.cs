@@ -1,17 +1,15 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Statutis.API.Form;
 using Statutis.API.Models;
 using Statutis.Core.Interfaces.Business;
 using Statutis.Core.Interfaces.Business.History;
 using Statutis.Core.Interfaces.Business.Service;
-using Statutis.Entity;
 using Statutis.Entity.Service;
 
 namespace Statutis.API.Controllers;
 
+[Tags("Groupe")]
 [Route("api/groups")]
 [ApiController]
 public class GroupController : Controller
@@ -29,6 +27,10 @@ public class GroupController : Controller
 		this._teamService = teamService;
 	}
 
+	/// <summary>
+	/// Récupration de touts les groupes
+	/// </summary>
+	/// <returns>Groupes publis si pas authentifié, sinon touts les groupes existants</returns>
 	[HttpGet, Route("")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GroupModel>))]
 	public async Task<IActionResult> GetAll()
@@ -49,9 +51,16 @@ public class GroupController : Controller
 		);
 	}
 
+	/// <summary>
+	/// Récupération d'un groupe par son identifiant
+	/// </summary>
+	/// <param name="guid">Identifiant du groupe cible</param>
+	/// <returns>Un groupe</returns>
+	/// <response code="403">Si vous ne diposez pas des accès suivant pour consulter ces informations.</response>
 	[HttpGet, Route("{guid}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GroupModel))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> Get(Guid guid)
 	{
 		Group? group = await _groupService.Get(guid);
@@ -78,9 +87,19 @@ public class GroupController : Controller
 		return Ok(new GroupModel(group, histories, Url));
 	}
 
+	/// <summary>
+	///	Mise a jour d'un groupe
+	/// </summary>
+	/// <param name="guid">Identifiant du groupe que l'on souhaite mettre à jour</param>
+	/// <param name="form">Nouvelles informations sur le groupe</param>
+	/// <returns></returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
+	/// <response code="403">Si vous ne diposez pas des accès suivant pour consulter ces informations.</response>
 	[HttpPut, Route("{guid}"), Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GroupModel))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> Update(Guid guid, [FromBody] GroupForm form)
 	{
 		Group? group = await _groupService.Get(guid);
@@ -121,9 +140,15 @@ public class GroupController : Controller
 
 	}
 
+	/// <summary>
+	///	Ajout d'un groupe
+	/// </summary>
+	/// <param name="form">Informations sur le nouveau groupe</param>
+	/// <returns></returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	[HttpPost, Route(""), Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GroupModel))]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> Add([FromBody] GroupForm form)
 	{
 		Group group = new Group(form.Name, form.Description);
@@ -145,9 +170,17 @@ public class GroupController : Controller
 
 	}
 
+	/// <summary>
+	///	Suppression d'un groupe
+	/// </summary>
+	/// <param name="guid">Identifiant du groupe que l'on souhaite supprimer</param>
+	/// <returns></returns>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
+	/// <response code="403">Si vous ne diposez pas des accès suivant pour consulter ces informations.</response>
 	[HttpDelete, Route("{guid}"), Authorize]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> Delete(Guid guid)
 	{
 		Group? group = await _groupService.Get(guid);
@@ -162,7 +195,7 @@ public class GroupController : Controller
 		var user = await _userService.GetUserAsync(User);
 		if (user == null)
 			return Forbid();
-		
+
 		var teamUserId = user.Teams.Select(x => x.TeamId);
 		if (!group.Teams.Any(x => teamUserId.Contains(x.TeamId)))
 			return Forbid();
@@ -175,10 +208,16 @@ public class GroupController : Controller
 
 	}
 
+	/// <summary>
+	/// Récupération d'un avatar d'un groupe
+	/// </summary>
+	/// <param name="guid">Identifiant du groupe cible</param>
+	/// <returns></returns>
+	/// <response code="404">Si le groupe visé n'existe pas ou qu'il ne dispose pas d'avatar.</response>
 	[HttpGet]
 	[AllowAnonymous]
 	[Route("avatar/{guid}")]
-	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetAvatar(Guid guid)
 	{
@@ -191,11 +230,20 @@ public class GroupController : Controller
 		return File(targetGroup.Avatar, targetGroup.AvatarContentType);
 	}
 
+	/// <summary>
+	/// Mettre à jour l'avatar d'un groupe
+	/// </summary>
+	/// <param name="guid">Identifiant du groupe cible</param>
+	/// <param name="form">Informations sur le nouvel avatar (null si l'on souhaite supprimer celui courant)</param>
+	/// <returns></returns>
+	/// <response code="404">Si le groupe visé n'existe pas.</response>
+	/// <response code="401">Si vous n'êtes pas authentifié.</response>
 	[HttpPut, Authorize]
 	[Authorize]
 	[Route("avatar/{guid}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> UploadAvatar(Guid guid, IFormFile? form = null)
 	{
 
