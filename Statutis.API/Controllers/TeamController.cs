@@ -176,7 +176,7 @@ public class TeamController : Controller
 	/// <remarks>
 	/// Pour pouvoir modifier l'avatar d'une équipes il faut soit être administrateur, soit être membre de cette équipe.
 	/// </remarks>
-	/// <response code="404">Si l'équipoe visée n'existe pas ou qu'elle ne dispose pas d'avatar.</response>
+	/// <response code="404">Si l'équipe visée n'existe pas ou qu'elle ne dispose pas d'avatar.</response>
 	/// <response code="403">Vous ne disposez pas des droits suffisant.</response>
 	[HttpGet]
 	[AllowAnonymous]
