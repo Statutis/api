@@ -109,7 +109,6 @@ public class ServiceController : Controller
             ServiceTypeName = serviceTypeName,
             //Specific to HTTP
             Code = form.Code,
-            RedirectUrl = form.RedirectUrl
         };
 
         Service service = await _serviceService.Insert(httpService);
