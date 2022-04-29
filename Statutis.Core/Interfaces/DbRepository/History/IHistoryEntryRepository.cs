@@ -33,7 +33,7 @@ public interface IHistoryEntryRepository
 	/// <param name="service"></param>
 	/// <param name="count">Nombre limite d'entrée</param>
 	/// <returns></returns>
-	public Task<List<HistoryEntry>> Get(Entity.Service.Service service, int count = 15, ListSortDirection order = ListSortDirection.Descending);
+	public Task<List<HistoryEntry>> Get(Entity.Service.Service service, int count = 100, ListSortDirection order = ListSortDirection.Descending);
 
 	/// <summary>
 	/// Ajout d'une entrée

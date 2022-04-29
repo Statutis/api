@@ -3,7 +3,6 @@ using Statutis.Core.Interfaces.Business.History;
 using Statutis.Core.Interfaces.DbRepository.History;
 using Statutis.Entity.History;
 using Statutis.Entity.Service;
-using Statutis.Entity.Service.Check;
 
 namespace Statutis.Business.History;
 
@@ -26,17 +25,17 @@ public class HistoryEntryService : IHistoryEntryService
 		return _repository.GetLast(service, state);
 	}
 
-	public Task<Dictionary<Entity.Service.Service, HistoryEntry?>> GetAllLast()
+	public Task<Dictionary<Service, HistoryEntry?>> GetAllLast()
 	{
 		return _repository.GetAllLast();
 	}
 
-	public Task<Dictionary<Entity.Service.Service, HistoryEntry?>> GetAllLast(List<Entity.Service.Service> services)
+	public Task<Dictionary<Service, HistoryEntry?>> GetAllLast(List<Service> services)
 	{
 		return _repository.GetAllLast(services);
 	}
 
-	public Task<List<HistoryEntry>> Get(Entity.Service.Service service, int count = 15, ListSortDirection order = ListSortDirection.Descending)
+	public Task<List<HistoryEntry>> Get(Service service, int count = 100, ListSortDirection order = ListSortDirection.Descending)
 	{
 		return _repository.Get(service, count, order);
 	}
@@ -76,7 +75,7 @@ public class HistoryEntryService : IHistoryEntryService
 
 		foreach (Service service in group.Services)
 		{
-			var historyEntry = await this.Get(service,15);
+			var historyEntry = await this.Get(service);
 			historyEntry.ForEach(x => { x.Service = null!;});
 			if(historyEntry.Count == 0)
 				continue;
