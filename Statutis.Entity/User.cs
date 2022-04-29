@@ -38,10 +38,15 @@ public class User
 	public String Roles { get; set; }
 
 	public List<Team> Teams { get; set; } = new List<Team>();
-	
+
 	public String CompleteName()
 	{
 		return String.IsNullOrWhiteSpace(Firstname) || String.IsNullOrWhiteSpace(Firstname) ? Username : (Firstname + Name);
+	}
+
+	public bool IsAdmin()
+	{
+		return this.Roles.ToUpper().Trim() != "ROLE_ADMIN";
 	}
 
 
