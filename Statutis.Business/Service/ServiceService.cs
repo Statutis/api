@@ -43,6 +43,11 @@ public class ServiceService : IServiceService
 		return _repository.Get(guid);
 	}
 
+	public Task<T?> GetByClass<T>(Guid guid) where T : Service
+	{
+		return _repository.GetByClass<T>(guid);
+	}
+
 	public Task<Service> Insert(Service service)
 	{
 		return _repository.Insert(service);

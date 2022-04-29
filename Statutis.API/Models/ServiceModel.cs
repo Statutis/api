@@ -1,6 +1,8 @@
+using System.Security.Policy;
 using Microsoft.AspNetCore.Mvc;
 using Statutis.Entity.History;
 using Statutis.Entity.Service;
+using Statutis.Entity.Service.Check;
 
 namespace Statutis.API.Models;
 
@@ -63,6 +65,8 @@ public class ServiceModel
 	/// Référence vers le groupe de ce service
 	/// </summary>
 	public String GroupRef { get; set; }
+	
+	public String DetailRef { get; set; }
 
 
 	/// <summary>
@@ -87,6 +91,24 @@ public class ServiceModel
 		State = historyState;
 		LastCheck = DateTime.Now;
 		HistoryRef = urlHelper.Action("Get","History", new {Guid = service.ServiceId}) ?? String.Empty;
+
+		if (service is DnsService)
+		{
+			DetailRef = urlHelper.Action("GetDns", "Service", new {Guid = service.ServiceId}) ?? String.Empty;
+		} else if (service is PingService)
+		{
+			DetailRef = urlHelper.Action("GetPing", "Service", new {Guid = service.ServiceId}) ?? String.Empty;
+	
+		} else if (service is HttpService)
+		{
+			DetailRef = urlHelper.Action("GetHttp", "Service", new {Guid = service.ServiceId}) ?? String.Empty;
+
+		} else if (service is AtlassianStatusPageService)
+		{
+			DetailRef = urlHelper.Action("GetAtlassianStatusPage", "Service", new {Guid = service.ServiceId}) ?? String.Empty;
+
+		}
+		
 	}
 
 	/// <summary>
