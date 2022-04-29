@@ -238,7 +238,8 @@ public class GroupController : Controller
 		if (targetGroup == null || targetGroup.Avatar == null || targetGroup.AvatarContentType == null)
 			return NotFound();
 
-		//Todo : Vérifier si il s'agit d'une équipe/groupe publique
+		if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false && !targetGroup.IsPublic)
+			return Forbid();
 
 		return File(targetGroup.Avatar, targetGroup.AvatarContentType);
 	}
