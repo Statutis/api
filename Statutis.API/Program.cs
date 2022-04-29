@@ -59,7 +59,7 @@ builder.Services.AddSwaggerGen(options =>
 	{
 		Title = "Statutis API",
 		Version = "v1",
-		Description = "API pour les status de vos service sur Statutis",
+		Description = "API pour les status de vos services sur Statutis",
 		TermsOfService = new Uri("https://statutis.silvain.eu/legal/notice"),
 		Contact = new OpenApiContact()
 		{
