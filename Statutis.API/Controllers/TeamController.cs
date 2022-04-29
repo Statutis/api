@@ -65,10 +65,10 @@ public class TeamController : Controller
 		if ( !await _teamService.IsPublic(team))
 		{
 			if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false && !await _teamService.IsPublic(team))
-				return Forbid();
+				return Unauthorized();
 			
 			var user = await _userService.GetUserAsync(User);
-			if (user == null || !user.IsAdmin() && !team.Users.Contains(user))
+			if (user == null || (!user.IsAdmin() && !team.Users.Contains(user)))
 				return Forbid();		
 		}
 		
@@ -99,7 +99,7 @@ public class TeamController : Controller
 			return NotFound();
 
 		if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
-			return Forbid();
+			return Unauthorized();
 
 		var user = await _userService.GetUserAsync(User);
 		if (user == null || !user.IsAdmin() && !team.Users.Contains(user))
