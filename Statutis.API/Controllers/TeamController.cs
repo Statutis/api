@@ -7,7 +7,6 @@ using Statutis.Entity;
 
 namespace Statutis.API.Controllers;
 
-
 /// <summary>
 /// Controleur sur les équipes
 /// </summary>
@@ -63,13 +62,15 @@ public class TeamController : Controller
 		if (team == null)
 			return NotFound();
 		
-		if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
-			return Forbid();
-
-		var user = await _userService.GetUserAsync(User);
-		if (user == null || !user.IsAdmin() && !team.Users.Contains(user))
-			return Forbid();
-		
+		if ( !await _teamService.IsPublic(team))
+		{
+			if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false && !await _teamService.IsPublic(team))
+				return Forbid();
+			
+			var user = await _userService.GetUserAsync(User);
+			if (user == null || !user.IsAdmin() && !team.Users.Contains(user))
+				return Forbid();		
+		}
 		
 		return Ok(new TeamModel(team, this.Url));
 	}
@@ -186,7 +187,7 @@ public class TeamController : Controller
 		return Ok();
 
 	}
-	
+
 	/// <summary>
 	/// Récupération d'un avatar d'une équipe
 	/// </summary>
