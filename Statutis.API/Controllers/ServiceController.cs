@@ -230,8 +230,7 @@ public class ServiceController : Controller
             return Forbid();
 
         var test = (res.HistoryEntries.Count > 0) ? res.HistoryEntries.Last() : new HistoryEntry();
-        
-        
+
 
         return Ok(new ServiceModel(res, test, Url));
     }
@@ -263,10 +262,10 @@ public class ServiceController : Controller
         var historyState = (dnsService.HistoryEntries.Count > 0)
             ? dnsService.HistoryEntries.Last().State
             : HistoryState.Unknown;
-        
+
         return Ok(new DnsServiceModel(dnsService, historyState, Url));
     }
-    
+
 
     /// <summary>
     /// Permet de récupérer un service de type http
@@ -295,7 +294,7 @@ public class ServiceController : Controller
         var historyState = (httpService.HistoryEntries.Count > 0)
             ? httpService.HistoryEntries.Last().State
             : HistoryState.Unknown;
-        
+
         return Ok(new HttpServiceModel(httpService, historyState, Url));
     }
 
@@ -326,10 +325,10 @@ public class ServiceController : Controller
         var historyState = (pingService.HistoryEntries.Count > 0)
             ? pingService.HistoryEntries.Last().State
             : HistoryState.Unknown;
-        
+
         return Ok(new PingServiceModel(pingService, historyState, Url));
     }
-    
+
     /// <summary>
     /// Permet de récupérer un service de type DNS
     /// </summary>
@@ -357,8 +356,53 @@ public class ServiceController : Controller
         var historyState = (statusPageService.HistoryEntries.Count > 0)
             ? statusPageService.HistoryEntries.Last().State
             : HistoryState.Unknown;
-        
+
         return Ok(new AtlassianStatusPageModel(statusPageService, historyState, Url));
+    }
+
+    /// <summary>
+    /// Permet de mettre à jour un service type DNS
+    /// </summary>
+    /// <param name="form"></param>
+    /// <returns>DNS</returns>
+    [HttpPatch("dns"), Authorize]
+    public async Task<IActionResult> UpdateDnsService([FromBody] DnsPatchForm form)
+    {
+        bool status = CanUpdateService(form, out Guid groupGuid, out string serviceTypeName);
+        if (!status)
+            return Forbid();
+
+        DnsService? service = await _serviceService.GetByClass<DnsService>(form.Guid);
+        if (service == null)
+            return Forbid();
+
+        ServiceType? serviceType = await _serviceTypeService.Get(form.ServiceTypeRef.Split("/").Last());
+        if (serviceType == null)
+            return Forbid();
+
+        bool check = Guid.TryParse(form.GroupRef.Split("/").Last(), out Guid guid);
+        if (!check)
+            return Forbid();
+        
+        
+        Group? group = await _groupService.Get(guid);
+        if (group == null)
+            return Forbid();
+        
+        service.Description = form.Description;
+        service.Host = form.Host;
+        service.Name = form.Name;
+        service.ServiceTypeName = serviceType.Name;
+        service.GroupId = guid;
+        service.Result = form.Result;
+        service.Type = form.Type;
+
+        var historyState = (service.HistoryEntries.Count > 0)
+            ? service.HistoryEntries.Last().State
+            : HistoryState.Unknown;
+        
+        var updateObj = await _serviceService.Update<DnsService>(service);
+        return Ok(new DnsServiceModel(updateObj, historyState, Url));
     }
 
 
@@ -404,6 +448,44 @@ public class ServiceController : Controller
     /// <param name="serviceTypeName">Type de service cible</param>
     /// <returns></returns>
     private bool CanAddService(ServiceForm form, out Guid groupGuid, out string serviceTypeName)
+    {
+        groupGuid = new Guid();
+        serviceTypeName = "";
+
+        if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
+            return false;
+
+        User? user = _userService.GetUserAsync(User).Result;
+        if (user == null)
+            return false;
+
+        bool canParse = Guid.TryParse(form.GroupRef.Split("/").Last(), out groupGuid);
+
+        if (!canParse)
+            return false;
+
+        if (!(_userService.isUserInGroup(user, groupGuid).Result))
+        {
+            return false;
+        }
+
+        serviceTypeName = form.ServiceTypeRef.Split("/").Last();
+
+
+        if (_serviceTypeService.Get(Uri.UnescapeDataString(serviceTypeName)).Result == null)
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Vérification s'il est possible de modifier un service
+    /// </summary>
+    /// <param name="form">Formulaire du service</param>
+    /// <param name="groupGuid">Groupe cible</param>
+    /// <param name="serviceTypeName">Type de service cible</param>
+    /// <returns></returns>
+    private bool CanUpdateService(ServicePatchForm form, out Guid groupGuid, out string serviceTypeName)
     {
         groupGuid = new Guid();
         serviceTypeName = "";
