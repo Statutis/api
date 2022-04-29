@@ -43,6 +43,11 @@ public class ServiceRepository : IServiceRepository
 		return await _ctx.Service.Include(x => x.HistoryEntries).FirstOrDefaultAsync(x => x.ServiceId == guid);
 	}
 
+	public async Task<T?> GetByClass<T>(Guid guid) where T : Entity.Service.Service
+	{
+		return await _ctx.Service.Where(x => x.ServiceId == guid).Select(x => x as T).FirstOrDefaultAsync();
+	}
+
 	public async Task<Entity.Service.Service> Insert(Entity.Service.Service service)
 	{
 		_ctx.Service.Add(service);
