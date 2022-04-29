@@ -238,7 +238,8 @@ public class GroupController : Controller
 		if (targetGroup == null || targetGroup.Avatar == null || targetGroup.AvatarContentType == null)
 			return NotFound();
 
-		//Todo : Vérifier si il s'agit d'une équipe/groupe publique
+		if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false && !targetGroup.IsPublic)
+			return Forbid();
 
 		return File(targetGroup.Avatar, targetGroup.AvatarContentType);
 	}
@@ -270,7 +271,7 @@ public class GroupController : Controller
 		var targetGroup = await _groupService.Get(guid);
 		var userGroups = await _groupService.GetFromUser(user);
 
-		if (targetGroup == null || (user.Roles != "ROLE_ADMIN" && userGroups.Contains(targetGroup)))
+		if (targetGroup == null || (!user.IsAdmin() && userGroups.Contains(targetGroup)))
 			return Forbid();
 
 

@@ -1,5 +1,6 @@
 using Statutis.Core.Interfaces.Business;
 using Statutis.Core.Interfaces.DbRepository;
+using Statutis.Core.Interfaces.DbRepository.Service;
 using Statutis.Entity;
 
 namespace Statutis.Business;
@@ -8,10 +9,12 @@ public class TeamService : ITeamService
 {
 
 	private ITeamRepository _teamRepository;
+	private readonly IGroupRepository _groupRepository;
 
-	public TeamService(ITeamRepository teamRepository)
+	public TeamService(ITeamRepository teamRepository, IGroupRepository _groupRepository)
 	{
 		_teamRepository = teamRepository;
+		this._groupRepository = _groupRepository;
 	}
 
 	public Task<List<Team>> GetAll()
@@ -48,6 +51,17 @@ public class TeamService : ITeamService
 	{
 		return _teamRepository.Delete(team);
 	}
-	
-	
+
+	public async Task<bool> IsPublic(Team team)
+	{
+
+		return (await _groupRepository.GetByTeamId(team.TeamId)).Any(x => x.IsPublic);
+	}
+
+	public Task<List<Team>> GetAllPublic()
+	{
+		return _teamRepository.GetAllPublic();
+	}
+
+
 }
