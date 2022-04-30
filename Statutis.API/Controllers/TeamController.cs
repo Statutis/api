@@ -7,7 +7,6 @@ using Statutis.Entity;
 
 namespace Statutis.API.Controllers;
 
-
 /// <summary>
 /// Controleur sur les équipes
 /// </summary>
@@ -39,8 +38,11 @@ public class TeamController : Controller
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TeamModel))]
 	public async Task<IActionResult> GetAll()
 	{
-		//TODO limiter seulement au équipes qui on un groupe public
-		return Ok((await _teamService.GetAll()).Select(x => new TeamModel(x, this.Url)));
+		if (User.Identity != null && User.Identity.IsAuthenticated)
+		{
+			return Ok((await _teamService.GetAll()).Select(x => new TeamModel(x, this.Url)));
+		}
+		return Ok((await _teamService.GetAllPublic()).Select(x => new TeamModel(x, this.Url)));
 	}
 
 	/// <summary>
@@ -56,11 +58,21 @@ public class TeamController : Controller
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetGuid(Guid guid)
 	{
-		// TODO droits
-		Team? type = await _teamService.Get(guid);
-		if (type == null)
+		Team? team = await _teamService.Get(guid);
+		if (team == null)
 			return NotFound();
-		return Ok(new TeamModel(type, this.Url));
+		
+		if ( !await _teamService.IsPublic(team))
+		{
+			if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false && !await _teamService.IsPublic(team))
+				return Unauthorized();
+			
+			var user = await _userService.GetUserAsync(User);
+			if (user == null || (!user.IsAdmin() && !team.Users.Contains(user)))
+				return Forbid();		
+		}
+		
+		return Ok(new TeamModel(team, this.Url));
 	}
 
 	/// <summary>
@@ -87,10 +99,10 @@ public class TeamController : Controller
 			return NotFound();
 
 		if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
-			return Forbid();
+			return Unauthorized();
 
 		var user = await _userService.GetUserAsync(User);
-		if (user == null || user.Roles != "ROLE_ADMIN" && !team.Users.Contains(user))
+		if (user == null || !user.IsAdmin() && !team.Users.Contains(user))
 			return Forbid();
 
 		team.Name = form.Name;
@@ -104,7 +116,7 @@ public class TeamController : Controller
 			team.Users.Add((await _userService.GetByEmail(teamId))!);
 		}
 
-		if (user.Roles != "ROLE_ADMIN" && !team.Users.Contains(user))
+		if (!user.IsAdmin() && !team.Users.Contains(user))
 			team.Users.Add(user);
 
 		await _teamService.Update(team);
@@ -134,7 +146,7 @@ public class TeamController : Controller
 			return Unauthorized();
 
 		var user = await _userService.GetUserAsync(User);
-		if (user != null && user.Roles != "ROLE_ADMIN" && !team.Users.Contains(user))
+		if (user != null && !user.IsAdmin() && !team.Users.Contains(user))
 			team.Users.Add(user);
 
 		await _teamService.Add(team);
@@ -165,7 +177,7 @@ public class TeamController : Controller
 			return Unauthorized();
 
 		var user = await _userService.GetUserAsync(User);
-		if (user != null && user.Roles != "ROLE_ADMIN" && !team.Users.Contains(user))
+		if (user != null && !user.IsAdmin() && !team.Users.Contains(user))
 			return Forbid();
 
 
@@ -175,7 +187,7 @@ public class TeamController : Controller
 		return Ok();
 
 	}
-	
+
 	/// <summary>
 	/// Récupération d'un avatar d'une équipe
 	/// </summary>
@@ -198,7 +210,8 @@ public class TeamController : Controller
 		if (targetTeam == null || targetTeam.Avatar == null || targetTeam.AvatarContentType == null)
 			return NotFound();
 
-		//Todo : Vérifier si il s'agit d'une équipe publique
+		if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false && !await _teamService.IsPublic(targetTeam))
+			return Forbid();
 
 		return File(targetTeam.Avatar, targetTeam.AvatarContentType);
 	}
@@ -228,7 +241,7 @@ public class TeamController : Controller
 
 		var targetTeam = await _teamService.Get(guid);
 		var userTeam = await _teamService.GetTeamsOfUser(user);
-		if (targetTeam == null || (user.Roles != "ROLE_ADMIN" && userTeam.Contains(targetTeam)))
+		if (targetTeam == null || (!user.IsAdmin() && userTeam.Contains(targetTeam)))
 			return Forbid();
 
 

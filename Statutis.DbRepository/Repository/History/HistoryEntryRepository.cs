@@ -36,7 +36,7 @@ public class HistoryEntryRepository : IHistoryEntryRepository
 
 	}
 
-	public Task<List<HistoryEntry>> Get(Entity.Service.Service service, int count = 15, ListSortDirection order = ListSortDirection.Descending)
+	public Task<List<HistoryEntry>> Get(Entity.Service.Service service, int count = 100, ListSortDirection order = ListSortDirection.Descending)
 	{
 		var ctx = _ctx.History;
 		if(order == ListSortDirection.Descending)

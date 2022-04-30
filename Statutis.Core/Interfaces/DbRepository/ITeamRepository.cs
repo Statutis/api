@@ -18,4 +18,6 @@ public interface ITeamRepository
     
     //delete
     Task Delete(Team team);
+
+    public Task<List<Team>> GetAllPublic();
 }

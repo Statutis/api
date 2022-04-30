@@ -117,7 +117,7 @@ public class UserController : Controller
 			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
 
 
-		if (email != User.Identity.Name && user.Roles != "ROLE_ADMIN")
+		if (email != User.Identity.Name && !user.IsAdmin())
 			return StatusCode(StatusCodes.Status403Forbidden, "You don't have enough permissions");
 
 		User? targetUser = await _userService.GetByEmail(email);
@@ -157,7 +157,7 @@ public class UserController : Controller
 			return StatusCode(StatusCodes.Status401Unauthorized, new AuthModel(null, Url));
 
 
-		if (email != user.Email && user.Roles != "ROLE_ADMIN")
+		if (email != user.Email && !user.IsAdmin())
 			return StatusCode(StatusCodes.Status403Forbidden, "You don't have enough permissions");
 
 		User? targetUser = await _userService.GetByEmail(email);
@@ -278,7 +278,7 @@ public class UserController : Controller
 		var targetUser = String.IsNullOrWhiteSpace(email) ? user : await _userService.GetByEmail(email);
 		if (targetUser == null)
 			return NotFound();
-		if (user.Email != targetUser.Email && user.Roles != "ROLE_ADMIN")
+		if (user.Email != targetUser.Email && !user.IsAdmin())
 			return Forbid();
 
 
