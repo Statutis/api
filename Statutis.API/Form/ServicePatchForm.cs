@@ -8,11 +8,6 @@ namespace Statutis.API.Form;
 public class ServicePatchForm
 {
     /// <summary>
-    /// </summary>
-    [Required]
-    public string Ref { get; set; }
-
-    /// <summary>
     /// Nom du service
     /// </summary>
     [Required]
