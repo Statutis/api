@@ -1,5 +1,3 @@
-using System.Text.Encodings.Web;
-using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Statutis.API.Form;
@@ -34,6 +32,7 @@ public class ServiceController : Controller
     /// <param name="service"></param>
     /// <param name="userService"></param>
     /// <param name="serviceTypeService"></param>
+    /// <param name="groupService"></param>
     public ServiceController(IHistoryEntryService historyEntryService,
         IServiceService service,
         IUserService userService,
@@ -230,8 +229,7 @@ public class ServiceController : Controller
             return Forbid();
 
         var test = (res.HistoryEntries.Count > 0) ? res.HistoryEntries.Last() : new HistoryEntry();
-        
-        
+
 
         return Ok(new ServiceModel(res, test, Url));
     }
@@ -249,9 +247,12 @@ public class ServiceController : Controller
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [HttpGet("dns/{guid}")]
-    public async Task<IActionResult> GetDns([FromQuery] Guid guid)
+    public async Task<IActionResult> GetDns(Guid guid)
     {
-        User user = await _userService.GetUserAsync(User);
+        User? user = await _userService.GetUserAsync(User);
+        if (user == null)
+            return Unauthorized();
+        
         bool check = canUserViewService(user, guid, out Service? service);
         if (!check)
             return Forbid();
@@ -263,10 +264,10 @@ public class ServiceController : Controller
         var historyState = (dnsService.HistoryEntries.Count > 0)
             ? dnsService.HistoryEntries.Last().State
             : HistoryState.Unknown;
-        
+
         return Ok(new DnsServiceModel(dnsService, historyState, Url));
     }
-    
+
 
     /// <summary>
     /// Permet de récupérer un service de type http
@@ -281,11 +282,13 @@ public class ServiceController : Controller
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [HttpGet("http/{guid}")]
-    public async Task<IActionResult> GetHttp([FromQuery] Guid guid)
+    public async Task<IActionResult> GetHttp(Guid guid)
     {
-        User user = await _userService.GetUserAsync(User);
+        User? user = await _userService.GetUserAsync(User);
+        if (user == null)
+            return Unauthorized();
         bool check = canUserViewService(user, guid, out Service? service);
-        if (!check)
+        if (!check && !user.IsAdmin())
             return Forbid();
 
         var httpService = await _serviceService.GetByClass<HttpService>(guid);
@@ -295,7 +298,7 @@ public class ServiceController : Controller
         var historyState = (httpService.HistoryEntries.Count > 0)
             ? httpService.HistoryEntries.Last().State
             : HistoryState.Unknown;
-        
+
         return Ok(new HttpServiceModel(httpService, historyState, Url));
     }
 
@@ -312,9 +315,11 @@ public class ServiceController : Controller
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [HttpGet("ping/{guid}")]
-    public async Task<IActionResult> GetPing([FromQuery] Guid guid)
+    public async Task<IActionResult> GetPing(Guid guid)
     {
-        User user = await _userService.GetUserAsync(User);
+        User? user = await _userService.GetUserAsync(User);
+        if (user == null)
+            return Unauthorized();
         bool check = canUserViewService(user, guid, out Service? service);
         if (!check)
             return Forbid();
@@ -326,10 +331,10 @@ public class ServiceController : Controller
         var historyState = (pingService.HistoryEntries.Count > 0)
             ? pingService.HistoryEntries.Last().State
             : HistoryState.Unknown;
-        
+
         return Ok(new PingServiceModel(pingService, historyState, Url));
     }
-    
+
     /// <summary>
     /// Permet de récupérer un service de type DNS
     /// </summary>
@@ -343,9 +348,11 @@ public class ServiceController : Controller
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [HttpGet("atlassian_status_page/{guid}")]
-    public async Task<IActionResult> GetAtlassianStatusPage([FromQuery] Guid guid)
+    public async Task<IActionResult> GetAtlassianStatusPage(Guid guid)
     {
-        User user = await _userService.GetUserAsync(User);
+        User? user = await _userService.GetUserAsync(User);
+        if (user == null)
+            return Unauthorized();
         bool check = canUserViewService(user, guid, out Service? service);
         if (!check)
             return Forbid();
@@ -357,8 +364,178 @@ public class ServiceController : Controller
         var historyState = (statusPageService.HistoryEntries.Count > 0)
             ? statusPageService.HistoryEntries.Last().State
             : HistoryState.Unknown;
-        
+
         return Ok(new AtlassianStatusPageModel(statusPageService, historyState, Url));
+    }
+
+    /// <summary>
+    /// Permet de mettre à jour un service type DNS
+    /// </summary>
+    /// <param name="form"></param>
+    /// <param name="guid"></param>
+    /// <returns>DNS</returns>
+    [HttpPut("dns/{guid}"), Authorize]
+    public async Task<IActionResult> UpdateDnsService(Guid guid, [FromBody] DnsPatchForm form)
+    {
+        bool status = CanUpdateService(form, out Guid groupGuid, out string serviceTypeName);
+        if (!status)
+            return Forbid();
+
+        DnsService? service = await _serviceService.GetByClass<DnsService>(guid);
+        if (service == null)
+            return Forbid();
+
+        string serviceTypeRefStr = form.ServiceTypeRef.Split("/").Last();
+        serviceTypeRefStr = Uri.UnescapeDataString(serviceTypeRefStr);
+        ServiceType? serviceType = await _serviceTypeService.Get(serviceTypeRefStr);
+        if (serviceType == null)
+            return Forbid();
+
+
+        Group? group = await _groupService.Get(groupGuid);
+        if (group == null)
+            return Forbid();
+        
+        service.Description = form.Description;
+        service.Host = form.Host;
+        service.Name = form.Name;
+        service.ServiceTypeName = serviceType.Name;
+        service.GroupId = groupGuid;
+        service.Result = form.Result;
+        service.Type = form.Type;
+
+        var historyState = (service.HistoryEntries.Count > 0)
+            ? service.HistoryEntries.Last().State
+            : HistoryState.Unknown;
+        
+        var updateObj = await _serviceService.Update<DnsService>(service);
+        return Ok(new DnsServiceModel(updateObj, historyState, Url));
+    }
+    
+    /// <summary>
+    /// Permet de mettre à jour un service type Http
+    /// </summary>
+    /// <param name="guid"></param>
+    /// <param name="form"></param>
+    /// <returns>HTTP</returns>
+    [HttpPut("http/{guid}"), Authorize]
+    public async Task<IActionResult> UpdateHttpService(Guid guid, [FromBody] HttpPatchForm form)
+    {
+        bool status = CanUpdateService(form, out Guid groupGuid, out string serviceTypeName);
+        if (!status)
+            return Forbid();
+        
+        HttpService? service = await _serviceService.GetByClass<HttpService>(guid);
+        if (service == null)
+            return Forbid();
+
+        string serviceTypeRefStr = form.ServiceTypeRef.Split("/").Last();
+        serviceTypeRefStr = Uri.UnescapeDataString(serviceTypeRefStr);
+        ServiceType? serviceType = await _serviceTypeService.Get(serviceTypeRefStr);
+        if (serviceType == null)
+            return Forbid();
+
+        Group? group = await _groupService.Get(groupGuid);
+        if (group == null)
+            return Forbid();
+        
+        service.Description = form.Description;
+        service.Host = form.Host;
+        service.Name = form.Name;
+        service.ServiceTypeName = serviceType.Name;
+        service.GroupId = groupGuid;
+        service.Code = form.Code;
+        service.RedirectUrl = form.RedirectUrl;
+
+        var historyState = (service.HistoryEntries.Count > 0)
+            ? service.HistoryEntries.Last().State
+            : HistoryState.Unknown;
+        
+        var updateObj = await _serviceService.Update<HttpService>(service);
+        return Ok(new HttpServiceModel(updateObj, historyState, Url));
+    }
+    
+    /// <summary>
+    /// Permet de mettre à jour un service type Ping
+    /// </summary>
+    /// <param name="form"></param>
+    /// <param name="guid"></param>
+    /// <returns>ping</returns>
+    [HttpPut("ping/{guid}"), Authorize]
+    public async Task<IActionResult> UpdatePingService(Guid guid, [FromBody] PingPatchForm form)
+    {
+        bool status = CanUpdateService(form, out Guid groupGuid, out string serviceTypeName);
+        if (!status)
+            return Forbid();
+        
+        
+        PingService? service = await _serviceService.GetByClass<PingService>(guid);
+        if (service == null)
+            return Forbid();
+
+        string serviceTypeRefStr = form.ServiceTypeRef.Split("/").Last();
+        serviceTypeRefStr = Uri.UnescapeDataString(serviceTypeRefStr);
+        ServiceType? serviceType = await _serviceTypeService.Get(serviceTypeRefStr);
+        if (serviceType == null)
+            return Forbid();
+
+        Group? group = await _groupService.Get(groupGuid);
+        if (group == null)
+            return Forbid();
+        
+        service.Description = form.Description;
+        service.Host = form.Host;
+        service.Name = form.Name;
+        service.ServiceTypeName = serviceType.Name;
+        service.GroupId = groupGuid;
+
+        var historyState = (service.HistoryEntries.Count > 0)
+            ? service.HistoryEntries.Last().State
+            : HistoryState.Unknown;
+        
+        var updateObj = await _serviceService.Update<PingService>(service);
+        return Ok(new PingServiceModel(updateObj, historyState, Url));
+    }
+    
+    /// <summary>
+    /// Permet de mettre à jour un service type Atlassian Status Page
+    /// </summary>
+    /// <param name="form"></param>
+    /// <param name="guid"></param>
+    /// <returns>DNS</returns>
+    [HttpPatch("atlassian_status_page/{guid}"), Authorize]
+    public async Task<IActionResult> UpdateAtlassianService(Guid guid, [FromBody] AtlassianStatusPagePatchForm form)
+    {
+        bool status = CanUpdateService(form, out Guid groupGuid, out string serviceTypeName);
+        if (!status)
+            return Forbid();
+
+        AtlassianStatusPageService? service = await _serviceService.GetByClass<AtlassianStatusPageService>(guid);
+        if (service == null)
+            return Forbid();
+
+        string serviceTypeRefStr = form.ServiceTypeRef.Split("/").Last();
+        serviceTypeRefStr = Uri.UnescapeDataString(serviceTypeRefStr);
+        ServiceType? serviceType = await _serviceTypeService.Get(serviceTypeRefStr);
+        if (serviceType == null)
+            return Forbid();
+
+        Group? group = await _groupService.Get(groupGuid);
+        if (group == null)
+            return Forbid();
+        
+        service.Description = form.Description;
+        service.Host = form.Host;
+        service.Name = form.Name;
+        service.ServiceTypeName = serviceType.Name;
+        service.GroupId = groupGuid;
+
+        var historyState = (service.HistoryEntries.Count > 0)
+            ? service.HistoryEntries.Last().State
+            : HistoryState.Unknown;
+        
+        var updateObj = await _serviceService.Update<AtlassianStatusPageService>(service);
+        return Ok(new AtlassianStatusPageModel(updateObj, historyState, Url));
     }
 
 
@@ -374,7 +551,7 @@ public class ServiceController : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> deleteService([FromQuery] Guid guid)
+    public async Task<IActionResult> deleteService(Guid guid)
     {
         if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
             return new StatusCodeResult(StatusCodes.Status401Unauthorized);
@@ -383,15 +560,15 @@ public class ServiceController : Controller
         if (user == null)
             return new StatusCodeResult(StatusCodes.Status401Unauthorized);
 
-        bool flag = await _userService.isUserInGroup(user, guid);
-        if (!flag)
+        bool flag = await _userService.IsUserInGroup(user, guid);
+        if (!flag && !user.IsAdmin())
             return Forbid();
 
-        Group? group = await _groupService.Get(guid);
-        if (group == null)
+        Service? service = await _serviceService.Get(guid);
+        if (service == null)
             return Forbid();
 
-        await _groupService.Delete(group);
+        await _serviceService.Delete(service);
 
         return Ok();
     }
@@ -420,7 +597,7 @@ public class ServiceController : Controller
         if (!canParse)
             return false;
 
-        if (!(_userService.isUserInGroup(user, groupGuid).Result))
+        if (!(_userService.IsUserInGroup(user, groupGuid).Result))
         {
             return false;
         }
@@ -435,7 +612,45 @@ public class ServiceController : Controller
     }
 
     /// <summary>
-    /// Permet de savoir si un utilisateur est authorisé à voir un  
+    /// Vérification s'il est possible de modifier un service
+    /// </summary>
+    /// <param name="form">Formulaire du service</param>
+    /// <param name="groupGuid">Groupe cible</param>
+    /// <param name="serviceTypeName">Type de service cible</param>
+    /// <returns></returns>
+    private bool CanUpdateService(ServicePatchForm form, out Guid groupGuid, out string serviceTypeName)
+    {
+        groupGuid = new Guid();
+        serviceTypeName = "";
+
+        if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
+            return false;
+
+        User? user = _userService.GetUserAsync(User).Result;
+        if (user == null)
+            return false;
+
+        bool canParse = Guid.TryParse(form.GroupRef.Split("/").Last(), out groupGuid);
+
+        if (!canParse)
+            return false;
+
+        if (!(_userService.IsUserInGroup(user, groupGuid).Result))
+        {
+            return false;
+        }
+
+        serviceTypeName = form.ServiceTypeRef.Split("/").Last();
+
+
+        if (_serviceTypeService.Get(Uri.UnescapeDataString(serviceTypeName)).Result == null)
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Permet de savoir si un utilisateur est authorisé à voir un service
     /// </summary>
     /// <param name="user"></param>
     /// <param name="guid"></param>

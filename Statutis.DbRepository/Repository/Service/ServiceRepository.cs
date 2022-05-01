@@ -55,7 +55,7 @@ public class ServiceRepository : IServiceRepository
 		return service;
 	}
 
-	public async Task<Entity.Service.Service> Update(Entity.Service.Service service)
+	public async Task<T> Update<T>(T service) where T : Entity.Service.Service
 	{
 		_ctx.Service.Update(service);
 		await _ctx.SaveChangesAsync();

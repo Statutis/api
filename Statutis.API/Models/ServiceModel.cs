@@ -66,7 +66,10 @@ public class ServiceModel
 	/// </summary>
 	public String GroupRef { get; set; }
 	
-	public String DetailRef { get; set; }
+	/// <summary>
+	/// Référence vers le détail du service
+	/// </summary>
+	public String DetailRef { get; set; } = String.Empty;
 
 
 	/// <summary>

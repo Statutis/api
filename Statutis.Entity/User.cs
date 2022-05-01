@@ -46,10 +46,6 @@ public class User
 
 	public bool IsAdmin()
 	{
-		return this.Roles.ToUpper().Trim() != "ROLE_ADMIN";
+		return this.Roles.ToUpper().Trim() == "ROLE_ADMIN";
 	}
-
-
-
-
 }

@@ -20,7 +20,7 @@ public interface IServiceRepository
     Task<Entity.Service.Service> Insert(Entity.Service.Service service);
     
     //Update
-    Task<Entity.Service.Service> Update(Entity.Service.Service service);
+    Task<T> Update<T>(T service) where T : Entity.Service.Service;
     
     //Delete
     Task Delete(Entity.Service.Service service);

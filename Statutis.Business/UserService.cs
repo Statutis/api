@@ -63,7 +63,7 @@ public class UserService : IUserService
         return false;
     }
 
-    public async Task<bool> isUserInGroup(User user, Guid guid)
+    public async Task<bool> IsUserInGroup(User user, Guid guid)
     {
 	    if (user.Teams.Count == 0)
 		    return false;

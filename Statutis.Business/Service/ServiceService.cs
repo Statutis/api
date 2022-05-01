@@ -53,9 +53,9 @@ public class ServiceService : IServiceService
 		return _repository.Insert(service);
 	}
 
-	public Task<Service> Update(Service service)
+	public Task<T> Update<T>(T service) where T : Service
 	{
-		return _repository.Update(service);
+		return _repository.Update<T>(service);
 	}
 
 	public async Task Delete(Service delete)
