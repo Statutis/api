@@ -1,5 +1,3 @@
-using System.Text.Encodings.Web;
-using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Statutis.API.Form;
@@ -372,7 +370,9 @@ public class ServiceController : Controller
         if (!status)
             return Forbid();
 
-        DnsService? service = await _serviceService.GetByClass<DnsService>(form.Guid);
+        bool test = Guid.TryParse(form.Ref.Split("/").Last(), out Guid serviceGuid);
+        
+        DnsService? service = await _serviceService.GetByClass<DnsService>(serviceGuid);
         if (service == null)
             return Forbid();
 
@@ -404,6 +404,143 @@ public class ServiceController : Controller
         var updateObj = await _serviceService.Update<DnsService>(service);
         return Ok(new DnsServiceModel(updateObj, historyState, Url));
     }
+    
+    /// <summary>
+    /// Permet de mettre à jour un service type Http
+    /// </summary>
+    /// <param name="form"></param>
+    /// <returns>DNS</returns>
+    [HttpPatch("dns"), Authorize]
+    public async Task<IActionResult> UpdateHttpService([FromBody] HttpPatchForm form)
+    {
+        bool status = CanUpdateService(form, out Guid groupGuid, out string serviceTypeName);
+        if (!status)
+            return Forbid();
+
+        bool test = Guid.TryParse(form.Ref.Split("/").Last(), out Guid serviceGuid);
+        
+        HttpService? service = await _serviceService.GetByClass<HttpService>(serviceGuid);
+        if (service == null)
+            return Forbid();
+
+        ServiceType? serviceType = await _serviceTypeService.Get(form.ServiceTypeRef.Split("/").Last());
+        if (serviceType == null)
+            return Forbid();
+
+        bool check = Guid.TryParse(form.GroupRef.Split("/").Last(), out Guid guid);
+        if (!check)
+            return Forbid();
+        
+        
+        Group? group = await _groupService.Get(guid);
+        if (group == null)
+            return Forbid();
+        
+        service.Description = form.Description;
+        service.Host = form.Host;
+        service.Name = form.Name;
+        service.ServiceTypeName = serviceType.Name;
+        service.GroupId = guid;
+        service.Code = form.Code;
+        service.RedirectUrl = form.RedirectUrl;
+
+        var historyState = (service.HistoryEntries.Count > 0)
+            ? service.HistoryEntries.Last().State
+            : HistoryState.Unknown;
+        
+        var updateObj = await _serviceService.Update<HttpService>(service);
+        return Ok(new HttpServiceModel(updateObj, historyState, Url));
+    }
+    
+    /// <summary>
+    /// Permet de mettre à jour un service type Ping
+    /// </summary>
+    /// <param name="form"></param>
+    /// <returns>DNS</returns>
+    [HttpPatch("dns"), Authorize]
+    public async Task<IActionResult> UpdatePingService([FromBody] PingPatchForm form)
+    {
+        bool status = CanUpdateService(form, out Guid groupGuid, out string serviceTypeName);
+        if (!status)
+            return Forbid();
+
+        bool test = Guid.TryParse(form.Ref.Split("/").Last(), out Guid serviceGuid);
+        
+        PingService? service = await _serviceService.GetByClass<PingService>(serviceGuid);
+        if (service == null)
+            return Forbid();
+
+        ServiceType? serviceType = await _serviceTypeService.Get(form.ServiceTypeRef.Split("/").Last());
+        if (serviceType == null)
+            return Forbid();
+
+        bool check = Guid.TryParse(form.GroupRef.Split("/").Last(), out Guid guid);
+        if (!check)
+            return Forbid();
+        
+        
+        Group? group = await _groupService.Get(guid);
+        if (group == null)
+            return Forbid();
+        
+        service.Description = form.Description;
+        service.Host = form.Host;
+        service.Name = form.Name;
+        service.ServiceTypeName = serviceType.Name;
+        service.GroupId = guid;
+
+        var historyState = (service.HistoryEntries.Count > 0)
+            ? service.HistoryEntries.Last().State
+            : HistoryState.Unknown;
+        
+        var updateObj = await _serviceService.Update<PingService>(service);
+        return Ok(new PingServiceModel(updateObj, historyState, Url));
+    }
+    
+    /// <summary>
+    /// Permet de mettre à jour un service type Ping
+    /// </summary>
+    /// <param name="form"></param>
+    /// <returns>DNS</returns>
+    [HttpPatch("dns"), Authorize]
+    public async Task<IActionResult> UpdateAtlassianService([FromBody] AtlassianStatusPagePatchForm form)
+    {
+        bool status = CanUpdateService(form, out Guid groupGuid, out string serviceTypeName);
+        if (!status)
+            return Forbid();
+
+        bool test = Guid.TryParse(form.Ref.Split("/").Last(), out Guid serviceGuid);
+        
+        AtlassianStatusPageService? service = await _serviceService.GetByClass<AtlassianStatusPageService>(serviceGuid);
+        if (service == null)
+            return Forbid();
+
+        ServiceType? serviceType = await _serviceTypeService.Get(form.ServiceTypeRef.Split("/").Last());
+        if (serviceType == null)
+            return Forbid();
+
+        bool check = Guid.TryParse(form.GroupRef.Split("/").Last(), out Guid guid);
+        if (!check)
+            return Forbid();
+        
+        
+        Group? group = await _groupService.Get(guid);
+        if (group == null)
+            return Forbid();
+        
+        service.Description = form.Description;
+        service.Host = form.Host;
+        service.Name = form.Name;
+        service.ServiceTypeName = serviceType.Name;
+        service.GroupId = guid;
+
+        var historyState = (service.HistoryEntries.Count > 0)
+            ? service.HistoryEntries.Last().State
+            : HistoryState.Unknown;
+        
+        var updateObj = await _serviceService.Update<AtlassianStatusPageService>(service);
+        return Ok(new AtlassianStatusPageModel(updateObj, historyState, Url));
+    }
 
 
     /// <summary>
@@ -418,7 +555,7 @@ public class ServiceController : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> deleteService([FromQuery] Guid guid)
+    public async Task<IActionResult> deleteService(Guid guid)
     {
         if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
             return new StatusCodeResult(StatusCodes.Status401Unauthorized);
@@ -427,15 +564,15 @@ public class ServiceController : Controller
         if (user == null)
             return new StatusCodeResult(StatusCodes.Status401Unauthorized);
 
-        bool flag = await _userService.isUserInGroup(user, guid);
-        if (!flag)
+        bool flag = await _userService.IsUserInGroup(user, guid);
+        if (!flag && !user.IsAdmin())
             return Forbid();
 
-        Group? group = await _groupService.Get(guid);
-        if (group == null)
+        Service? service = await _serviceService.Get(guid);
+        if (service == null)
             return Forbid();
 
-        await _groupService.Delete(group);
+        await _serviceService.Delete(service);
 
         return Ok();
     }
@@ -464,7 +601,7 @@ public class ServiceController : Controller
         if (!canParse)
             return false;
 
-        if (!(_userService.isUserInGroup(user, groupGuid).Result))
+        if (!(_userService.IsUserInGroup(user, groupGuid).Result))
         {
             return false;
         }
@@ -502,7 +639,7 @@ public class ServiceController : Controller
         if (!canParse)
             return false;
 
-        if (!(_userService.isUserInGroup(user, groupGuid).Result))
+        if (!(_userService.IsUserInGroup(user, groupGuid).Result))
         {
             return false;
         }
@@ -517,7 +654,7 @@ public class ServiceController : Controller
     }
 
     /// <summary>
-    /// Permet de savoir si un utilisateur est authorisé à voir un  
+    /// Permet de savoir si un utilisateur est authorisé à voir un service
     /// </summary>
     /// <param name="user"></param>
     /// <param name="guid"></param>

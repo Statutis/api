@@ -10,7 +10,7 @@ public class ServicePatchForm
     /// <summary>
     /// </summary>
     [Required]
-    public Guid Guid { get; set; }
+    public string Ref { get; set; }
 
     /// <summary>
     /// Nom du service
