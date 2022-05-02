@@ -160,6 +160,7 @@ public class ServiceController : Controller
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> AddAtlassianStatusPageService([FromBody] AtlassianStatusPageForm form)
     {
+        form.ServiceTypeRef = Uri.UnescapeDataString(form.ServiceTypeRef);
         bool status = CanAddService(form, out Guid groupGuid, out string serviceTypeName);
         if (!status)
             return Forbid();
@@ -186,7 +187,7 @@ public class ServiceController : Controller
     public Task<IActionResult> GetCheckType()
     {
         return Task.FromResult<IActionResult>(Ok(new List<String>()
-            {DnsService.CheckType, HttpService.CheckType, PingService.CheckType}));
+            {DnsService.CheckType, HttpService.CheckType, PingService.CheckType, AtlassianStatusPageService.CheckType}));
     }
 
     /// <summary>
@@ -503,7 +504,7 @@ public class ServiceController : Controller
     /// <param name="form"></param>
     /// <param name="guid"></param>
     /// <returns>DNS</returns>
-    [HttpPatch("atlassian_status_page/{guid}"), Authorize]
+    [HttpPut("atlassian_status_page/{guid}"), Authorize]
     public async Task<IActionResult> UpdateAtlassianService(Guid guid, [FromBody] AtlassianStatusPagePatchForm form)
     {
         bool status = CanUpdateService(form, out Guid groupGuid, out string serviceTypeName);
