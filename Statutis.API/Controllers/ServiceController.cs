@@ -337,7 +337,7 @@ public class ServiceController : Controller
     }
 
     /// <summary>
-    /// Permet de récupérer un service de type DNS
+    /// Permet de récupérer un service de type Atlassian Status Page
     /// </summary>
     /// <param name="guid"></param>
     /// <response code="401">Si vous n'êtes pas authentifié.</response>
