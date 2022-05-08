@@ -108,7 +108,6 @@ public class ServiceController : Controller
             ServiceTypeName = serviceTypeName,
             //Specific to HTTP
             Code = form.Code,
-            RedirectUrl = form.RedirectUrl
         };
 
         Service service = await _serviceService.Insert(httpService);
@@ -258,7 +257,7 @@ public class ServiceController : Controller
         if (!check)
             return Forbid();
 
-        var dnsService = await _serviceService.GetByClass<DnsService>(guid);
+        var dnsService = await _serviceService.Get<DnsService>(guid);
         if (dnsService == null)
             return new StatusCodeResult(StatusCodes.Status404NotFound);
 
@@ -292,7 +291,7 @@ public class ServiceController : Controller
         if (!check && !user.IsAdmin())
             return Forbid();
 
-        var httpService = await _serviceService.GetByClass<HttpService>(guid);
+        var httpService = await _serviceService.Get<HttpService>(guid);
         if (httpService == null)
             return Forbid();
 
@@ -325,7 +324,7 @@ public class ServiceController : Controller
         if (!check)
             return Forbid();
 
-        var pingService = await _serviceService.GetByClass<PingService>(guid);
+        var pingService = await _serviceService.Get<PingService>(guid);
         if (pingService == null)
             return Forbid();
 
@@ -358,7 +357,7 @@ public class ServiceController : Controller
         if (!check)
             return Forbid();
 
-        var statusPageService = await _serviceService.GetByClass<AtlassianStatusPageService>(guid);
+        var statusPageService = await _serviceService.Get<AtlassianStatusPageService>(guid);
         if (statusPageService == null)
             return Forbid();
 
@@ -382,7 +381,7 @@ public class ServiceController : Controller
         if (!status)
             return Forbid();
 
-        DnsService? service = await _serviceService.GetByClass<DnsService>(guid);
+        DnsService? service = await _serviceService.Get<DnsService>(guid);
         if (service == null)
             return Forbid();
 
@@ -426,7 +425,7 @@ public class ServiceController : Controller
         if (!status)
             return Forbid();
         
-        HttpService? service = await _serviceService.GetByClass<HttpService>(guid);
+        HttpService? service = await _serviceService.Get<HttpService>(guid);
         if (service == null)
             return Forbid();
 
@@ -446,7 +445,6 @@ public class ServiceController : Controller
         service.ServiceTypeName = serviceType.Name;
         service.GroupId = groupGuid;
         service.Code = form.Code;
-        service.RedirectUrl = form.RedirectUrl;
 
         var historyState = (service.HistoryEntries.Count > 0)
             ? service.HistoryEntries.Last().State
@@ -470,7 +468,7 @@ public class ServiceController : Controller
             return Forbid();
         
         
-        PingService? service = await _serviceService.GetByClass<PingService>(guid);
+        PingService? service = await _serviceService.Get<PingService>(guid);
         if (service == null)
             return Forbid();
 
@@ -511,7 +509,7 @@ public class ServiceController : Controller
         if (!status)
             return Forbid();
 
-        AtlassianStatusPageService? service = await _serviceService.GetByClass<AtlassianStatusPageService>(guid);
+        AtlassianStatusPageService? service = await _serviceService.Get<AtlassianStatusPageService>(guid);
         if (service == null)
             return Forbid();
 
@@ -552,8 +550,92 @@ public class ServiceController : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> deleteService(Guid guid)
+    public async Task<IActionResult> Delete([FromQuery] Guid guid)
     {
+        Service? service = await _serviceService.Get(guid);
+        return await DeleteService(service);
+    }
+    
+    /// <summary>
+    /// Suppression d'un service de type DNS
+    /// </summary>
+    /// <param name="guid"></param>
+    /// <response code="401">Si vous n'êtes pas authentifié.</response>
+    /// <response code="404">Si le service n'est pas trouvé.</response>
+    /// <response code="403">Si l'utilisateur courant n'a pas les droits sur le groupe cible.</response>
+    /// <returns>Réponse vide</returns>
+    [HttpDelete, Route("dns/{guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> DeleteDNS([FromQuery] Guid guid)
+    {
+        Service? service = await _serviceService.Get<DnsService>(guid);
+        return await DeleteService(service);
+    }
+    /// <summary>
+    /// Suppression d'un service de type HTTP
+    /// </summary>
+    /// <param name="guid"></param>
+    /// <response code="401">Si vous n'êtes pas authentifié.</response>
+    /// <response code="404">Si le service n'est pas trouvé.</response>
+    /// <response code="403">Si l'utilisateur courant n'a pas les droits sur le groupe cible.</response>
+    /// <returns>Réponse vide</returns>
+    [HttpDelete, Route("http/{guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> DeleteHttp([FromQuery] Guid guid)
+    {
+        Service? service = await _serviceService.Get<HttpService>(guid);
+        return await DeleteService(service);
+    }
+
+    /// <summary>
+    /// Suppression d'un service de type Ping
+    /// </summary>
+    /// <param name="guid"></param>
+    /// <response code="401">Si vous n'êtes pas authentifié.</response>
+    /// <response code="404">Si le service n'est pas trouvé.</response>
+    /// <response code="403">Si l'utilisateur courant n'a pas les droits sur le groupe cible.</response>
+    /// <returns>Réponse vide</returns>
+    [HttpDelete, Route("ping/{guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> DeletePing([FromQuery] Guid guid)
+    {
+        Service? service = await _serviceService.Get<PingService>(guid);
+        return await DeleteService(service);
+    }
+
+
+    /// <summary>
+    /// Suppression d'un service de type Ping
+    /// </summary>
+    /// <param name="guid"></param>
+    /// <response code="401">Si vous n'êtes pas authentifié.</response>
+    /// <response code="404">Si le service n'est pas trouvé.</response>
+    /// <response code="403">Si l'utilisateur courant n'a pas les droits sur le groupe cible.</response>
+    /// <returns>Réponse vide</returns>
+    [HttpDelete, Route("atlassian_status_page/{guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> DeleteAtlassianStatusPage(Guid guid)
+    {
+        Service? service = await _serviceService.Get<AtlassianStatusPageService>(guid);
+        return await DeleteService(service);
+    }
+
+    private async Task<IActionResult> DeleteService(Service? service)
+    {
+
+        if (service == null)
+        {
+            return NotFound();
+        }
+
         if ((HttpContext.User.Identity?.IsAuthenticated ?? false) == false)
             return new StatusCodeResult(StatusCodes.Status401Unauthorized);
 
@@ -561,12 +643,8 @@ public class ServiceController : Controller
         if (user == null)
             return new StatusCodeResult(StatusCodes.Status401Unauthorized);
 
-        bool flag = await _userService.IsUserInGroup(user, guid);
+        bool flag = await _userService.IsUserInGroup(user, service.GroupId);
         if (!flag && !user.IsAdmin())
-            return Forbid();
-
-        Service? service = await _serviceService.Get(guid);
-        if (service == null)
             return Forbid();
 
         await _serviceService.Delete(service);

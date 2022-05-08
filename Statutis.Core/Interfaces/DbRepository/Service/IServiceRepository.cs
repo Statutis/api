@@ -14,7 +14,7 @@ public interface IServiceRepository
     
     Task<List<Entity.Service.Service>> Get(string name);
     Task<Entity.Service.Service?> Get(Guid guid);
-    Task<T?> GetByClass<T>(Guid guid) where T : Entity.Service.Service;
+    Task<T?> Get<T>(Guid guid) where T : Entity.Service.Service;
     
     //insert
     Task<Entity.Service.Service> Insert(Entity.Service.Service service);

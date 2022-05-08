@@ -15,12 +15,6 @@ public class HttpServiceModel : ServiceModel
     /// Code de retour attendu
     /// </summary>
     public int? Code { get; set; } = null;
-
-    /// <summary>
-    /// Url de redirection
-    /// </summary>
-    public String? RedirectUrl { get; set; } = null;
-
     /// <summary>
     /// Constructeur
     /// </summary>
@@ -41,6 +35,5 @@ public class HttpServiceModel : ServiceModel
         historyState, urlHelper)
     {
         Code = service.Code;
-        RedirectUrl = service.RedirectUrl;
     }
 }
