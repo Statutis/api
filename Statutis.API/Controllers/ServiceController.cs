@@ -257,7 +257,7 @@ public class ServiceController : Controller
         if (!check)
             return Forbid();
 
-        var dnsService = await _serviceService.GetByClass<DnsService>(guid);
+        var dnsService = await _serviceService.Get<DnsService>(guid);
         if (dnsService == null)
             return new StatusCodeResult(StatusCodes.Status404NotFound);
 
@@ -291,7 +291,7 @@ public class ServiceController : Controller
         if (!check && !user.IsAdmin())
             return Forbid();
 
-        var httpService = await _serviceService.GetByClass<HttpService>(guid);
+        var httpService = await _serviceService.Get<HttpService>(guid);
         if (httpService == null)
             return Forbid();
 
@@ -324,7 +324,7 @@ public class ServiceController : Controller
         if (!check)
             return Forbid();
 
-        var pingService = await _serviceService.GetByClass<PingService>(guid);
+        var pingService = await _serviceService.Get<PingService>(guid);
         if (pingService == null)
             return Forbid();
 
@@ -357,7 +357,7 @@ public class ServiceController : Controller
         if (!check)
             return Forbid();
 
-        var statusPageService = await _serviceService.GetByClass<AtlassianStatusPageService>(guid);
+        var statusPageService = await _serviceService.Get<AtlassianStatusPageService>(guid);
         if (statusPageService == null)
             return Forbid();
 
@@ -381,7 +381,7 @@ public class ServiceController : Controller
         if (!status)
             return Forbid();
 
-        DnsService? service = await _serviceService.GetByClass<DnsService>(guid);
+        DnsService? service = await _serviceService.Get<DnsService>(guid);
         if (service == null)
             return Forbid();
 
@@ -425,7 +425,7 @@ public class ServiceController : Controller
         if (!status)
             return Forbid();
         
-        HttpService? service = await _serviceService.GetByClass<HttpService>(guid);
+        HttpService? service = await _serviceService.Get<HttpService>(guid);
         if (service == null)
             return Forbid();
 
@@ -468,7 +468,7 @@ public class ServiceController : Controller
             return Forbid();
         
         
-        PingService? service = await _serviceService.GetByClass<PingService>(guid);
+        PingService? service = await _serviceService.Get<PingService>(guid);
         if (service == null)
             return Forbid();
 
@@ -509,7 +509,7 @@ public class ServiceController : Controller
         if (!status)
             return Forbid();
 
-        AtlassianStatusPageService? service = await _serviceService.GetByClass<AtlassianStatusPageService>(guid);
+        AtlassianStatusPageService? service = await _serviceService.Get<AtlassianStatusPageService>(guid);
         if (service == null)
             return Forbid();
 
@@ -570,7 +570,7 @@ public class ServiceController : Controller
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeleteDNS([FromQuery] Guid guid)
     {
-        Service? service = await _serviceService.GetByClass<DnsService>(guid);
+        Service? service = await _serviceService.Get<DnsService>(guid);
         return await DeleteService(service);
     }
     /// <summary>
@@ -587,7 +587,7 @@ public class ServiceController : Controller
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeleteHttp([FromQuery] Guid guid)
     {
-        Service? service = await _serviceService.GetByClass<HttpService>(guid);
+        Service? service = await _serviceService.Get<HttpService>(guid);
         return await DeleteService(service);
     }
 
@@ -605,7 +605,7 @@ public class ServiceController : Controller
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeletePing([FromQuery] Guid guid)
     {
-        Service? service = await _serviceService.GetByClass<PingService>(guid);
+        Service? service = await _serviceService.Get<PingService>(guid);
         return await DeleteService(service);
     }
 
@@ -624,7 +624,7 @@ public class ServiceController : Controller
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeleteAtlassianStatusPage(Guid guid)
     {
-        Service? service = await _serviceService.GetByClass<AtlassianStatusPageService>(guid);
+        Service? service = await _serviceService.Get<AtlassianStatusPageService>(guid);
         return await DeleteService(service);
     }
 

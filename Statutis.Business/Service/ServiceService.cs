@@ -43,9 +43,9 @@ public class ServiceService : IServiceService
 		return _repository.Get(guid);
 	}
 
-	public Task<T?> GetByClass<T>(Guid guid) where T : Service
+	public Task<T?> Get<T>(Guid guid) where T : Service
 	{
-		return _repository.GetByClass<T>(guid);
+		return _repository.Get<T>(guid);
 	}
 
 	public Task<Service> Insert(Service service)
