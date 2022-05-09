@@ -22,7 +22,7 @@ Le projet a été construit autour de l'architecture N-Tiers. On utilise dans ce
 - `Core` : Contient toutes les interfaces à implémenter
 - `Cron`: Service permettant la vérification des services
 - `DbRepository` : Gère les opérations liées à la base de données, contient aussi le `DbContext`
-- `Entity` : Contient toutes les entitées utilisées dans le projet. 
+- `Entity` : Contient toutes les entités utilisées dans le projet. 
 
 # Les variables d'environnement
 
